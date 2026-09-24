@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<title>Ciuffo, model sheet</title>
+<style>
+  body{margin:0;background:#222;color:#eee;font:14px system-ui}
+  #out img,#out svg{display:block;width:100%;max-width:1920px;margin:0 0 12px}
+</style>
+</head>
+<body>
+<div id="out"></div>
+<script type="module">
+import { ciuffo, shadow, paperBG, C, EXPRESSIONS } from './ciuffo.js';
+import { saveSVG, wrap } from './export.js';
+
+const W = 1920, H = 1080;
+const T = (x, y, s, size = 22, anchor = 'middle', col = C.ink, weight = 600) =>
+  `<text x="${x}" y="${y}" font-family="Segoe UI, Arial, sans-serif" font-size="${size}" font-weight="${weight}" fill="${col}" text-anchor="${anchor}" letter-spacing="1">${s}</text>`;
+const headOnly = (view, expr, x, y, s) => {
+  // testa isolata: disegno il personaggio e ritaglio sulla testa
+  const id = 'c' + Math.random().toString(36).slice(2, 8);
+  return `<defs><clipPath id="${id}"><circle cx="${x}" cy="${y}" r="${118 * s}"/></clipPath></defs>` +
+    `<circle cx="${x}" cy="${y}" r="${118 * s}" fill="#FBF7F0" stroke="${C.ink}" stroke-width="2" opacity="0.9"/>` +
+    `<g clip-path="url(#${id})">${ciuffo({ view, expr, x, y: y + 640 * s - 20 * s, scale: s })}</g>`;
+};
+
+// ---------- tavola 1: turnaround + espressioni ----------
+function sheet1() {
+  const g = 640, s = 0.66;
+  let b = paperBG(W, H, 2000);
+  b += T(60, 70, 'CIUFFO · MODEL SHEET 01 · TURNAROUND ED ESPRESSIONI', 26, 'start', C.ink, 700);
+  b += T(60, 102, 'Video tutorial «Tocca a te» · eSports FITP · bozza 24/09/2026 · disegnato in codice (SVG)', 17, 'start', '#6b5f73', 400);
+  const views = [['front', 'FRONTE'], ['q', 'TRE QUARTI'], ['side', 'PROFILO'], ['back', 'RETRO']];
+  views.forEach(([v, lab], i) => {
+    const x = 250 + i * 330;
+    b += `<path d="M${x - 140} ${g} L${x + 140} ${g}" stroke="${C.ink}" stroke-width="3" opacity="0.5"/>`;
+    b += shadow(x, g, 0, s) + ciuffo({ view: v, x, y: g, scale: s, expr: 'neutro' });
+    b += T(x, g + 46, lab, 20);
+  });
+  // palette
+  const pal = [['CAPELLI', C.hair], ['PELLE', C.skin], ['POLO', C.white], ['SHORTS', C.violet], ['ZAINO', C.green], ['POLSINO', C.pink], ['POLSINO', C.cyan], ['LINEA', C.ink]];
+  pal.forEach(([n, c], i) => {
+    const x = 1600 + (i % 2) * 150, y = 170 + Math.floor(i / 2) * 92;
+    b += `<rect x="${x}" y="${y}" width="56" height="56" rx="10" fill="${c}" stroke="${C.ink}" stroke-width="3"/>`;
+    b += T(x + 66, y + 26, n, 14, 'start') + T(x + 66, y + 46, c.toUpperCase(), 13, 'start', '#6b5f73', 400);
+  });
+  b += T(1600, 150, 'PALETTE', 18, 'start', C.ink, 700);
+  b += T(1600, 560, 'Altezza: 4 teste · età percepita 15-16', 15, 'start', '#6b5f73', 400);
+  b += T(1600, 584, 'Fascia bianca: niente ciuffo sulla fronte', 15, 'start', '#6b5f73', 400);
+  b += T(1600, 608, 'Polsino rosa/ciano sul polso destro', 15, 'start', '#6b5f73', 400);
+  // espressioni
+  b += T(60, 760, 'ESPRESSIONI', 20, 'start', C.ink, 700);
+  EXPRESSIONS.forEach((e, i) => {
+    const x = 150 + i * 232, y = 890;
+    b += headOnly('front', e, x, y, 0.62);
+    b += T(x, y + 100, e.toUpperCase(), 16);
+  });
+  return wrap(W, H, b);
+}
+
+// ---------- tavola 2: pose chiave ----------
+function sheet2() {
+  const g = 900, s = 0.6;
+  let b = paperBG(W, H, 2000);
+  // metà destra viola: test di leggibilità nel mondo «dentro»
+  b += `<rect x="960" y="0" width="960" height="${H}" fill="#311A60"/>`;
+  b += `<path d="M900 1080 L1400 -40" stroke="${C.cyan}" stroke-width="3" opacity="0.5"/><path d="M1300 1080 L1920 180" stroke="${C.pink}" stroke-width="3" opacity="0.5"/>`;
+  b += T(60, 70, 'CIUFFO · MODEL SHEET 02 · POSE CHIAVE', 26, 'start', C.ink, 700);
+  b += T(60, 102, 'Sinistra: mondo «fuori» (carta) · destra: mondo «dentro» (viola eSports FITP)', 17, 'start', '#6b5f73', 400);
+  const poses = [
+    ['CAMMINA', { view: 'side', armA: [24, 16], armB: [-20, 14], legA: [-22, -8], legB: [24, -4], lean: 4, expr: 'incuriosito', hair: -6 }],
+    ['CORRE', { view: 'side', armA: [48, 72], armB: [-46, 84], legA: [-42, -64], legB: [52, -74], lean: 12, planted: false, lift: 20, expr: 'determinato', hair: -14 }],
+    ['TELEFONO IN MANO', { view: 'q', armA: [15, -163], armB: [10, 125], handB: 'phone', tilt: 10, expr: 'incuriosito' }],
+    ['SALTO', { view: 'front', armA: [-150, -10], armB: [150, 10], legA: [-28, 10], legB: [28, -10], planted: false, lift: 110, expr: 'esultanza', squash: 1.04, hair: 8 }],
+    ['SWIPE', { view: 'q', armA: [125, -15], armB: [-12, -10], handA: 'point', legA: [14, 0], legB: [-12, 0], lean: 4, expr: 'determinato', trail: true }],
+    ['ESULTA', { view: 'front', armA: [-30, 150], armB: [165, -12], handA: 'fist', handB: 'fist', legA: [-9, 0], legB: [9, 0], expr: 'esultanza', tilt: -4 }],
+  ];
+  poses.forEach(([lab, p], i) => {
+    const x = 170 + i * 316;
+    const dark = x > 960;
+    if (p.trail) {
+      b += `<path d="M${x - 60} ${g - 230} Q${x + 10} ${g - 430} ${x + 124} ${g - 356}" fill="none" stroke="${C.hair}" stroke-width="10" stroke-linecap="round" opacity="0.9"/>`;
+    }
+    b += shadow(x, g, p.lift || 0, s);
+    const glow = dark ? ` style="filter:drop-shadow(0 0 3px ${C.cyan}) drop-shadow(0 0 12px rgba(246,8,190,.45))"` : '';
+    b += `<g${glow}>${ciuffo({ ...p, x, y: g, scale: s })}</g>`;
+    b += T(x, g + 50, lab, 18, 'middle', dark ? '#fff' : C.ink);
+  });
+  return wrap(W, H, b);
+}
+
+const s1 = sheet1(), s2 = sheet2();
+document.getElementById('out').innerHTML = s1 + s2;
+window.__export = async () => {
+  await saveSVG(s1, 'sheet/model-sheet-01-turnaround-espressioni.png', W, H);
+  await saveSVG(s2, 'sheet/model-sheet-02-pose.png', W, H);
+  return 'ok';
+};
+</script>
+</body>
+</html>

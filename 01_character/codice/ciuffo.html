@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<title>Ciuffo, prova in codice</title>
+<style>
+  html,body{margin:0;background:#F3EDE2;}
+  .stage{display:flex;gap:0;width:1600px;height:900px;}
+  .half{flex:1;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+  .fuori{background:#F3EDE2;
+    background-image:radial-gradient(rgba(43,34,51,.06) 1px,transparent 1px);background-size:5px 5px;}
+  .dentro{background:radial-gradient(circle at 50% 40%,#4A2A8A 0%,#311A60 55%,#1C0F3A 100%);}
+  .dentro::before,.dentro::after{content:"";position:absolute;width:140%;height:3px;left:-20%;
+    background:linear-gradient(90deg,transparent,#00FFFF,transparent);transform:rotate(-24deg);top:30%;opacity:.55;filter:blur(1px)}
+  .dentro::after{background:linear-gradient(90deg,transparent,#F608BE,transparent);top:72%;opacity:.5}
+  svg{height:860px;overflow:visible}
+  .dentro svg{filter:drop-shadow(0 0 2px #00FFFF) drop-shadow(0 0 10px rgba(246,8,190,.45))}
+
+  /* animazione: respiro, ciuffo che ondeggia, battito di ciglia */
+  .body{animation:breathe 2.4s ease-in-out infinite;transform-origin:200px 850px}
+  .hair{animation:sway 1.2s ease-in-out infinite alternate;transform-origin:200px 150px}
+  .eyes{animation:blink 4s infinite;transform-origin:200px 205px}
+  @keyframes breathe{0%,100%{transform:scaleY(1)}50%{transform:scaleY(1.012)}}
+  @keyframes sway{from{transform:rotate(-2.5deg)}to{transform:rotate(3deg)}}
+  @keyframes blink{0%,94%,100%{transform:scaleY(1)}96%{transform:scaleY(.1)}}
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="half fuori"><svg viewBox="0 0 400 900"><use href="#ciuffo"/></svg></div>
+  <div class="half dentro"><svg viewBox="0 0 400 900"><use href="#ciuffo"/></svg></div>
+</div>
+
+<svg width="0" height="0" style="position:absolute">
+<defs>
+<g id="ciuffo" stroke="#2B2233" stroke-width="5" stroke-linejoin="round" stroke-linecap="round">
+ <g class="body">
+  <!-- ombra a terra -->
+  <ellipse cx="200" cy="862" rx="120" ry="12" fill="#2B2233" opacity=".15" stroke="none"/>
+
+  <!-- racchetta dietro la spalla (manico) -->
+  <rect x="262" y="228" width="22" height="120" rx="8" fill="#2B2233" transform="rotate(14 273 288)"/>
+  <rect x="262" y="228" width="22" height="18" rx="6" fill="#F608BE" transform="rotate(14 273 288)"/>
+
+  <!-- gambe -->
+  <path d="M168 560 L164 770" stroke-width="30" stroke="#2B2233"/>
+  <path d="M168 560 L164 770" stroke-width="20" stroke="#F2C09A"/>
+  <path d="M232 560 L236 770" stroke-width="30" stroke="#2B2233"/>
+  <path d="M232 560 L236 770" stroke-width="20" stroke="#F2C09A"/>
+  <!-- calzini -->
+  <rect x="148" y="752" width="32" height="46" rx="6" fill="#FFFFFF"/>
+  <rect x="220" y="752" width="32" height="46" rx="6" fill="#FFFFFF"/>
+  <!-- scarpe grosse -->
+  <path d="M112 848 Q110 800 150 792 L182 792 Q196 800 196 822 L196 848 Z" fill="#FFFFFF"/>
+  <path d="M112 848 L196 848" stroke-width="7"/>
+  <path d="M288 848 Q290 800 250 792 L218 792 Q204 800 204 822 L204 848 Z" fill="#FFFFFF"/>
+  <path d="M204 848 L288 848" stroke-width="7"/>
+  <path d="M150 806 l22 0 M152 818 l22 0 M228 806 l22 0 M226 818 l22 0" stroke-width="3"/>
+
+  <!-- pantaloncini -->
+  <path d="M142 452 L258 452 L270 572 L208 572 L200 520 L192 572 L130 572 Z" fill="#311A60"/>
+
+  <!-- braccia -->
+  <path d="M128 318 L112 520" stroke-width="28" stroke="#2B2233"/>
+  <path d="M128 318 L112 520" stroke-width="18" stroke="#F2C09A"/>
+  <path d="M272 318 L288 520" stroke-width="28" stroke="#2B2233"/>
+  <path d="M272 318 L288 520" stroke-width="18" stroke="#F2C09A"/>
+  <circle cx="111" cy="532" r="16" fill="#F2C09A"/>
+  <circle cx="289" cy="532" r="16" fill="#F2C09A"/>
+  <!-- polsino destro (a sinistra per chi guarda): rosa e ciano -->
+  <rect x="98" y="476" width="30" height="16" fill="#F608BE"/>
+  <rect x="98" y="492" width="30" height="16" fill="#00FFFF"/>
+
+  <!-- polo -->
+  <path d="M150 290 L250 290 L292 322 L276 372 L256 362 L258 462 L142 462 L144 362 L124 372 L108 322 Z" fill="#FFFFFF"/>
+  <!-- bretelle zaino -->
+  <path d="M152 296 L150 430" stroke="#2F5D3A" stroke-width="14"/>
+  <path d="M248 296 L250 430" stroke="#2F5D3A" stroke-width="14"/>
+  <!-- colletto e bottoni -->
+  <path d="M172 290 L200 322 L228 290" fill="#FFFFFF"/>
+  <path d="M200 322 L200 356" stroke-width="3"/>
+  <circle cx="200" cy="334" r="2.5" fill="#2B2233" stroke="none"/>
+  <circle cx="200" cy="348" r="2.5" fill="#2B2233" stroke="none"/>
+
+  <!-- collo -->
+  <rect x="184" y="258" width="32" height="36" fill="#F2C09A"/>
+
+  <!-- capelli: fiamma spettinata spinta indietro dalla fascia -->
+  <g class="hair">
+   <path d="M128 168 L110 122 L146 138 L140 84 L176 118 L184 58 L212 108 L236 50 L244 106 L282 70 L270 124 L310 112 L276 160 Z" fill="#E0432B"/>
+  </g>
+  <!-- orecchie -->
+  <ellipse cx="128" cy="205" rx="14" ry="20" fill="#F2C09A"/>
+  <ellipse cx="272" cy="205" rx="14" ry="20" fill="#F2C09A"/>
+  <!-- testa -->
+  <path d="M132 170 Q132 128 200 128 Q268 128 268 172 L266 214 Q262 266 200 272 Q138 266 134 214 Z" fill="#F2C09A"/>
+  <!-- fascia da tennis -->
+  <path d="M128 150 Q200 128 272 150 L274 176 Q200 156 126 176 Z" fill="#FFFFFF"/>
+  <path d="M140 160 l0 8 M158 155 l0 8 M176 151 l0 8 M194 149 l0 8 M212 149 l0 8 M230 151 l0 8 M248 155 l0 8 M262 160 l0 8" stroke-width="2" opacity=".35"/>
+
+  <!-- viso -->
+  <g class="eyes">
+   <circle cx="176" cy="206" r="6.5" fill="#2B2233" stroke="none"/>
+   <circle cx="224" cy="206" r="6.5" fill="#2B2233" stroke="none"/>
+  </g>
+  <path d="M164 188 L186 184" stroke-width="5"/>
+  <path d="M214 182 L238 188" stroke-width="5"/>
+  <path d="M200 214 L192 234 L204 234" fill="none" stroke-width="4"/>
+  <path d="M180 248 Q200 262 222 246" fill="none" stroke-width="4.5"/>
+  <g fill="#C65A2E" stroke="none" opacity=".7">
+   <circle cx="160" cy="226" r="2.5"/><circle cx="168" cy="232" r="2.5"/><circle cx="156" cy="236" r="2.5"/>
+   <circle cx="240" cy="226" r="2.5"/><circle cx="232" cy="232" r="2.5"/><circle cx="244" cy="236" r="2.5"/>
+  </g>
+ </g>
+</g>
+</defs>
+</svg>
+</body>
+</html>

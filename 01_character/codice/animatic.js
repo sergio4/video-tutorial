@@ -3,14 +3,15 @@
 // un solo viaggio (il mondo myFITP è un sentiero continuo percorso da sinistra a destra),
 // transizioni fatte da oggetti che si muovono o si trasformano, teletrasporto come motivo ricorrente.
 // Tutti i tempi arrivano da timeline.json (TL.cue), la stessa usata per voce, musica ed effetti.
-import { ciuffo, shadow, paperBG, C } from './ciuffo.js';
+import { ciuffo, shadow, paperBG, racketHead, C } from './ciuffo.js';
 import { A, TL } from './assets.js';
 import * as M from './myfitp.js';
-import { arena, net, rival, hud, ball as tBall, courtPt } from './arena.js';
+import { arena, net, rival, rivalRacket, hud, ball as tBall, courtPt } from './arena.js';
 
 export const W = 1080, H = 1920, FPS = 25;
 export const duration = () => TL.dur;
 let Q = {}; // cue della timeline, assegnati a ogni fotogramma
+const O = () => TL.opts || {}; // opzioni del taglio (es. social: true nel taglio da 30 s)
 
 // ---------- utilità ----------
 const clamp = (v, a = 0, b = 1) => Math.max(a, Math.min(b, v));
@@ -87,6 +88,7 @@ const defs = t => `<defs>
 <filter id="toWhite"><feColorMatrix type="matrix" values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 1 0"/></filter>
 <radialGradient id="phoneLight" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="${C.pink}" stop-opacity="0.35"/><stop offset="0.5" stop-color="${C.cyan}" stop-opacity="0.12"/><stop offset="1" stop-color="${C.cyan}" stop-opacity="0"/></radialGradient>
 <radialGradient id="tpLight" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#FFFFFF"/><stop offset="0.55" stop-color="#FFE9F6" stop-opacity="0.85"/><stop offset="1" stop-color="#FFE9F6" stop-opacity="0"/></radialGradient>
+<linearGradient id="titleBand" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#12072E" stop-opacity="0.85"/><stop offset="0.7" stop-color="#12072E" stop-opacity="0.55"/><stop offset="1" stop-color="#12072E" stop-opacity="0"/></linearGradient>
 <radialGradient id="vignette" cx="50%" cy="48%" r="75%"><stop offset="0.6" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity="0.32"/></radialGradient>
 </defs>`;
 
@@ -130,15 +132,15 @@ function fuori(t, o = {}) {
     const x = ((x0 + t * 14) % 1500) - 250;
     s += `<path d="M${f(x)} ${y} q${f(w * 0.12)} ${f(-w * 0.2)} ${f(w * 0.3)} ${f(-w * 0.08)} q${f(w * 0.14)} ${f(-w * 0.2)} ${f(w * 0.34)} ${f(-w * 0.02)} q${f(w * 0.22)} ${f(-w * 0.04)} ${f(w * 0.36)} ${f(w * 0.1)} Z" fill="#FFFDF7" stroke="${C.ink}" stroke-width="4" stroke-linejoin="round" opacity="${f3(calm)}"/>`;
   }
-  if (calm > 0) for (let i = 0; i < 3; i++) {
+  if (calm > 0 && !o.bare) for (let i = 0; i < 3; i++) {
     const bx = ((120 + i * 70 + t * 40) % 1400) - 200, by = 520 + i * 26 + 8 * Math.sin(t * 3 + i), w = 4 + 3 * Math.sin(t * 9 + i * 2);
     s += `<path d="M${f(bx - 16)} ${f(by - w)} Q${f(bx - 6)} ${f(by - 2)} ${f(bx)} ${f(by + 2)} Q${f(bx + 6)} ${f(by - 2)} ${f(bx + 16)} ${f(by - w)}" fill="none" stroke="${C.ink}" stroke-width="4" stroke-linecap="round"/>`;
   }
-  s += `<path d="M1010 1180 L1020 600 M984 600 L1056 600 L1050 630 L990 630 Z" fill="#E9E1D2" stroke="${C.ink}" stroke-width="6" stroke-linejoin="round"/>`;
+  if (!o.bare && calm > 0) s += `<path d="M1010 1180 L1020 600 M984 600 L1056 600 L1050 630 L990 630 Z" fill="#E9E1D2" stroke="${C.ink}" stroke-width="6" stroke-linejoin="round" opacity="${f3(calm)}"/>`;
   let fence = '';
   for (let x = -600; x <= W + 600; x += 90) fence += `M${x} 1180 L${x} 1010 `;
   for (let x = -600; x <= W + 600; x += 30) fence += `M${x} 1030 l30 60 M${x + 30} 1030 l-30 60 M${x} 1090 l30 60 M${x + 30} 1090 l-30 60 `;
-  s += `<path d="${fence}" stroke="${C.ink}" stroke-width="2.5" opacity="0.35"/><path d="M-600 1012 L${W + 600} 1012" stroke="${C.ink}" stroke-width="5" opacity="0.6"/>`;
+  if (!o.bare && calm > 0) s += `<path d="${fence}" stroke="${C.ink}" stroke-width="2.5" opacity="${f3(0.35 * calm)}"/><path d="M-600 1012 L${W + 600} 1012" stroke="${C.ink}" stroke-width="5" opacity="${f3(0.6 * calm)}"/>`;
   let hedge = `M-600 1180`;
   for (let x = -600; x <= W + 600; x += 60) hedge += ` Q${x + 30} ${1150 + (Math.abs(x) % 120 ? 6 : -4)} ${x + 60} 1180`;
   s += `<path d="${hedge} L${W + 600} 1260 L-600 1260 Z" fill="#7C8F63" stroke="${C.ink}" stroke-width="4" stroke-linejoin="round"/>`;
@@ -282,8 +284,15 @@ function tessera(cx, cy, w, flip, o = {}) {
     face = `<rect x="${f(-w / 2)}" y="${f(-h / 2)}" width="${f(w)}" height="${f(h)}" rx="22" fill="#123C9C"/>` + tr +
       `<image href="${A.esports}" x="${f(-w * 0.22)}" y="${f(-h * 0.3)}" width="${f(w * 0.44)}" height="${f(h * 0.6)}" opacity="${f3(0.5 + 0.5 * glow)}"/>`;
   }
+  let sh = '';
+  if (o.shine >= 0 && o.shine <= 1 && flip <= 0.5) {
+    const id = 'shn' + (clipN++), x = lerp(-w * 0.9, w * 0.9, smooth(o.shine));
+    sh = `<clipPath id="${id}"><rect x="${f(-w / 2)}" y="${f(-h / 2)}" width="${f(w)}" height="${f(h)}" rx="${f(w * 0.045)}"/></clipPath>` +
+      `<g clip-path="url(#${id})"><path d="M${f(x - 40)} ${f(-h)} L${f(x + 50)} ${f(-h)} L${f(x - 60)} ${f(h)} L${f(x - 150)} ${f(h)} Z" fill="#fff" opacity="0.45"/><path d="M${f(x + 80)} ${f(-h)} L${f(x + 100)} ${f(-h)} L${f(x - 10)} ${f(h)} L${f(x - 30)} ${f(h)} Z" fill="#fff" opacity="0.35"/></g>`;
+  }
   const halo = glow > 0 ? `<rect x="${f(-w / 2 - 12)}" y="${f(-h / 2 - 12)}" width="${f(w + 24)}" height="${f(h + 24)}" rx="30" fill="none" stroke="${C.cyan}" stroke-width="7" opacity="${f3(glow * 0.8)}" filter="url(#neon)"/>` : '';
-  return g(halo + face + `<path d="${wobRect(-w / 2, -h / 2, w, h, 22, 5, 2.5)}" fill="none" stroke="${C.ink}" stroke-width="6"/>`,
+  const shadowC = `<rect x="${f(-w / 2 + w * 0.03)}" y="${f(-h / 2 + w * 0.04)}" width="${f(w)}" height="${f(h)}" rx="${f(w * 0.045)}" fill="${C.ink}" opacity="0.35"/>`;
+  return g(shadowC + halo + face + sh + `<path d="${wobRect(-w / 2, -h / 2, w, h, w * 0.045, 5, 2.5)}" fill="none" stroke="${C.ink}" stroke-width="${f(Math.max(3, w / 60))}"/>`,
     `translate(${f(cx)} ${f(cy)}) rotate(${f(o.rot || 0)}) scale(${f3(Math.max(sx, 0.02) * (o.scale || 1))} ${f3(o.scale || 1)})`);
 }
 // nota a mano (L3) con freccia disegnata verso l'elemento di cui parla
@@ -308,11 +317,15 @@ function note(t, tin, tout, x, y, label, target, o = {}) {
 }
 
 // ---------- titoli delle tappe (L1 titolo, L2 sottotitolo) ----------
-const STEPS = () => [
-  { n: 1, title: 'Entra in myFITP', tin: Q.tp_land + 0.7, tout: Q.walk1 + 0.9, px: P[0], subs: [[Q.tp_land + 1.0, 'Scarica l’app e crea il tuo account'], [Q.tag_throw - 2.2, 'Collega il tuo ID di Tennis Clash']] },
+const STEPS = () => O().social ? [
+  { n: 1, title: 'Entra in myFITP', tin: Q.tp_land + 0.5, tout: Q.walk1 + 0.7, px: P[0], subs: [[Q.tp_land + 0.8, 'Scarica l’app e collega il tuo ID']] },
+  { n: 2, title: 'Tesserati', tin: Q.p2, tout: Q.walk2 + 0.7, px: P[1], subs: [[Q.p2 + 0.3, 'La chiave dei tornei ufficiali']] },
+  { n: 3, title: 'Iscriviti a un torneo', tin: Q.p3, tout: Q.match_btn + 0.3, px: P[2], subs: [[Q.p3 + 0.3, 'Scegli il torneo e «Registrati»'], [Q.day, 'Poi «Vai al tuo match»']] },
+] : [
+  { n: 1, title: 'Entra in myFITP', tin: Q.tp_land + 0.7, tout: Q.walk1 + 0.9, px: P[0], subs: [[Q.tp_land + 1.0, 'Scarica l’app e crea il tuo account'], [Q.tag_throw - 0.9, 'Collega il tuo ID di Tennis Clash']] },
   { n: 2, title: 'Tesserati', tin: Q.p2 + 0.1, tout: Q.walk2 + 0.9, px: P[1], subs: [[Q.p2 + 0.5, 'La chiave dei tornei ufficiali']] },
   { n: 3, title: 'Iscriviti a un torneo', tin: Q.p3 + 0.1, tout: Q.match_btn + 0.3, px: P[2], subs: [[Q.p3 + 0.4, 'Scegli un torneo del tuo livello'], [Q.sheet + 0.4, 'Tocca «Registrati» e conferma'], [Q.day, 'Il giorno del torneo: «Vai al tuo match»']] },
-  { n: 4, title: 'Gioca su Tennis Clash', tin: Q.arena + 0.5, tout: Q.shot1 + 1.9, px: null, subs: [[Q.arena + 0.9, 'Il match si apre da solo']] },
+  { n: 4, title: 'Gioca su Tennis Clash', tin: Q.arena + 0.5, tout: TL.shots[0] - 0.9, px: null, subs: [[Q.arena + 0.9, 'Il match si apre da solo']] },
 ];
 function chapter(t, camX) {
   let s = '';
@@ -372,8 +385,8 @@ function sceneBench(t) {
 // ---------- scena 2 · il sentiero myFITP ----------
 const CAM_IN = () => [
   [Q.tp_land, 600, 1000, 1.16], [Q.tp_land + 1.8, 540, 960, 1.0], [Q.walk1 + 0.2, 540, 960, 1.0], [Q.p2 + 0.2, P[1], 960, 1.0],
-  [Q.card_catch - 0.2, P[1], 960, 1.0], [Q.card_catch + 0.8, P[1], 1060, 1.26], [Q.card_flip + 0.4, P[1], 1060, 1.26],
-  [Q.road + 0.2, P[1], 990, 1.06], [Q.walk2 + 0.2, P[1] + 60, 960, 1.0], [Q.p3, P[2], 960, 1.0], [Q.popup - 0.2, P[2], 960, 1.0],
+  [Q.card_catch - 0.2, P[1], 960, 1.0], [Q.present + 0.5, P[1] - 60, 900, 1.08], [Q.card_store, P[1] - 60, 900, 1.08],
+  [Q.road + 0.3, P[1], 960, 1.0], [Q.walk2 + 0.2, P[1] + 60, 960, 1.0], [Q.p3, P[2], 960, 1.0], [Q.popup - 0.2, P[2], 960, 1.0],
   [Q.popup + 0.5, P[2] - 20, 900, 1.12], [Q.seats + 0.2, P[2] - 20, 900, 1.12], [Q.day + 0.6, P[2] + 20, 880, 0.94],
   [Q.ready_btn, P[2] + 20, 900, 0.96], [Q.match_btn + 0.4, P[2] + 60, 1000, 1.06], [Q.silence, P[2] + 90, 1080, 1.14], [Q.match_tap, P[2] + 90, 1080, 1.14],
 ];
@@ -392,15 +405,15 @@ function heroPath(t) {
   else if (tp < Q.tag_snap) { const u = smooth(span(tp, Q.tag_throw - 0.4, Q.tag_throw)); p = { ...STAND, view: 'q', flip: true, expr: 'determinato', armB: [lerp(-150, 150, u), lerp(30, 10, u)] }; }
   else if (tp < Q.ball_hop) p = { ...STAND, ...breathe(t), expr: tp > Q.tag_snap + 0.3 ? 'furbo' : 'determinato', tilt: 6 };
   else if (tp < Q.walk1) p = { ...STAND, view: 'q', expr: 'incuriosito', tilt: 3 };
-  else if (tp < Q.p2 - 0.2) { x = lerp(STAND_X[0], STAND_X[1] - 80, smooth(span(tp, Q.walk1, Q.p2 - 0.2))); p = walk(tp, { expr: 'neutro' }, 1.4); }
+  else if (tp < Q.p2 - 0.2) { x = lerp(STAND_X[0], STAND_X[1] - 80, smooth(span(tp, Q.walk1, Q.p2 - 0.2))); p = walk(tp, { expr: 'neutro' }, O().walkHz || 1.4); }
   else if (tp < Q.card_catch - 0.6) { x = STAND_X[1] - 80; p = { ...STAND, ...breathe(t), expr: 'incuriosito', tilt: -10 + 6 * Math.sin(tp * 2) }; }
   else if (tp < Q.card_catch) { x = STAND_X[1] - 80; p = { ...STAND, expr: 'determinato', armA: [-160, 0], armB: [160, 0], tilt: -6 }; }
-  else if (tp < Q.gag) { x = STAND_X[1] - 80; const u = span(tp, Q.card_catch, Q.card_catch + 0.3); p = { ...STAND, expr: tp > Q.card_catch + 0.8 ? 'sorriso' : 'incuriosito', squash: 1 - 0.07 * Math.sin(Math.PI * u), armA: [-40, -100], armB: [40, 100] }; }
-  else if (tp < Q.shrug) { x = STAND_X[1] - 80; const u = smooth(span(tp, Q.gag, Q.gag + 0.9)); p = { ...STAND, view: 'side', expr: 'determinato', lean: 8, armB: [lerp(-120, 70, u), -20], armA: [lerp(-60, 30, u), 20], legA: [-14, 0], legB: [14, 0], handB: 'fist' }; }
-  else if (tp < Q.card_flip) { x = STAND_X[1] - 80; p = { ...STAND, expr: 'neutro', tilt: 8, armA: [-50, -60], armB: [50, 60] }; }
-  else if (tp < Q.road) { x = STAND_X[1] - 80; p = { ...STAND, expr: tp > Q.card_glow ? 'sorpreso' : 'incuriosito', armA: [-40, -100], armB: [40, 100] }; }
+  else if (tp < Q.present) { x = STAND_X[1] - 80; const u = span(tp, Q.card_catch, Q.card_catch + 0.3); p = { ...STAND, expr: 'sorriso', squash: 1 - 0.07 * Math.sin(Math.PI * u), armA: [-165, -5], armB: [165, 5], tilt: -4 }; }
+  else if (tp < Q.present + 0.7) { x = STAND_X[1] - 80; p = { ...STAND, expr: 'esultanza', armA: [-150, -10], armB: [150, 10], tilt: -6 }; }   // la solleva come un trofeo
+  else if (tp < Q.card_store) { x = STAND_X[1] - 80; p = { ...STAND, ...breathe(t), expr: blinkAt(tp, 'sorriso', [Q.present + 1.6]), tilt: -9, armA: [-20, -30], armB: [20, 30] }; }
+  else if (tp < Q.road) { x = STAND_X[1] - 80; const u = smooth(span(tp, Q.card_store, Q.card_store + 0.3)); p = { ...STAND, view: 'q', expr: 'furbo', armB: [lerp(20, -150, u), lerp(30, 30, u)] }; } // la ripone nello zaino
   else if (tp < Q.walk2) { x = STAND_X[1] - 80; p = { ...STAND, ...breathe(t), expr: 'sorriso', tilt: 10 }; }
-  else if (tp < Q.p3 - 0.2) { x = lerp(STAND_X[1] - 80, STAND_X[2], smooth(span(tp, Q.walk2, Q.p3 - 0.2))); p = walk(tp, { expr: 'sorriso' }, 1.5); }
+  else if (tp < Q.p3 - 0.2) { x = lerp(STAND_X[1] - 80, STAND_X[2], smooth(span(tp, Q.walk2, Q.p3 - 0.2))); p = walk(tp, { expr: 'sorriso' }, O().walkHz || 1.5); }
   else if (tp < Q.list_stop) { x = STAND_X[2]; p = { ...STAND, ...breathe(t), view: 'q', flip: true, expr: 'incuriosito', tilt: -3 }; }
   else if (tp < Q.card_pull) { x = STAND_X[2]; p = { ...STAND, view: 'q', flip: true, expr: 'determinato', armB: [150, -40], handB: 'point' }; }
   else if (tp < Q.jump_btn - 0.6) { x = STAND_X[2]; p = { ...STAND, ...breathe(t), view: 'q', flip: true, expr: tp < Q.sheet ? 'sorpreso' : 'furbo' }; }
@@ -490,17 +503,26 @@ function sceneTrail(t) {
       g(M.card(0, 0, M.UW - 24, M.TOURNEYS[PICK % M.TOURNEYS.length], { badge: 1 + 0.5 * Math.sin(Math.PI * span(t, Q.card_pull, Q.card_pull + 0.6)) }), `translate(${f(rx)} ${f(ry)}) scale(${f3(rw / (M.UW - 24))})`, 1 - gu), `rotate(0.8 ${P[2] - 60} ${BOARD.top + BOARD.h / 2})`, 1 - span(t, Q.card_pull + 1.2, Q.card_pull + 1.4));
   }
   const frames = boardOutline(P[0], -1.2, 31) + boardOutline(P[2], 0.8, 33);
-  // tessera: scende come una foglia, viene presa, si gira, poi finisce nello zaino
+  // tessera: scende dal cielo, Ciuffo la prende e la solleva; la grafica reale si allarga sopra di lui,
+  // ben leggibile, attraversata da un riflesso; poi torna piccola e finisce nello zaino
   let card = '';
-  const hx = STAND_X[1] - 80, held = [hx, groundY(hx) - 380 * SC_IN];
-  if (t >= Q.p2 - 0.2 && t < Q.road + 0.8) {
-    let cx, cy, flip = 0, w = 340, rot = 0, sc = 1;
-    if (t < Q.card_catch) { const u = span(t, Q.p2 - 0.2, Q.card_catch); cx = hx + 140 * Math.sin(u * 7) * (1 - u); cy = lerp(-200, held[1] - 150, smooth(u)); rot = 28 * Math.sin(u * 7) * (1 - u); flip = 2 * (1 - u); }
-    else if (t < Q.gag) { const u = easeOut(span(t, Q.card_catch, Q.card_catch + 0.5)); cx = hx; cy = lerp(held[1] - 150, held[1], u); }
-    else if (t < Q.card_flip) { cx = hx - 175; cy = held[1] - 230 + 10 * Math.sin(t * 3); w = 260; }
-    else { const u = smooth(span(t, Q.card_flip, Q.card_flip + 0.5)); cx = lerp(hx - 175, hx, u); cy = lerp(held[1] - 230, held[1] - 50, u); w = lerp(260, 360, u); flip = smooth(span(t, Q.card_flip + 0.2, Q.card_flip + 0.9)); }
-    if (t >= Q.road + 0.2) { const u = smooth(span(t, Q.road + 0.2, Q.road + 0.8)); sc = 1 - 0.85 * u; cx = lerp(cx, hx - 40, u); cy = lerp(cy, held[1] - 60, u); }
-    card = tessera(cx, cy, w, flip, { rot, glow: span(t, Q.card_glow, Q.card_glow + 0.4), scale: sc });
+  const hx = STAND_X[1] - 80, gy1 = groundY(hx), held = [hx, gy1 - 380 * SC_IN];
+  const catchP = [hx, gy1 - 470 * SC_IN - 110], showP = [hx - 60, 790], bag = [hx - 40, gy1 - 400 * SC_IN];
+  if (t >= Q.p2 - 0.2 && t < Q.card_store + 0.6) {
+    let cx, cy, w = 300, rot = 0, sc = 1, shine = -1, glow = 0;
+    if (t < Q.card_catch) { const u = span(t, Q.p2 - 0.2, Q.card_catch); cx = catchP[0] + 130 * Math.sin(u * 6) * (1 - u); cy = lerp(-250, catchP[1], smooth(u)); rot = 22 * Math.sin(u * 6) * (1 - u); }
+    else if (t < Q.present) { cx = catchP[0]; cy = catchP[1]; }
+    else if (t < Q.card_store) {
+      const u = back(span(t, Q.present, Q.present + 0.7)), bob = 8 * Math.sin((t - Q.present) * 2.2);
+      cx = lerp(catchP[0], showP[0], u); cy = lerp(catchP[1], showP[1], u) + bob; w = lerp(300, 600, u);
+      rot = lerp(0, -2, u) + 1.2 * Math.sin((t - Q.present) * 1.7);
+      shine = span(t, Q.present + 0.7, Q.present + 1.6); glow = span(t, Q.present + 0.3, Q.present + 0.8);
+    } else { const u = smooth(span(t, Q.card_store, Q.card_store + 0.55)); const q = arc(showP, bag, 160, u); cx = q[0]; cy = q[1]; w = lerp(600, 90, u); rot = -2 + 30 * u; sc = 1; glow = 1 - u; }
+    card = tessera(cx, cy, w, 0, { rot, glow, scale: sc, shine });
+    if (t >= Q.present + 0.3 && t < Q.card_store + 0.4) for (let i = 0; i < 14; i++) { // scintille intorno alla tessera
+      const a = hash(i, 9) * 6.28 + (t - Q.present) * 0.8, r = 360 + 60 * Math.sin(t * 3 + i), k = 0.5 + 0.5 * Math.sin(t * 5 + i * 1.7);
+      card += sparkle(cx + Math.cos(a) * r, cy + Math.sin(a) * r * 0.62, 8 + 10 * k, i % 2 ? C.cyan : '#FFE45C', k * (1 - span(t, Q.card_store, Q.card_store + 0.4)));
+    }
   }
   // strada di circuito: le piste della tessera colano a terra e corrono verso la tappa 3
   let road = '';
@@ -508,7 +530,7 @@ function sceneTrail(t) {
   if (ur > 0) {
     const pts = []; for (let xx = hx - 40; xx <= STAND_X[2] + 60; xx += 40) pts.push([xx, groundY(xx) + 8]);
     road = [[-14, C.cyan], [14, C.pink]].map(([dy, col], i) =>
-      `<path d="${wobLine([[hx - 10, held[1] + 60], [hx - 30, groundY(hx) - 30], ...pts.map(q => [q[0], q[1] + dy])], 40 + i, 3)}" fill="none" stroke="${col}" stroke-width="9" stroke-linecap="round" pathLength="1" stroke-dasharray="1" stroke-dashoffset="${f3(1 - smooth(ur))}" filter="url(#neon)"/>`).join('');
+      `<path d="${wobLine([[bag[0], bag[1] + 40], [hx - 30, groundY(hx) - 30], ...pts.map(q => [q[0], q[1] + dy])], 40 + i, 3)}" fill="none" stroke="${col}" stroke-width="9" stroke-linecap="round" pathLength="1" stroke-dasharray="1" stroke-dashoffset="${f3(1 - smooth(ur))}" filter="url(#neon)"/>`).join('');
   }
   let ball = '';
   const bp = guideBall(t);
@@ -531,64 +553,115 @@ function sceneTrail(t) {
 
 // ---------- scena 3 · teletrasporto verso il campo, poi SuperTennis Arena ----------
 const ME = { g: 1700, sc: 0.62 };
-const READY = { view: 'back', bagRacket: false, handB: 'racket', armB: [60, 50], armA: [-20, -10], legA: [-10, 6], legB: [10, -6], expr: 'determinato' };
-function swingPose(t, t0) {
-  const u = smooth(span(t, t0, t0 + 0.45));
-  return { ...READY, armB: [lerp(110, -70, u), lerp(20, -40, u)], armA: [-30, -20], lean: lerp(6, -8, u), legA: [-14, 8], legB: [14, -8] };
+const READY_ARM = [60, 50];
+const READY = { view: 'back', bagRacket: false, handB: 'racket', armB: READY_ARM, armA: [-20, -10], legA: [-10, 6], legB: [10, -6], expr: 'determinato' };
+// swing di dritto (visto da dietro) rispetto all'istante d'impatto: racchetta bassa dietro a destra,
+// impatto all'altezza dell'anca con il piatto verso la rete, accompagnamento dal basso verso l'alto
+// fin sopra la spalla sinistra (angoli oltre 180° = il braccio passa sopra, non sotto), ritorno in posizione
+const SWING = [[-0.9, READY_ARM, 4], [-0.34, [35, -10], 7], [0, [40, 50], 2], [0.3, [200, 30], -9], [0.9, READY_ARM, 4]];
+function swingPose(t, hit) {
+  const dt = t - hit;
+  let a = SWING[0], b = SWING[SWING.length - 1];
+  for (let i = 0; i < SWING.length - 1; i++) if (dt >= SWING[i][0] && dt <= SWING[i + 1][0]) { a = SWING[i]; b = SWING[i + 1]; break; }
+  const u = dt <= SWING[0][0] ? 0 : dt >= b[0] ? 1 : (dt - a[0]) / (b[0] - a[0]);
+  const e = a[0] === -0.34 ? easeIn(u) : smooth(u); // il braccio accelera verso l'impatto
+  return { ...READY, armB: [lerp(a[1][0], b[1][0], e), lerp(a[1][1], b[1][1], e)], lean: lerp(a[2], b[2], e), legA: [-14, 8], legB: [14, -8], armA: [-30, -20] };
 }
-const SHOTS = () => [
-  { t0: Q.shot1, to: [0.3, 0.86], back: [0.62, 0.12], rivalU: 0.32, meU: 0.56, fly: 0.9, a: [240, 1640], b: [520, 1340], c: [300, 1180] },
-  { t0: Q.shot2, to: [0.72, 0.84], back: [0.4, 0.1], rivalU: 0.7, meU: 0.44, fly: 0.9, a: [820, 1640], b: [560, 1330], c: [800, 1180] },
-  { t0: Q.shot3, to: [0.93, 0.9], back: null, rivalU: 0.6, meU: 0.5, fly: Q.cheer - Q.shot3 - 0.4, a: [200, 1680], b: [560, 1360], c: [960, 1200] },
-];
-function rally(t) {
-  let pos = null, rU = 0.5, meU = 0.5, rSwing = 0;
-  const shots = SHOTS();
-  for (const [i, s] of shots.entries()) {
-    if (t < s.t0) break;
-    const hit = s.t0 + 0.4, prev = shots[i - 1];
-    meU = prev ? lerp(prev.meU, s.meU, smooth(span(t, prev.t0 + 1.4, s.t0))) : s.meU;
-    const u1 = span(t, hit, hit + s.fly);
-    rU = lerp(prev ? prev.rivalU : 0.5, s.rivalU, smooth(span(t, hit, hit + s.fly * 0.85)));
-    if (!s.back) rU = lerp(0.5, 0.8, smooth(span(t, hit, hit + s.fly)));
-    if (t >= hit && u1 < 1) { const [x0, y0] = courtPt(s.meU, 0.02), [x1, y1] = courtPt(...s.to); pos = [lerp(x0, x1, u1), lerp(y0, y1, u1), 150 + 260 * Math.sin(Math.PI * u1) * (1 - 0.4 * u1)]; }
-    else if (u1 >= 1 && s.back) {
-      const u2 = span(t, hit + s.fly, hit + s.fly + 0.9); rSwing = 1 - span(t, hit + s.fly, hit + s.fly + 0.25);
-      if (u2 < 1) { const [x1, y1] = courtPt(...s.to), [x2, y2] = courtPt(...s.back); pos = [lerp(x1, x2, u2), lerp(y1, y2, u2), 60 + 240 * Math.sin(Math.PI * u2)]; }
-    } else if (u1 >= 1 && !s.back) { const u3 = span(t, hit + s.fly, hit + s.fly + 0.7); if (u3 < 1) { const [x1, y1] = courtPt(...s.to); pos = [x1 + 160 * u3, y1 - 40 * u3, 90 * Math.sin(Math.PI * u3)]; } }
+// profondità del campo su cui poggia Ciuffo e conversione schermo ↔ campo (u, d, altezza)
+const D_ME = Math.pow((1780 - ME.g) / (1780 - 760), 1 / 0.72);
+function toCourt([x, y], d) {
+  const [xl, gy, k] = courtPt(0, d), xr = courtPt(1, d)[0];
+  return [(x - xl) / (xr - xl), d, (gy - y) / k];
+}
+function toScreen([u, d, h]) { const [x, y, k] = courtPt(u, d); return [x, y, h * k]; }
+const ME_U = [0.36, 0.27, 0.33, 0.3], RIV_U = [0.62, 0.36, 0.66, 0.4];
+const RIV_CONTACT = smooth(0.3 / 0.45);   // valore dello swing dell'avversario all'impatto
+const rivSwingAt = (t, hr) => smooth(span(t, hr - 0.3, hr + 0.15));
+// piano dello scambio, calcolato dai soli istanti d'impatto in timeline (TL.shots)
+function rallyPlan() {
+  if (rallyPlan.cache && rallyPlan.cache.key === TL.shots.join()) return rallyPlan.cache;
+  const H = TL.shots, n = H.length, lead = O().serveLead || 1.0;
+  const meU = i => ME_U[i % ME_U.length];
+  const C = H.map((h, i) => toCourt(racketHead({ ...swingPose(h, h), x: courtPt(meU(i), 0)[0], y: ME.g, scale: ME.sc }), D_ME));
+  const rHits = [H[0] - lead, ...H.slice(0, -1).map((h, i) => h + 0.5 * (H[i + 1] - h))];   // servizio + risposte
+  const R = rHits.map((hr, i) => toCourt(rivalRacket(RIV_U[i % RIV_U.length], 0.9, hr, RIV_CONTACT), 0.9));
+  const segs = [];
+  const seg = (t0, t1, p0, p1, apex) => segs.push({ t0, t1, p0, p1, apex });
+  for (let i = 0; i < n; i++) {
+    // l'avversario colpisce (servizio o risposta), rimbalzo nella metà di Ciuffo, impatto sulla racchetta
+    const r = R[i], c = C[i], tr = rHits[i], tc = H[i], tb = tr + 0.62 * (tc - tr);
+    const bn = [lerp(r[0], c[0], 0.82), 0.2, 0];
+    seg(tr, tb, r, bn, 170); seg(tb, tc, bn, c, 70);
+    if (i < n - 1) { // colpo di Ciuffo verso l'avversario, rimbalzo nella sua metà
+      const rn = R[i + 1], tb2 = tc + 0.7 * (rHits[i + 1] - tc), bf = [lerp(c[0], rn[0], 0.85), 0.78, 0];
+      seg(tc, tb2, c, bf, 230); seg(tb2, rHits[i + 1], bf, rn, 60);
+    } else {       // vincente: rimbalza nell'angolo e scappa via
+      const bw = [0.93, 0.9, 0], tbw = Q.cheer - 0.08;
+      seg(tc, tbw, c, bw, 260); seg(tbw, Q.cheer + 0.7, bw, [1.12, 1.02, 30], 90);
+    }
   }
+  rallyPlan.cache = { key: TL.shots.join(), H, C, R, rHits, segs, meU };
+  return rallyPlan.cache;
+}
+function rally(t) {
+  const P = rallyPlan();
+  let pos = null;
+  for (const sg of P.segs) if (t >= sg.t0 && t <= sg.t1) {
+    const u = (t - sg.t0) / (sg.t1 - sg.t0);
+    pos = toScreen([lerp(sg.p0[0], sg.p1[0], u), lerp(sg.p0[1], sg.p1[1], u), lerp(sg.p0[2], sg.p1[2], u) + sg.apex * 4 * u * (1 - u)]);
+    break;
+  }
+  // Ciuffo si sposta verso il punto d'impatto successivo; l'avversario verso il suo
+  let meU = P.meU(0), rU = RIV_U[0], rSwing = 0;
+  P.H.forEach((h, i) => { if (t > (i ? P.H[i - 1] + 0.3 : -1)) meU = lerp(i ? P.meU(i - 1) : P.meU(0), P.meU(i), smooth(span(t, i ? P.H[i - 1] + 0.3 : 0, h - 0.35))); });
+  P.rHits.forEach((hr, i) => {
+    const prev = i ? P.rHits[i - 1] : Q.arena;
+    if (t > prev) rU = lerp(RIV_U[Math.max(0, i - 1) % RIV_U.length], RIV_U[i % RIV_U.length], smooth(span(t, prev + 0.3, hr - 0.2)));
+    rSwing = Math.max(rSwing, t < hr + 0.6 ? rivSwingAt(t, hr) * (1 - span(t, hr + 0.2, hr + 0.6)) : 0);
+  });
+  const last = P.H[P.H.length - 1];
+  if (t > last) rU = lerp(RIV_U[(P.rHits.length - 1) % RIV_U.length], 0.82, smooth(span(t, last, Q.cheer))); // si allunga ma non ci arriva
   return { pos, rU, meU, rSwing };
 }
-function swipe(t, t0, a, b, c) {
-  const u = span(t, t0, t0 + 0.4), out = span(t, t0 + 0.7, t0 + 1.2);
+function swipe(t, hit) { // scia rossa del dito: il gesto che diventa il colpo, nella direzione della pallina
+  const u = span(t, hit - 0.34, hit), out = span(t, hit + 0.3, hit + 0.8);
   if (u <= 0 || out >= 1) return '';
-  return `<path d="M${a[0]} ${a[1]} Q${b[0]} ${b[1]} ${c[0]} ${c[1]}" fill="none" stroke="#FF2A3D" stroke-width="18" stroke-linecap="round" pathLength="1" stroke-dasharray="1" stroke-dashoffset="${f3(1 - u)}" opacity="${f3(1 - out)}" filter="url(#neon)"/>`;
+  const P = rallyPlan(), i = P.H.indexOf(hit), c = toScreen(P.C[i]);
+  const a = [c[0] - 170, c[1] - c[2] + 190], b = [c[0] + 60, c[1] - c[2] + 40], e = [c[0] + 20, c[1] - c[2] - 330];
+  return `<path d="M${f(a[0])} ${f(a[1])} Q${f(b[0])} ${f(b[1])} ${f(e[0])} ${f(e[1])}" fill="none" stroke="#FF2A3D" stroke-width="18" stroke-linecap="round" pathLength="1" stroke-dasharray="1" stroke-dashoffset="${f3(1 - u)}" opacity="${f3(1 - out)}" filter="url(#neon)"/>`;
 }
 function arenaView(t, o = {}) {
   const { pos, rU, meU, rSwing } = rally(t);
+  const P = rallyPlan();
   const draw = o.final ? 1 : span(t, Q.arena, Q.arena + 1.6);
   let p = READY;
   const land = span(t, Q.arena + 0.1, Q.arena + 0.6);
   if (t < Q.arena + 0.6) p = { ...READY, expr: 'sorpreso', planted: false, lift: 700 * Math.pow(1 - land, 2), armA: [-120, -20], armB: [120, 20] };
   else if (t < Q.arena + 0.9) p = { ...READY, squash: 0.88 };
-  for (const s of SHOTS()) if (t >= s.t0 - 0.2) p = swingPose(t, s.t0);
+  for (const h of P.H) if (t >= h - 0.9) p = swingPose(t, h);
   if (t >= Q.cheer) { const u = span(t, Q.cheer, Q.cheer + 0.8); p = { ...STAND, view: 'back', bagRacket: false, handB: 'racket', expr: 'esultanza', planted: false, lift: 160 * Math.sin(Math.PI * u), armA: [-150, -10], armB: [150, 10] }; }
   if (t >= Q.cheer + 0.8 || o.final) p = { ...STAND, view: 'back', bagRacket: false, handB: 'racket', armA: [-30, 150], armB: [165, -12], handA: 'fist' };
-  const meX = courtPt(meU, 0)[0];
-  const trailPts = [0.12, 0.08, 0.04].map(d => rally(t - d).pos).filter(Boolean);
+  const meX = courtPt(o.final ? 0.5 : meU, 0)[0];
+  const trailPts = [0.09, 0.06, 0.03].map(d => { const q = rally(t - d).pos; return q ? [q[0], q[1], q[2]] : null; }).filter(Boolean);
   const behind = pos && pos[1] < courtPt(0.5, 0.5)[1];
-  const rv = draw > 0.6 ? rival(rU, 0.9, t, rSwing) : '';
-  return arena(t, draw) + rv + (behind ? tBall(pos, trailPts) : '') + net() + (behind ? '' : tBall(pos, trailPts)) + hero(p, meX, ME.g, ME.sc);
+  const rv = draw > 0.35 ? rival(rU, 0.9, t, rSwing) : '';
+  return arena(t, draw) + rv + (behind ? tBall(pos, trailPts) : '') + net() + hero(p, meX, ME.g, ME.sc) + (behind ? '' : tBall(pos, trailPts));
 }
 function sceneArena(t) {
+  const P = rallyPlan(), last = P.H[P.H.length - 1];
   // camera: leggera spinta durante lo scambio, poi segue il vincente al rallentatore
-  const k = smooth(span(t, Q.shot3 + 0.4, Q.shot3 + 1.2)) * (1 - smooth(span(t, Q.cheer + 0.2, Q.cheer + 1.2)));
-  const s = lerp(1.0, 1.05, smooth(span(t, Q.arena + 2, Q.shot3))) + 0.12 * k;
+  const k = smooth(span(t, last, last + 0.8)) * (1 - smooth(span(t, Q.cheer + 0.2, Q.cheer + 1.2)));
+  const s = lerp(1.0, 1.05, smooth(span(t, Q.arena + 1.5, last))) + 0.12 * k;
   const view = g(arenaView(t), camT(540, lerp(960, 900, k), s));
-  const hudIn = smooth(span(t, Q.shot1 + 1.8, Q.shot1 + 2.3));
+  const hudIn = smooth(span(t, P.H[0] + 0.6, P.H[0] + 1.1));
   let top = hudIn > 0 ? g(hud(t >= Q.cheer ? 7 : 6, 4), `translate(0 ${f((1 - hudIn) * -260)})`) : '';
-  for (const s2 of SHOTS()) top += swipe(t, s2.t0, s2.a, s2.b, s2.c);
-  top += note(t, Q.shot1 - 0.2, Q.shot1 + 1.6, 620, 1470, 'swipe per colpire', [430, 1560], { bend: -60 });
+  for (const h of P.H) top += swipe(t, h);
+  if (!O().social) { // la nota sta a sinistra, lontano dal punto d'impatto, e indica l'inizio della scia
+    const c = toScreen(P.C[0]);
+    top += note(t, P.H[0] - 0.8, P.H[0] + 0.9, 250, 1800, 'swipe per colpire', [c[0] - 200, c[1] - c[2] + 200], { bend: 40 });
+  }
+  const st4 = STEPS().find(x => x.n === 4);
+  if (st4) { const k4 = span(t, st4.tin - 0.3, st4.tin + 0.3) * (1 - span(t, st4.tout - 0.6, st4.tout)); if (k4 > 0) top = `<rect width="${W}" height="620" fill="url(#titleBand)" opacity="${f3(k4)}"/>` + top; }
   const flash = 1 - span(t, Q.arena, Q.arena + 0.5);
   return { boil: view, flat: '', top: top + (flash > 0 ? `<rect width="${W}" height="${H}" fill="#FFF6FB" opacity="${f3(flash)}"/>` : '') };
 }
@@ -664,6 +737,31 @@ function sceneEnd(t) {
   return { boil: g(body, camT(...cam)), flat: '', top: gfx };
 }
 
+// ---------- finale del taglio social ----------
+function endCard(t, t0) {
+  const u = smooth(span(t, t0 + 0.2, t0 + 0.8));
+  const p = u < 1 ? mix({ ...STAND, expr: 'sorriso' }, { ...STAND, expr: 'furbo', tilt: 6, armB: [120, -60], handB: 'fist' }, u) : { ...STAND, ...breathe(t), expr: 'furbo', tilt: 6, armB: [120, -60], handB: 'fist' };
+  const body = fuori(t, { calm: 1, bare: true, tallies: 4 }) + hero(p, 480, G_OUT, SC_OUT);
+  let gfx = '';
+  const u8 = span(t, Q.tocca, Q.tocca + 0.6);
+  if (u8 > 0) {
+    gfx += `<path d="${wobLine([[180, 492], [540, 468], [900, 486]], 9, 4)}" fill="none" stroke="${C.pink}" stroke-width="40" stroke-linecap="round" pathLength="1" stroke-dasharray="1" stroke-dashoffset="${f3(1 - smooth(span(t, Q.tocca + 0.2, Q.tocca + 0.8)))}" opacity="0.9"/>`;
+    gfx += written(text(540, 460, 'Tocca a te.', 124, C.ink), 60, 320, 960, 180, u8);
+  }
+  const ud = smooth(span(t, Q.domain, Q.domain + 0.4));
+  if (ud > 0) gfx += text(540, 600, 'esports.fitp.it', 40, C.ink, { op: ud * 0.85 }) +
+    g(`<image href="${A.fitp}" x="120" y="680" width="230" height="114"/><image href="${A.esports}" x="390" y="660" width="290" height="163"/><image href="${A.tcIcon}" x="730" y="684" width="110" height="110" clip-path="inset(0 round 24px)"/>`, '', ud);
+  return { boil: g(body, camT(FRAME_END.x, FRAME_END.y, FRAME_END.s)), flat: '', top: gfx };
+}
+// strappo diagonale: sotto il bordo disegnato compare il foglio del finale
+function tearTo(a, b, u) {
+  const e = -300 + easeIn(u) * (W + 1500), slope = 0.6 * H;
+  const clip = `<clipPath id="tear"><path d="M${f(e)} -10 L${W + 2000} -10 L${W + 2000} ${H + 10} L${f(e - slope)} ${H + 10} Z"/></clipPath>`;
+  const edge = `<path d="${wobLine([[e, -10], [e - slope * 0.33, H * 0.33], [e - slope * 0.66, H * 0.66], [e - slope, H + 10]], 77, 30)}" fill="none" stroke="#FFFDF7" stroke-width="22" stroke-linejoin="round"/>`;
+  const clipB = `<clipPath id="tearB"><path d="M-400 -10 L${f(e)} -10 L${f(e - slope)} ${H + 10} L-400 ${H + 10} Z"/></clipPath>`; // parte già scoperta
+  return { boil: `${b.boil}`, flat: '', top: `<defs>${clip}${clipB}</defs><g clip-path="url(#tearB)">${b.top || ''}</g><g clip-path="url(#tear)"><g filter="url(#boil)">${a.boil}</g>${a.top || ''}</g>` + edge };
+}
+
 // ---------- montaggio ----------
 const tcode = t => `${String(Math.floor(t)).padStart(2, '0')}:${String(Math.floor((t % 1) * FPS)).padStart(2, '0')}`;
 export function frame(t, o = {}) {
@@ -674,11 +772,12 @@ export function frame(t, o = {}) {
   else if (t < Q.tp_land) { const u = span(t, Q.tp_in + 1.0, Q.tp_land); r = { boil: teleport(t, span(t, Q.tp_in - 0.3, Q.tp_in + 2.1)) + flyer(t, u, 540, lerp(1150, 1000, u), lerp(0.4, 0.8, u)), flat: '' }; }
   else if (t < Q.match_tap) r = sceneTrail(t);
   else if (t < Q.arena) r = sceneTeleport2(t);
+  else if (O().social && t >= Q.endcard) { const e = endCard(t, Q.endcard); r = t < Q.endcard + 0.6 ? tearTo(sceneArena(t), e, span(t, Q.endcard, Q.endcard + 0.6)) : e; }
   else if (t < Q.t7) r = sceneArena(t);
   else if (t < Q.end) r = sceneReturn(t);
   else r = sceneEnd(t);
   const flash1 = t >= Q.tp_land && t < Q.tp_land + 0.45 ? 1 - span(t, Q.tp_land, Q.tp_land + 0.45) : 0; // arrivo del primo teletrasporto
-  const titles = t >= Q.tp_land && t < Q.t7 ? chapter(t, r.cam ? r.cam.x : 540) : '';
+  const titles = t >= Q.tp_land && t < (O().social ? Q.endcard : Q.t7) ? chapter(t, r.cam ? r.cam.x : 540) : '';
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">${defs(t)}<rect width="${W}" height="${H}" fill="#12072E"/>` +
     `<g filter="url(#boil)">${r.boil}</g>${r.flat || ''}${r.boil2 ? `<g filter="url(#boil)">${r.boil2}</g>` : ''}${r.top || ''}${titles}` +
     (flash1 > 0 ? `<rect width="${W}" height="${H}" fill="#FFF6FB" opacity="${f3(flash1)}"/>` : '') +

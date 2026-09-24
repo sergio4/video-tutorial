@@ -303,6 +303,22 @@ export function ciuffo(p0) {
   return `<g transform="translate(${f(p.x)} ${f(p.y - p.lift)}) scale(${f(p.scale * sx * flip * 1000) / 1000} ${f(p.scale * p.squash * 1000) / 1000})">${body}</g>`;
 }
 
+// Posizione nel mondo del centro della racchetta impugnata con la mano B (stessa geometria di ciuffo()):
+// serve a far arrivare la pallina esattamente sul piatto della racchetta nel momento dell'impatto.
+export function racketHead(p0) {
+  const p = { ...DEFAULT_POSE, ...p0 };
+  const V = VIEWS[p.view];
+  const lower = Math.max(legReach(...p.legA), legReach(...p.legB));
+  const hipDY = p.planted ? (L_THIGH + L_SHIN) - lower : 0;
+  const [a1, a2] = p.armB;
+  const el = seg(V.sh[1], a1, L_UP), wr = seg(el, a1 + a2, L_FORE), hp = seg(wr, a1 + a2, 8);
+  let [x, y] = seg(hp, a1 + a2, 128);
+  const th = rad(p.lean), dy = y - HIP_Y;          // rotazione del busto attorno al bacino
+  [x, y] = [x * Math.cos(th) - dy * Math.sin(th), HIP_Y + x * Math.sin(th) + dy * Math.cos(th) + hipDY];
+  const sx = p.squash === 1 ? 1 : 1 + (1 - p.squash) * 0.9;
+  return [p.x + x * p.scale * sx * (p.flip ? -1 : 1), p.y - p.lift + y * p.scale * p.squash];
+}
+
 export function shadow(x, groundY, lift, scale = 1) {
   const k = Math.max(0.35, 1 - lift / 400);
   return `<ellipse cx="${f(x)}" cy="${f(groundY + 4 * scale)}" rx="${f(120 * k * scale)}" ry="${f(13 * k * scale)}" fill="${C.ink}" opacity="${f(0.16 * k * 100) / 100}"/>`;

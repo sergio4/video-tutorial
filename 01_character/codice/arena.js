@@ -90,7 +90,7 @@ export function net() {
 export function rival(u, d, t = 0, swing = 0) {
   const [x, y, k] = courtPt(u, d), s = 1.7 * k;
   const bob = Math.sin(t * 9) * 3;
-  const arm = lerp(-40, 70, swing);
+  const arm = lerp(-70, 20, swing); // dalla racchetta alta e indietro all'impatto di fianco, all'altezza della vita
   return `<g transform="translate(${f(x)} ${f(y + bob)}) scale(${f(s)})">` +
     `<ellipse cx="0" cy="4" rx="46" ry="8" fill="${INK}" opacity="0.2"/>` +
     `<path d="M-14 0 L-10 -70 M14 0 L10 -70" stroke="${INK}" stroke-width="16" stroke-linecap="round"/><path d="M-14 0 L-10 -70 M14 0 L10 -70" stroke="#8A5A3B" stroke-width="9" stroke-linecap="round"/>` +
@@ -99,6 +99,12 @@ export function rival(u, d, t = 0, swing = 0) {
     `<g transform="rotate(${f(arm)} 20 -150)"><path d="M20 -150 L52 -110" stroke="${INK}" stroke-width="14" stroke-linecap="round"/><path d="M52 -110 L78 -80" stroke="${INK}" stroke-width="7"/><ellipse cx="90" cy="-66" rx="18" ry="24" fill="none" stroke="${INK}" stroke-width="6"/></g>` +
     `<circle cx="0" cy="-190" r="28" fill="#8A5A3B" stroke="${INK}" stroke-width="5"/><path d="M-28 -198 Q0 -232 28 -198 Q16 -214 0 -214 Q-16 -214 -28 -198 Z" fill="#1C1438"/>` +
     `</g>`;
+}
+// posizione nel mondo della racchetta dell'avversario (stessa geometria di rival())
+export function rivalRacket(u, d, t = 0, swing = 0) {
+  const [x, y, k] = courtPt(u, d), s = 1.7 * k, bob = Math.sin(t * 9) * 3;
+  const a = lerp(-70, 20, swing) * Math.PI / 180, dx = 90 - 20, dy = -66 + 150;
+  return [x + s * (20 + dx * Math.cos(a) - dy * Math.sin(a)), y + bob + s * (-150 + dx * Math.sin(a) + dy * Math.cos(a))];
 }
 // HUD reinterpretato: nomi e punteggio in alto, due pannelli come nel gioco
 // (sotto la fascia alta, lasciata libera per le note dell'animatic)

@@ -1,0 +1,111 @@
+{
+ "_nota": "Taglio social da 30 s: stessa animazione del master, tempi compressi (vedi timeline.json).",
+ "dur": 30.4,
+ "opts": {
+  "social": true,
+  "walkHz": 2.6,
+  "serveLead": 0.8
+ },
+ "cue": {
+  "ball_out": 0.5,
+  "look_cam": 2.6,
+  "tp_in": 3.4,
+  "tp_land": 4.8,
+  "doors": 5.6,
+  "tag_throw": 8.2,
+  "tag_snap": 8.8,
+  "ball_hop": 9.4,
+  "walk1": 9.6,
+  "p2": 11.0,
+  "card_catch": 12.0,
+  "road": 14.4,
+  "walk2": 14.6,
+  "p3": 16.2,
+  "list_stop": 17.2,
+  "card_pull": 17.5,
+  "sheet": 18.1,
+  "jump_btn": 19.0,
+  "btn_press": 19.6,
+  "popup": 19.9,
+  "confirm": 20.4,
+  "seats": 20.9,
+  "day": 21.1,
+  "ready_btn": 22.7,
+  "ready_tap": 23.0,
+  "match_btn": 23.3,
+  "silence": 24.1,
+  "match_tap": 24.4,
+  "arena": 25.6,
+  "cheer": 27.6,
+  "endcard": 27.8,
+  "tocca": 28.0,
+  "domain": 28.8,
+  "t7": 99,
+  "vittoria": 99,
+  "end": 99,
+  "stand": 99,
+  "tally": 99,
+  "recap1": 99,
+  "recap2": 99,
+  "recap3": 99,
+  "recap4": 99,
+  "present": 12.4,
+  "card_store": 14.2
+ },
+ "vo": [
+  {
+   "id": "s01",
+   "t": 0.3,
+   "text": "Sempre amichevoli su Tennis Clash? Entra nel circuito ufficiale."
+  },
+  {
+   "id": "s02",
+   "t": 5.3,
+   "text": "Scarica l'app myFITP e collega il tuo ID di Tennis Clash."
+  },
+  {
+   "id": "s03",
+   "t": 11.0,
+   "text": "Fai la Tessera eSports FITP."
+  },
+  {
+   "id": "s03b",
+   "t": 13.6,
+   "text": "È la chiave dei tornei ufficiali."
+  },
+  {
+   "id": "s04",
+   "t": 16.3,
+   "text": "Scegli un torneo e tocca «Registrati»."
+  },
+  {
+   "id": "s05",
+   "t": 21.1,
+   "text": "Il giorno del match, premi «Vai al tuo match»."
+  },
+  {
+   "id": "s06",
+   "t": 25.8,
+   "text": "E sei in campo!"
+  },
+  {
+   "id": "s07",
+   "t": 28.0,
+   "text": "Adesso tocca a te!"
+  }
+ ],
+ "srt": "sottotitoli_social30.srt",
+ "mix": "mix_30.wav",
+ "tts": {
+  "engine": "chatterbox",
+  "model": "ResembleAI/chatterbox (multilingue)",
+  "language": "it",
+  "reference": "audio/riferimento_voce.wav",
+  "exaggeration": 0.5,
+  "cfg_weight": 0.5,
+  "_nota": "voce provvisoria (sintesi Chatterbox, licenza MIT) con voce di riferimento LibriVox di pubblico dominio; da sostituire con un doppiatore"
+ },
+ "shots": [
+  27.0
+ ]
+}

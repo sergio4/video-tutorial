@@ -22,8 +22,8 @@ const toDataURL = blob => new Promise((ok, ko) => {
   r.readAsDataURL(blob);
 });
 
-export async function loadAssets() {
-  const tl = await (await fetch('timeline.json')).json();
+export async function loadAssets(tlPath = 'timeline.json') {
+  const tl = await (await fetch(tlPath)).json();
   Object.assign(TL, tl);
   await Promise.all(Object.entries(FILES).map(async ([k, path]) => {
     const res = await fetch(path);

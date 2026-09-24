@@ -13,21 +13,24 @@
 <body>
 <div id="bar"><button id="play">Play</button><input id="scrub" type="range" min="0" step="0.04" value="0"><span id="tc">0.00 s</span></div>
 <div id="stage"></div>
-<audio id="audio" src="audio/mix.wav" preload="auto"></audio>
+<audio id="audio" preload="auto"></audio>
 <script type="module">
 // ?tc=1 aggiunge il timecode in alto a destra. L'anteprima suona audio/mix.wav in sincrono.
 import { frame, W, H, FPS, duration } from './animatic.js';
 import { expose } from './export.js';
 import { loadAssets } from './assets.js';
 
-await loadAssets(); // timeline, loghi, tessera, font e carta vanno caricati prima del primo fotogramma
-const tc = new URLSearchParams(location.search).get('tc') === '1';
+// ?tl=timeline_30.json per il taglio social da 30 s
+const qs = new URLSearchParams(location.search);
+await loadAssets(qs.get('tl') || 'timeline.json'); // timeline, loghi, tessera, font e carta prima del primo fotogramma
+const tc = qs.get('tc') === '1';
 const DUR = duration();
 const draw = t => frame(t, { tc });
 expose({ W, H, FPS, N: Math.round(DUR * FPS), frame: draw });
 
 const stage = document.getElementById('stage'), label = document.getElementById('tc'), scrub = document.getElementById('scrub'), audio = document.getElementById('audio');
 scrub.max = DUR;
+audio.src = qs.get('tl') ? 'audio/mix_30.wav' : 'audio/mix.wav';
 const show = t => { stage.innerHTML = draw(t); label.textContent = t.toFixed(2) + ' s'; scrub.value = t; };
 let playing = false;
 function loop() {

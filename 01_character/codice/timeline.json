@@ -1,155 +1,141 @@
 {
- "_nota": "Unica fonte dei tempi (secondi). La leggono animatic.js (immagini) e audio/build_audio.py (voce, effetti, musica).",
- "dur": 85.0,
- "cue": {
-  "ball_out": 2.4,
-  "look_cam": 5.6,
-  "tp_in": 8.0,
-  "tp_land": 10.4,
-  "doors": 12.4,
-  "tag_throw": 17.8,
-  "tag_snap": 18.5,
-  "ball_hop": 20.8,
-  "walk1": 21.2,
-  "p2": 25.0,
-  "card_catch": 27.6,
-  "gag": 29.4,
-  "shrug": 30.7,
-  "card_flip": 31.5,
-  "card_glow": 32.4,
-  "road": 33.2,
-  "walk2": 34.4,
-  "p3": 38.6,
-  "list_stop": 42.0,
-  "card_pull": 43.2,
-  "sheet": 44.0,
-  "jump_btn": 45.4,
-  "btn_press": 46.2,
-  "popup": 46.6,
-  "confirm": 47.7,
-  "seats": 48.4,
-  "day": 49.3,
-  "ready_btn": 51.6,
-  "ready_tap": 52.2,
-  "match_btn": 52.9,
-  "silence": 55.0,
-  "match_tap": 55.5,
-  "arena": 58.4,
-  "shot1": 60.8,
-  "shot2": 63.3,
-  "shot3": 65.8,
-  "cheer": 68.0,
-  "t7": 69.5,
-  "vittoria": 71.4,
-  "end": 73.0,
-  "stand": 74.4,
-  "tally": 77.4,
-  "recap1": 75.2,
-  "recap2": 77.4,
-  "recap3": 78.6,
-  "recap4": 79.9,
-  "tocca": 81.4,
-  "domain": 82.8
+ "_nota": "Master (massimo 60 s). Unica fonte dei tempi (secondi): la leggono animatic.js (immagini) e audio/build_audio.py (voce, effetti, musica).",
+ "dur": 60.0,
+ "opts": {
+  "walkHz": 1.6,
+  "serveLead": 1.1
  },
+ "cue": {
+  "ball_out": 1.2,
+  "look_cam": 3.4,
+  "tp_in": 6.2,
+  "tp_land": 8.2,
+  "doors": 9.4,
+  "tag_throw": 13.9,
+  "tag_snap": 14.5,
+  "ball_hop": 15.4,
+  "walk1": 15.6,
+  "p2": 18.6,
+  "card_catch": 20.2,
+  "present": 20.8,
+  "card_store": 23.3,
+  "road": 23.6,
+  "walk2": 24.2,
+  "p3": 27.2,
+  "list_stop": 29.6,
+  "card_pull": 30.4,
+  "sheet": 31.2,
+  "jump_btn": 32.4,
+  "btn_press": 33.0,
+  "popup": 33.3,
+  "confirm": 34.0,
+  "seats": 34.5,
+  "day": 35.0,
+  "ready_btn": 36.6,
+  "ready_tap": 37.0,
+  "match_btn": 37.5,
+  "silence": 40.0,
+  "match_tap": 40.5,
+  "arena": 42.2,
+  "cheer": 48.4,
+  "t7": 48.8,
+  "vittoria": 50.0,
+  "end": 51.3,
+  "stand": 52.0,
+  "tally": 55.3,
+  "recap1": 53.2,
+  "recap2": 55.3,
+  "recap3": 55.92,
+  "recap4": 56.58,
+  "tocca": 57.2,
+  "domain": 58.4
+ },
+ "shots": [
+  44.9,
+  46.6
+ ],
+ "_shots": "istanti di impatto della racchetta di Ciuffo; l'ultimo è il vincente, che tocca terra e fa esultare al cue cheer",
  "vo": [
   {
-   "id": "v01",
-   "t": 1.0,
-   "text": "Giochi a Tennis Clash, ma solo amichevoli?"
+   "id": "m01",
+   "t": 0.4,
+   "text": "Sempre le solite amichevoli su Tennis Clash?"
   },
   {
-   "id": "v02",
-   "t": 4.0,
-   "text": "C'è un circuito ufficiale che ti aspetta. E l'ingresso è proprio nel tuo telefono."
+   "id": "m02",
+   "t": 3.4,
+   "text": "C'è un circuito ufficiale che ti aspetta. E si entra proprio dal tuo telefono."
   },
   {
-   "id": "v03",
-   "t": 11.4,
-   "text": "Primo passo: scarica myFITP e crea il tuo account.",
-   "say": "Primo passo: scarica l'app mai, effe, i, ti, pi, e crea il tuo account."
+   "id": "m03",
+   "t": 8.6,
+   "text": "Primo passo: scarica l'app myFITP e crea il tuo account."
   },
   {
-   "id": "v04",
-   "t": 15.6,
-   "text": "Poi collega il tuo ID di Tennis Clash al profilo: così il circuito sa che sei tu.",
-   "say": "Poi collega il tuo ai-di di Tennis Clash al profilo: così il circuito sa che sei tu."
+   "id": "m04",
+   "t": 13.2,
+   "text": "Poi collega il tuo ID di Tennis Clash."
   },
   {
-   "id": "v05",
-   "t": 25.4,
-   "text": "Secondo passo: la Tessera eSports FITP.",
-   "say": "Secondo passo: la Tessera i-sports, effe, i, ti, pi."
+   "id": "m05",
+   "t": 18.7,
+   "text": "Secondo passo: fai la Tessera eSports FITP."
   },
   {
-   "id": "v06",
-   "t": 29.0,
-   "text": "È la chiave dei tornei ufficiali del circuito."
+   "id": "m06",
+   "t": 22.8,
+   "text": "È la chiave dei tornei ufficiali."
   },
   {
-   "id": "v07",
-   "t": 38.8,
-   "text": "Terzo passo: nella sezione eSports, scegli un torneo del tuo livello.",
-   "say": "Terzo passo: nella sezione i-sports, scegli un torneo del tuo livello."
+   "id": "m07",
+   "t": 27.4,
+   "text": "Terzo passo: nella sezione eSports, scegli un torneo del tuo livello."
   },
   {
-   "id": "v08",
-   "t": 44.2,
-   "text": "Tocca Registrati, e conferma."
+   "id": "m08",
+   "t": 32.0,
+   "text": "Tocca «Registrati» e conferma."
   },
   {
-   "id": "v09",
-   "t": 49.3,
-   "text": "Il giorno del torneo, quando è il tuo turno,"
+   "id": "m09",
+   "t": 35.0,
+   "text": "Il giorno del torneo, quando arriva il tuo turno,"
   },
   {
-   "id": "v10",
-   "t": 52.7,
-   "text": "premi: Vai al tuo match.",
-   "say": "premi: Vai, al tuo match."
+   "id": "m10",
+   "t": 38.0,
+   "text": "premi «Vai al tuo match»."
   },
   {
-   "id": "v11",
-   "t": 59.0,
-   "text": "E sei in campo, dentro Tennis Clash."
+   "id": "m11",
+   "t": 42.8,
+   "text": "E ti ritrovi in campo, dentro Tennis Clash."
   },
   {
-   "id": "v12",
-   "t": 70.0,
-   "text": "Il risultato arriva da solo, su myFITP.",
-   "say": "Il risultato arriva da solo, su mai, effe, i, ti, pi."
+   "id": "m12",
+   "t": 48.9,
+   "text": "Il risultato arriva da solo su myFITP."
   },
   {
-   "id": "v13",
-   "t": 75.2,
-   "text": "Entra in myFITP.",
-   "say": "Entra in mai, effe, i, ti, pi."
+   "id": "m13",
+   "t": 53.2,
+   "text": "Entra in myFITP, tesserati, iscriviti e gioca."
   },
   {
-   "id": "v14",
-   "t": 77.4,
-   "text": "Tesserati."
-  },
-  {
-   "id": "v15",
-   "t": 78.6,
-   "text": "Iscriviti."
-  },
-  {
-   "id": "v16",
-   "t": 79.9,
-   "text": "Gioca."
-  },
-  {
-   "id": "v17",
-   "t": 81.6,
-   "text": "Tocca a te."
+   "id": "m14",
+   "t": 57.4,
+   "text": "Adesso tocca a te!"
   }
  ],
  "tts": {
-  "engine": "kokoro",
-  "model": "hexgrad/Kokoro-82M",
-  "voice": "im_nicola",
-  "speed": 1.0,
-  "_nota": "voce provvisoria (sintesi, licenza Apache 2.0) da sostituire con un doppiatore; 'say' = grafia fonetica per la sintesi"
- }
+  "engine": "chatterbox",
+  "model": "ResembleAI/chatterbox (multilingue)",
+  "language": "it",
+  "reference": "audio/riferimento_voce.wav",
+  "exaggeration": 0.5,
+  "cfg_weight": 0.5,
+  "_nota": "voce provvisoria (sintesi Chatterbox, licenza MIT) con voce di riferimento LibriVox di pubblico dominio; da sostituire con un doppiatore"
+ },
+ "srt": "sottotitoli_master60.srt",
+ "mix": "mix.wav"
 }

@@ -17,7 +17,10 @@ import soundfile as sf
 from scipy.signal import butter, fftconvolve, lfilter, resample_poly
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-TL = json.load(open(os.path.join(HERE, '..', 'timeline.json'), encoding='utf-8'))
+import sys
+TL_NAME = sys.argv[1] if len(sys.argv) > 1 else 'timeline.json'   # timeline_30.json per il taglio social
+TL = json.load(open(os.path.join(HERE, '..', TL_NAME), encoding='utf-8'))
+SOCIAL = TL.get('opts', {}).get('social', False)
 Q = TL['cue']
 SR = 48000
 DUR = TL['dur']
@@ -299,21 +302,31 @@ def music():
     lead_bus = Bus()
     t = Q['arena'] + 1.6
     i = 0
-    while t < Q['t7'] - 0.5:
+    while t < (Q['endcard'] if SOCIAL else Q['t7'] - 0.5):
         lead_bus.add(lead(midi(mel[i % len(mel)]), BEAT * 0.95), t, 0.22, 0.15)
         t += BEAT
         i += 1
     # automazioni per sezione
     A = Q
+    W = TL['shots'][-1]   # impatto del colpo vincente
     silence = curve([(0, 1), (A['silence'] - 0.12, 1), (A['silence'], 0), (A['match_tap'] + 0.05, 0), (A['match_tap'] + 0.6, 1), (DUR, 1)])
     g_guitar = curve([(0, 0), (0.8, 1), (A['tp_in'] + 0.4, 1), (A['tp_in'] + 1.4, 0), (A['t7'] + 0.3, 0), (A['t7'] + 1.8, 0.9), (A['tocca'] - 0.2, 0.9), (A['tocca'], 0), (DUR, 0)])
     g_pad = curve([(0, 0), (A['tp_in'] + 1.0, 0), (A['tp_land'] + 1.0, 0.8), (A['silence'], 0.9), (A['arena'], 0.6), (A['t7'], 0.6), (A['end'], 0.35), (A['tocca'] - 0.2, 0.35), (A['tocca'], 0), (DUR, 0)])
     g_keys = curve([(0, 0), (A['tp_land'], 0), (A['tp_land'] + 1.5, 1), (A['silence'], 1), (A['arena'], 0.5), (A['t7'], 0.5), (A['t7'] + 1.5, 0), (DUR, 0)])
     g_kick_half = curve([(0, 0), (A['p2'], 0), (A['p2'] + 0.1, 1), (A['silence'], 1), (A['arena'], 0), (A['end'] + 1.5, 0), (A['end'] + 2, 0.7), (A['tocca'] - 0.2, 0.7), (A['tocca'], 0), (DUR, 0)])
-    g_kick_full = curve([(0, 0), (A['arena'], 0), (A['arena'] + 0.05, 1), (A['shot3'] + 0.5, 1), (A['shot3'] + 0.7, 0), (A['cheer'] - 0.05, 0), (A['cheer'], 1), (A['t7'], 1), (A['t7'] + 0.8, 0), (DUR, 0)])
-    g_top = curve([(0, 0), (A['p3'], 0), (A['p3'] + 1, 0.6), (A['silence'], 0.6), (A['arena'], 1), (A['shot3'] + 0.5, 1), (A['shot3'] + 0.7, 0), (A['cheer'], 1), (A['t7'], 1), (A['t7'] + 0.6, 0), (DUR, 0)])
+    g_kick_full = curve([(0, 0), (A['arena'], 0), (A['arena'] + 0.05, 1), (W + 0.1, 1), (W + 0.3, 0), (A['cheer'] - 0.05, 0), (A['cheer'], 1), (A['t7'], 1), (A['t7'] + 0.8, 0), (DUR, 0)])
+    g_top = curve([(0, 0), (A['p3'], 0), (A['p3'] + 1, 0.6), (A['silence'], 0.6), (A['arena'], 1), (W + 0.1, 1), (W + 0.3, 0), (A['cheer'], 1), (A['t7'], 1), (A['t7'] + 0.6, 0), (DUR, 0)])
     g_low = curve([(0, 0), (A['p3'], 0), (A['p3'] + 1.5, 0.7), (A['silence'], 0.8), (A['arena'], 1), (A['t7'], 1), (A['t7'] + 1.2, 0), (DUR, 0)])
     g_lead = curve([(0, 1), (DUR, 1)])
+    if SOCIAL:  # taglio da 30 s: il battito parte subito e il campo finisce sul cartello finale
+        E = A['endcard']
+        g_guitar = curve([(0, 0), (0.4, 1), (A['tp_in'] + 0.2, 1), (A['tp_in'] + 1.0, 0), (DUR, 0)])
+        g_pad = curve([(0, 0), (A['tp_in'] + 0.6, 0), (A['tp_land'] + 0.6, 0.8), (A['silence'], 0.9), (A['arena'], 0.6), (E, 0.6), (A['tocca'], 0.4), (DUR, 0.2)])
+        g_keys = curve([(0, 0), (A['tp_land'], 0), (A['tp_land'] + 0.8, 1), (A['silence'], 1), (A['arena'], 0.5), (E, 0), (DUR, 0)])
+        g_kick_half = curve([(0, 0), (A['tp_land'] + 0.8, 0), (A['tp_land'] + 0.9, 1), (A['silence'], 1), (A['arena'], 0), (DUR, 0)])
+        g_kick_full = curve([(0, 0), (A['arena'], 0), (A['arena'] + 0.05, 0.6), (W + 0.1, 1), (W + 0.3, 0), (A['cheer'] - 0.05, 0), (A['cheer'], 1), (E, 1), (E + 0.3, 0), (DUR, 0)])
+        g_top = curve([(0, 0), (A['p2'], 0), (A['p2'] + 0.5, 0.6), (A['silence'], 0.6), (A['arena'], 1), (W + 0.1, 1), (W + 0.3, 0), (A['cheer'], 1), (E, 1), (E + 0.3, 0), (DUR, 0)])
+        g_low = curve([(0, 0), (A['p2'], 0), (A['p2'] + 1, 0.7), (A['silence'], 0.8), (A['arena'], 1), (E, 1), (E + 0.5, 0), (DUR, 0)])
 
     # la batteria usa due tracce: mezzo tempo (1 e 3) e pieno (ogni battuta)
     half, full = Bus(), Bus()
@@ -325,15 +338,16 @@ def music():
            half.x * g_kick_half[:, None] + full.x * g_kick_full[:, None] + top.x * g_top[:, None] +
            low.x * g_low[:, None] + lead_bus.x * g_lead[:, None])
     # rallentatore sul vincente: filtro che si chiude e si riapre con il pubblico
-    a, b = int((A['shot3'] + 0.4) * SR), int(A['cheer'] * SR)
+    a, b = int(W * SR), int(A['cheer'] * SR)
     if b > a:
         seg = mix[a:b].copy()
         mix[a:b] = np.stack([lp(seg[:, c], 500) for c in range(2)], 1) * 0.8
     # accordo finale su «Tocca a te»
     fin = Bus()
-    fin.add(pad([midi(n) for n in (50, 57, 62, 66, 69, 76)], 3.0, 0.05, 1.8, 2400), A['tocca'], 0.9)
-    fin.add(pluck(midi(62), 3.0, 0.6), A['tocca'], 0.4, -0.2)
-    fin.add(pluck(midi(69), 3.0, 0.6), A['tocca'] + 0.05, 0.35, 0.2)
+    T0 = A['tocca'] - 0.3
+    fin.add(pad([midi(n) for n in (50, 57, 62, 66, 69, 76)], 3.0, 0.05, 1.8, 2400), T0, 0.45 if SOCIAL else 0.9)
+    fin.add(pluck(midi(62), 3.0, 0.6), T0, 0.4, -0.2)
+    fin.add(pluck(midi(69), 3.0, 0.6), T0 + 0.05, 0.35, 0.2)
     mix = (mix + fin.x) * silence[:, None]
     return reverb(mix, 2.2, 0.22)
 
@@ -342,7 +356,7 @@ def sfx():
     s = Bus()
     A = Q
     # ambiente del circolo: uccelli e palleggi lontani
-    for lo, hi in ((0, A['tp_in'] + 0.6), (A['t7'] + 0.8, DUR)):
+    for lo, hi in ((0, A['tp_in'] + 0.6), ((A['endcard'] + 0.4) if SOCIAL else (A['t7'] + 0.8), DUR)):
         t = lo + 0.4
         while t < hi:
             if rng.random() < 0.5:
@@ -359,8 +373,8 @@ def sfx():
     s.add(chime([81, 86], 0.08, 0.2), b0 + 2.6, 0.6, 0.0)
     # teletrasporto 1
     s.add(whoosh(1.3, 200, 2500, 0.5), A['tp_in'], 1, 0)
-    for k in range(6):
-        s.add(whoosh(0.35, 800, 4000, 0.35), A['tp_in'] + 1.2 + k * 0.2, 1, (-1) ** k * 0.4)
+    for k in range(max(2, min(6, int((A['tp_land'] - A['tp_in'] - 1.0) / 0.2)))):
+        s.add(whoosh(0.35, 800, 4000, 0.35), A['tp_in'] + 1.0 + k * 0.2, 1, (-1) ** k * 0.4)
     s.add(riser(1.2, 0.3), A['tp_in'] + 1.0, 1, 0)
     s.add(kick(0.6), A['tp_land'], 1, 0)
     s.add(kick(0.45), A['tp_land'] + 0.5, 1, 0.3)      # Ciuffo atterra davanti alla bacheca
@@ -377,13 +391,14 @@ def sfx():
     for lo, hi in ((A['walk1'], A['p2'] - 0.2), (A['walk2'], A['p3'] - 0.2)):
         for k, t in enumerate(np.arange(lo, hi, 0.4)):
             s.add(step_sfx(), t, 1, (-1) ** k * 0.15)
-    # tappa 2: la tessera scende come una foglia, poi si accende
-    for k, t in enumerate(np.arange(A['p2'], A['card_catch'], 0.28)):
+    # tappa 2: la tessera scende, viene sollevata e brilla, poi finisce nello zaino
+    for k, t in enumerate(np.arange(A['p2'] - 0.2, A['card_catch'], 0.28)):
         s.add(paper(0.1, 0.25), t, 1, np.sin(k) * 0.5)
     s.add(paper(0.2, 0.6), A['card_catch'], 1, 0)
-    s.add(whoosh(0.5, 300, 1500, 0.35), A['gag'], 1, -0.3)
-    s.add(paper(0.15, 0.5), A['card_flip'], 1, 0)
-    s.add(chime([81, 88], 0.1, 0.45), A['card_glow'], 1, 0)
+    s.add(whoosh(0.7, 300, 2500, 0.35), A['present'], 1, 0)
+    s.add(chime([81, 85, 88], 0.08, 0.4), A['present'] + 0.6, 1, 0)             # la grafica si accende
+    s.add(chime([93, 98], 0.05, 0.15), A['present'] + 1.0, 1, 0.3)              # riflesso
+    s.add(whoosh(0.5, 2500, 400, 0.35, False), A['card_store'], 1, -0.2)      # nello zaino
     s.add(chime([74, 78, 81, 86, 90, 93], 0.09, 0.18), A['road'], 1, 0.4)
     # tappa 3
     t, gap = A['p3'], 0.12
@@ -413,26 +428,30 @@ def sfx():
     s.add(pock(1.2, 0.9), A['match_tap'], 1, 0.3)
     s.add(kick(0.4), A['match_tap'] + 0.12, 1, 0)
     s.add(whoosh(1.2, 2500, 200, 0.5, False), A['match_tap'] + 0.2, 1, 0)
-    for k in range(8):
+    for k in range(max(2, min(8, int((A['arena'] - A['match_tap'] - 0.8) / 0.2)))):
         s.add(whoosh(0.35, 800, 4000, 0.35), A['match_tap'] + 0.8 + k * 0.2, 1, (-1) ** k * 0.4)
-    s.add(riser(1.6, 0.35), A['match_tap'] + 1.2, 1, 0)
-    s.add(kick(1.0), A['arena'], 1, 0)
-    s.add(kick(0.5), A['arena'] + 0.6, 1, 0)           # atterraggio a fondo campo
+    s.add(riser(min(1.6, A['arena'] - A['match_tap'] - 0.3), 0.35), A['arena'] - min(1.6, A['arena'] - A['match_tap'] - 0.3), 1, 0)
+    s.add(kick(0.6 if SOCIAL else 1.0), A['arena'], 1, 0)
+    s.add(kick(0.25 if SOCIAL else 0.5), A['arena'] + 0.6, 1, 0)           # atterraggio a fondo campo
     # campo
-    s.add(crowd(A['t7'] + 1.5 - A['arena'], 0.22), A['arena'], 1, 0)
+    s.add(crowd(((A['endcard'] + 0.5) if SOCIAL else (A['t7'] + 1.5)) - A['arena'], 0.1 if SOCIAL else 0.22), A['arena'], 1, 0)
     s.add(scribble(1.0, 0.18), A['arena'] + 0.1, 1, 0)
     s.add(whoosh(0.4, 500, 2500, 0.3), A['arena'] + 1.4, 1, 0)
-    for k, key in enumerate(('shot1', 'shot2', 'shot3')):
-        t0 = A[key]
-        s.add(whoosh(0.4, 400, 3500, 0.45), t0, 1, 0)
-        s.add(pock(1.1), t0 + 0.4, 1, 0.1)
-        if k < 2:
-            s.add(pock(0.3, 0.8), t0 + 1.22, 1, 0)             # rimbalzo nel campo avversario
-            s.add(lp(pock(0.7, 0.9), 2500), t0 + 1.3, 1, -0.1)  # risposta dell'avversario
-        else:
-            s.add(pock(0.5, 0.8), A['cheer'] - 0.03, 1, 0.4)   # il vincente tocca terra
-    s.add(cheer(3.2, 0.6), A['cheer'], 1, 0)
+    # scambio: stesso piano calcolato da animatic.js (rallyPlan) a partire da TL['shots']
+    Hs, lead = TL['shots'], TL.get('opts', {}).get('serveLead', 1.0)
+    rh = [Hs[0] - lead] + [h + 0.5 * (Hs[i + 1] - h) for i, h in enumerate(Hs[:-1])]
+    for i, h in enumerate(Hs):
+        s.add(lp(pock(0.75, 0.9), 2500), rh[i], 1, -0.1)          # colpo dell'avversario (servizio o risposta)
+        s.add(pock(0.3, 0.8), rh[i] + 0.62 * (h - rh[i]), 1, 0)   # rimbalzo nella metà di Ciuffo
+        s.add(whoosh(0.4, 400, 3500, 0.45), h - 0.34, 1, 0.1)     # swing e scia del dito
+        s.add(pock(1.1), h, 1, 0.1)                               # impatto di Ciuffo
+        if i < len(Hs) - 1:
+            s.add(pock(0.3, 0.8), h + 0.7 * (rh[i + 1] - h), 1, 0)  # rimbalzo nella metà avversaria
+    s.add(pock(0.5, 0.8), A['cheer'] - 0.08, 1, 0.4)              # il vincente tocca terra
+    s.add(cheer(1.4, 0.35) if SOCIAL else cheer(3.2, 0.6), A['cheer'], 1, 0)
     # ritorno sulla panchina
+    if SOCIAL:
+        s.add(paper(0.5, 0.7), A['endcard'], 1, 0)   # strappo verso il cartello finale
     s.add(whoosh(1.5, 3000, 300, 0.4, False), A['t7'], 1, 0)
     s.add(buzz(0.7, 0.4), A['vittoria'], 1, 0.3)
     s.add(chime([74, 78, 81, 86], 0.1, 0.3), A['vittoria'] + 0.2, 1, 0.2)
@@ -442,7 +461,7 @@ def sfx():
     s.add(scribble(0.4, 0.3), A['tally'], 1, 0.2)
     for key in ('recap1', 'recap2', 'recap3', 'recap4'):
         s.add(tick(0.25), A[key], 1, 0)
-    s.add(pock(1.3, 0.95), A['tocca'], 1, 0)
+    s.add(pock(1.3, 0.95), A['tocca'] - 0.3, 1, 0)   # il colpo arriva appena prima della voce
     s.add(chime([86], 0.1, 0.15), A['domain'], 1, 0)
     return reverb(s.x, 1.2, 0.15, 7000)
 
@@ -452,6 +471,8 @@ def voice():
     for item in TL['vo']:
         a, sr = sf.read(os.path.join(HERE, 'vo', item['id'] + '.wav'))
         a = resample_poly(a, SR, sr)
+        speech = a[np.abs(a) > 0.02]
+        a = a * (0.12 / (np.sqrt((speech ** 2).mean()) + 1e-9))  # stesso volume per tutte le frasi
         v.add(a, item['t'], 1.0, 0)
     return v.x
 
@@ -471,16 +492,17 @@ def main():
     mus, fx, vo = music(), sfx(), voice()
     # la musica si abbassa sotto la voce (circa -8 dB), con attacco rapido e rilascio morbido
     env = lp(np.abs(vo.sum(1)), 8, 1)
-    duck = 1 - 0.6 * np.clip(env / 0.03, 0, 1)
-    duck = lp(duck, 3, 1)
-    mix = mus * 0.55 * duck[:, None] + fx * 0.7 + vo * 1.1
+    k = np.clip(env / 0.03, 0, 1)
+    duck = lp(1 - 0.8 * k, 3, 1)        # musica circa -14 dB sotto la voce
+    duck_fx = lp(1 - 0.65 * k, 3, 1)    # effetti circa -9 dB sotto la voce
+    mix = mus * 0.55 * duck[:, None] + fx * 0.7 * duck_fx[:, None] + vo * 1.1
     peak = np.abs(mix).max()
     mix = np.tanh(mix / peak * 1.2) / np.tanh(1.2) * 0.89  # limitatore morbido, picco a -1 dBFS
     fade = np.minimum(1, np.minimum(np.arange(N) / (0.05 * SR), (N - np.arange(N)) / (0.8 * SR)))
     mix *= fade[:, None]
-    out = os.path.join(HERE, 'mix.wav')
+    out = os.path.join(HERE, TL.get('mix', 'mix.wav'))
     sf.write(out, mix.astype(np.float32), SR, subtype='PCM_16')
-    srt(os.path.join(HERE, '..', '..', '..', '02_animatic', 'sottotitoli_v3.srt'))
+    srt(os.path.join(HERE, '..', '..', '..', '02_animatic', TL.get('srt', 'sottotitoli_v3.srt')))
     for name, x in (('musica', mus * 0.55), ('effetti', fx * 0.7), ('voce', vo * 1.1)):
         print(f'{name:8s} rms {20 * np.log10(np.sqrt((x ** 2).mean()) + 1e-9):6.1f} dBFS')
     print('scritto', out, f'{N / SR:.1f} s')

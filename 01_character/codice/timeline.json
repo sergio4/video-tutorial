@@ -42,13 +42,13 @@
   "vittoria": 50.0,
   "end": 51.3,
   "stand": 52.0,
-  "tally": 55.3,
+  "tally": 53.88,
   "recap1": 53.2,
-  "recap2": 55.3,
-  "recap3": 55.92,
-  "recap4": 56.58,
+  "recap2": 53.88,
+  "recap3": 55.24,
+  "recap4": 56.12,
   "tocca": 57.2,
-  "domain": 58.4
+  "domain": 58.3
  },
  "shots": [
   44.9,
@@ -119,7 +119,7 @@
   {
    "id": "m13",
    "t": 53.2,
-   "text": "Entra in myFITP, tesserati, iscriviti e gioca."
+   "text": "Entra nel mondo eSports FITP, iscriviti e gioca."
   },
   {
    "id": "m14",
@@ -134,7 +134,7 @@
   "reference": "audio/riferimento_voce.wav",
   "exaggeration": 0.5,
   "cfg_weight": 0.5,
-  "_nota": "voce provvisoria (sintesi Chatterbox, licenza MIT) con voce di riferimento LibriVox di pubblico dominio; da sostituire con un doppiatore"
+  "_nota": "voce registrata (assets/voce/voce_master_registrata.mp3), divisa con audio/split_recording.py; la sintesi resta solo come riserva"
  },
  "srt": "sottotitoli_master60.srt",
  "mix": "mix.wav"

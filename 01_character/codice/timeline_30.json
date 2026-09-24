@@ -55,38 +55,53 @@
  "vo": [
   {
    "id": "s01",
-   "t": 0.3,
-   "text": "Sempre amichevoli su Tennis Clash? Entra nel circuito ufficiale."
+   "t": 0.2,
+   "text": "Sempre le solite amichevoli su Tennis Clash?"
+  },
+  {
+   "id": "s01b",
+   "t": 2.7,
+   "text": "C'è un circuito ufficiale che ti aspetta."
   },
   {
    "id": "s02",
-   "t": 5.3,
-   "text": "Scarica l'app myFITP e collega il tuo ID di Tennis Clash."
+   "t": 5.4,
+   "text": "Scarica l'app myFITP e crea il tuo account."
+  },
+  {
+   "id": "s02b",
+   "t": 8.8,
+   "text": "Poi collega il tuo ID di Tennis Clash."
   },
   {
    "id": "s03",
-   "t": 11.0,
+   "t": 11.3,
    "text": "Fai la Tessera eSports FITP."
   },
   {
    "id": "s03b",
-   "t": 13.6,
+   "t": 13.5,
    "text": "È la chiave dei tornei ufficiali."
   },
   {
    "id": "s04",
    "t": 16.3,
-   "text": "Scegli un torneo e tocca «Registrati»."
+   "text": "Scegli un torneo del tuo livello."
+  },
+  {
+   "id": "s04b",
+   "t": 18.2,
+   "text": "Tocca «Registrati» e conferma."
   },
   {
    "id": "s05",
-   "t": 21.1,
-   "text": "Il giorno del match, premi «Vai al tuo match»."
+   "t": 21.0,
+   "text": "Il giorno del torneo, quando arriva il tuo turno, premi «Vai al tuo match»."
   },
   {
    "id": "s06",
    "t": 25.8,
-   "text": "E sei in campo!"
+   "text": "E ti ritrovi in campo."
   },
   {
    "id": "s07",
@@ -103,7 +118,7 @@
   "reference": "audio/riferimento_voce.wav",
   "exaggeration": 0.5,
   "cfg_weight": 0.5,
-  "_nota": "voce provvisoria (sintesi Chatterbox, licenza MIT) con voce di riferimento LibriVox di pubblico dominio; da sostituire con un doppiatore"
+  "_nota": "voce registrata (assets/voce/voce_master_registrata.mp3), divisa con audio/split_recording.py; la sintesi resta solo come riserva"
  },
  "shots": [
   27.0

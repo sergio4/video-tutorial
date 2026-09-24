@@ -2,7 +2,7 @@
 <html lang="it">
 <head>
 <meta charset="utf-8">
-<title>«Tocca a te», animatic v2</title>
+<title>«Tocca a te», animatic v3</title>
 <style>
   body{margin:0;background:#111;color:#ddd;font:14px system-ui;display:flex;flex-direction:column;align-items:center}
   #bar{padding:8px;display:flex;gap:10px;align-items:center;width:min(100%,560px)}
@@ -11,34 +11,37 @@
 </style>
 </head>
 <body>
-<div id="bar"><button id="play">Play</button><input id="scrub" type="range" min="0" max="52" step="0.04" value="0"><span id="tc">0.00 s</span></div>
+<div id="bar"><button id="play">Play</button><input id="scrub" type="range" min="0" step="0.04" value="0"><span id="tc">0.00 s</span></div>
 <div id="stage"></div>
+<audio id="audio" src="audio/mix.wav" preload="auto"></audio>
 <script type="module">
-// ?clean=1 toglie la barra dell'animatic e le note di regia (resta solo l'immagine con i supers)
-import { frame, W, H, FPS, DUR } from './animatic.js';
+// ?tc=1 aggiunge il timecode in alto a destra. L'anteprima suona audio/mix.wav in sincrono.
+import { frame, W, H, FPS, duration } from './animatic.js';
 import { expose } from './export.js';
 import { loadAssets } from './assets.js';
 
-await loadAssets(); // loghi, tessera e font vanno caricati prima del primo fotogramma
-const clean = new URLSearchParams(location.search).get('clean') === '1';
-const draw = t => frame(t, { clean });
+await loadAssets(); // timeline, loghi, tessera, font e carta vanno caricati prima del primo fotogramma
+const tc = new URLSearchParams(location.search).get('tc') === '1';
+const DUR = duration();
+const draw = t => frame(t, { tc });
 expose({ W, H, FPS, N: Math.round(DUR * FPS), frame: draw });
 
-const stage = document.getElementById('stage'), tc = document.getElementById('tc'), scrub = document.getElementById('scrub');
-const show = t => { stage.innerHTML = draw(t); tc.textContent = t.toFixed(2) + ' s'; scrub.value = t; };
-let playing = false, t0 = 0, start = 0;
-function loop(ts) {
+const stage = document.getElementById('stage'), label = document.getElementById('tc'), scrub = document.getElementById('scrub'), audio = document.getElementById('audio');
+scrub.max = DUR;
+const show = t => { stage.innerHTML = draw(t); label.textContent = t.toFixed(2) + ' s'; scrub.value = t; };
+let playing = false;
+function loop() {
   if (!playing) return;
-  const t = (start + (ts - t0) / 1000) % DUR;
-  show(t);
+  show(audio.currentTime);
+  if (audio.ended) { playing = false; document.getElementById('play').textContent = 'Play'; return; }
   requestAnimationFrame(loop);
 }
 document.getElementById('play').onclick = e => {
   playing = !playing;
   e.target.textContent = playing ? 'Pausa' : 'Play';
-  if (playing) { start = +scrub.value; t0 = performance.now(); requestAnimationFrame(loop); }
+  if (playing) { audio.currentTime = +scrub.value; audio.play(); requestAnimationFrame(loop); } else audio.pause();
 };
-scrub.oninput = () => { playing = false; document.getElementById('play').textContent = 'Play'; show(+scrub.value); };
+scrub.oninput = () => { playing = false; audio.pause(); document.getElementById('play').textContent = 'Play'; show(+scrub.value); };
 show(0);
 </script>
 </body>

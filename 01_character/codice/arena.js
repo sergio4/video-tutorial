@@ -39,7 +39,9 @@ function tree(x, y, s) {
 const logo = (href, x, y, w, h, extra = '') => `<image href="${href}" x="${f(x)}" y="${f(y)}" width="${f(w)}" height="${f(h)}" preserveAspectRatio="xMidYMid meet" ${extra}/>`;
 
 // fondale statico (cielo, città, alberi, muro, tribune, campo); drift anima le nuvole
-export function arena(t = 0) {
+// draw (0…1): il campo si disegna da solo all'arrivo, prima le linee poi colori e pubblico
+export function arena(t = 0, draw = 1) {
+  const fillOp = Math.min(1, Math.max(0, (draw - 0.35) / 0.5)), lineU = Math.min(1, draw / 0.7);
   let s = `<defs><linearGradient id="arSky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5A4AA8"/><stop offset="0.55" stop-color="#C77BB0"/><stop offset="1" stop-color="#F4B08A"/></linearGradient></defs>`;
   s += `<rect width="${AW}" height="760" fill="url(#arSky)"/>`;
   for (const [x, y, w] of [[120, 160, 260], [620, 110, 320], [860, 260, 200], [320, 330, 220]]) {
@@ -58,13 +60,14 @@ export function arena(t = 0) {
   s += logo(A.esports, 70, 630, 200, 100) + logo(A.esports, 810, 630, 200, 100);
   // tribune laterali
   s += `<path d="M0 760 L260 760 L0 1180 Z" fill="#4A2BB8" stroke="${INK}" stroke-width="5"/><path d="M${AW} 760 L${AW - 260} 760 L${AW} 1180 Z" fill="#4A2BB8" stroke="${INK}" stroke-width="5"/>`;
-  s += `<clipPath id="stL"><path d="M0 770 L240 770 L0 1160 Z"/></clipPath><g clip-path="url(#stL)">${crowd(0, 770, 250, 390, 9, 11)}</g>`;
-  s += `<clipPath id="stR"><path d="M${AW} 770 L${AW - 240} 770 L${AW} 1160 Z"/></clipPath><g clip-path="url(#stR)">${crowd(AW - 250, 770, 250, 390, 9, 29)}</g>`;
+  s += `<g opacity="${fillOp.toFixed(3)}"><clipPath id="stL"><path d="M0 770 L240 770 L0 1160 Z"/></clipPath><g clip-path="url(#stL)">${crowd(0, 770, 250, 390, 9, 11)}</g>`;
+  s += `<clipPath id="stR"><path d="M${AW} 770 L${AW - 240} 770 L${AW} 1160 Z"/></clipPath><g clip-path="url(#stR)">${crowd(AW - 250, 770, 250, 390, 9, 29)}</g></g>`;
   // superficie e campo
   s += `<path d="M260 750 L${AW - 260} 750 L${AW} 1180 L${AW} ${AH} L0 ${AH} L0 1180 Z" fill="#4C8DE8"/>`;
   const P = (u, d) => courtPt(u, d).slice(0, 2).map(f).join(' ');
-  s += `<path d="M${P(0, 0)} L${P(1, 0)} L${P(1, 1)} L${P(0, 1)} Z" fill="#1463E0" stroke="#fff" stroke-width="9" stroke-linejoin="round"/>`;
-  const L = (a, b) => `<path d="M${P(...a)} L${P(...b)}" stroke="#fff" stroke-width="7"/>`;
+  s += `<path d="M${P(0, 0)} L${P(1, 0)} L${P(1, 1)} L${P(0, 1)} Z" fill="#1463E0" fill-opacity="${fillOp.toFixed(3)}"/>`;
+  s += `<path d="M${P(0, 0)} L${P(1, 0)} L${P(1, 1)} L${P(0, 1)} Z" fill="none" stroke="#fff" stroke-width="9" stroke-linejoin="round" pathLength="1" stroke-dasharray="1" stroke-dashoffset="${(1 - lineU).toFixed(3)}"/>`;
+  const L = (a, b) => `<path d="M${P(...a)} L${P(...b)}" stroke="#fff" stroke-width="7" pathLength="1" stroke-dasharray="1" stroke-dashoffset="${(1 - lineU).toFixed(3)}"/>`;
   s += L([0.125, 0], [0.125, 1]) + L([0.875, 0], [0.875, 1]) + L([0.125, 0.25], [0.875, 0.25]) + L([0.125, 0.75], [0.875, 0.75]) + L([0.5, 0.25], [0.5, 0.75]);
   // scritta a terra
   s += `<text x="90" y="1860" font-family="Arial, sans-serif" font-weight="900" font-style="italic" font-size="64" fill="#fff" opacity="0.35">SUPERTENNIS ARENA</text>`;

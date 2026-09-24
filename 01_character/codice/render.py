@@ -7,7 +7,8 @@ Nessun PNG intermedio su disco, salvo con --png.
 Uso:
   python render.py "animatic.html" ../../02_animatic/animatic_v1_9x16.mp4
   python render.py "anim.html?fmt=9x16" ../ciuffo_test-animazione_v1_9x16.mp4
-  python render.py "animatic.html?clean=1" out.mp4 --from 0 --to 125
+  python render.py animatic.html out.mp4 --audio audio/mix.wav
+  python render.py "animatic.html?tc=1" out.mp4 --from 0 --to 125
   python render.py "animatic.html" --still 13.6 still.png
 
 Requisiti (una volta sola):
@@ -55,6 +56,7 @@ def main():
     ap.add_argument("--png", help="cartella in cui salvare anche i PNG dei fotogrammi")
     ap.add_argument("--still", type=float, help="salva un solo fotogramma al secondo indicato (out = .png)")
     ap.add_argument("--crf", type=int, default=18, help="qualità H.264, più basso = migliore (default 18)")
+    ap.add_argument("--audio", help="file audio da unire al video (es. audio/mix.wav)")
     a = ap.parse_intermixed_args()
     if not a.out:
         ap.error("manca il file di uscita")
@@ -84,9 +86,10 @@ def main():
         if a.png:
             os.makedirs(a.png, exist_ok=True)
         os.makedirs(os.path.dirname(os.path.abspath(a.out)), exist_ok=True)
-        cmd = [ffmpeg_exe(), "-y", "-loglevel", "error", "-f", "image2pipe", "-framerate", str(FPS),
-               "-c:v", "png", "-i", "-", "-c:v", "libx264", "-pix_fmt", "yuv420p", "-crf", str(a.crf),
-               "-preset", "medium", "-movflags", "+faststart", a.out]
+        cmd = [ffmpeg_exe(), "-y", "-loglevel", "error", "-f", "image2pipe", "-framerate", str(FPS), "-c:v", "png", "-i", "-"]
+        if a.audio:
+            cmd += ["-ss", f"{start / FPS:.3f}", "-i", a.audio, "-map", "0:v", "-map", "1:a", "-c:a", "aac", "-b:a", "192k", "-shortest"]
+        cmd += ["-c:v", "libx264", "-pix_fmt", "yuv420p", "-crf", str(a.crf), "-preset", "medium", "-movflags", "+faststart", a.out]
         ff = subprocess.Popen(cmd, stdin=subprocess.PIPE)
         t0 = time.time()
         for i in range(start, end):

@@ -1,4 +1,6 @@
 # fotogrammi PNG intermedi: si rigenerano con render.py (opzione --png)
 01_character/codice/out/anim/
+# mix audio: si rigenera con audio/build_audio.py
+01_character/codice/audio/mix.wav
 __pycache__/
 *.pyc

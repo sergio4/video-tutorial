@@ -5,7 +5,7 @@
 <title>Ciuffo, test animazione</title>
 <style>
   body{margin:0;background:#111;color:#ddd;font:14px system-ui}
-  #stage svg{display:block;width:100%;max-width:1920px;height:auto}
+  #stage svg{display:block;max-width:100%;max-height:92vh;width:auto;height:auto}
   #bar{padding:8px}
 </style>
 </head>
@@ -14,9 +14,13 @@
 <div id="stage"></div>
 <script type="module">
 import { ciuffo, shadow, paperBG, C } from './ciuffo.js';
-import { saveSVG, wrap } from './export.js';
+import { saveSVG, wrap, expose } from './export.js';
 
-const W = 1920, H = 1080, FPS = 25, DUR = 6.4, GROUND = 960, SC = 0.8;
+// ?fmt=9x16 per il master verticale (1080x1920), altrimenti 16:9 (1920x1080)
+const VERT = new URLSearchParams(location.search).get('fmt') === '9x16';
+const W = VERT ? 1080 : 1920, H = VERT ? 1920 : 1080, FPS = 25, DUR = 6.4;
+const GROUND = VERT ? 1440 : 960, SC = VERT ? 0.95 : 0.8, CX = W / 2;
+const kx = W / 1920, ky = H / 1080;
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 const ease = u => u < 0.5 ? 2 * u * u : 1 - Math.pow(-2 * u + 2, 2) / 2;
 const on2 = t => Math.floor(t * FPS / 2) * 2 / FPS; // personaggio a 12,5 pose al secondo
@@ -27,12 +31,12 @@ function walkPose(t) {
     view: 'side', lean: 5, expr: t > 1.1 && t < 1.2 ? 'blink' : 'neutro',
     legA: [-26 * s, -40 * Math.max(0, -c)], legB: [26 * s, -40 * Math.max(0, c)],
     armA: [24 * s, 18], armB: [-24 * s, 18], hair: -6 - 5 * Math.sin(2 * ph),
-    x: -250 + 1210 * clamp(t / 2.4, 0, 1),
+    x: -250 + (CX + 250) * clamp(t / 2.4, 0, 1),
   };
 }
 
 function pose(t) {
-  const x = 960;
+  const x = CX;
   if (t < 2.4) return walkPose(t);
   if (t < 2.56) return { view: 'q', x, expr: 'neutro', hair: 4 };
   if (t < 3.2) return { view: 'front', x, expr: 'incuriosito', tilt: t < 2.8 ? 0 : 5, hair: -2 };
@@ -61,16 +65,17 @@ function world(t) {
   // strappo diagonale verso il mondo «dentro», durante il salto
   const u = clamp((t - 3.7) / 0.45, 0, 1);
   if (u <= 0) return { bg: paperBG(W, H, GROUND), dark: false };
-  const e = -500 + ease(u) * 3400;
+  const slope = 0.65 * H; // larghezza orizzontale dello strappo diagonale
+  const e = -500 + ease(u) * (W + slope + 800);
   const violet = `<defs><radialGradient id="vg" cx="50%" cy="42%" r="70%"><stop offset="0" stop-color="#4A2A8A"/><stop offset="0.6" stop-color="#311A60"/><stop offset="1" stop-color="#1C0F3A"/></radialGradient></defs>` +
     `<rect width="${W}" height="${H}" fill="url(#vg)"/>` +
     `<path d="M-100 ${H * 0.9} L${W + 100} ${H * 0.05}" stroke="${C.cyan}" stroke-width="3" opacity="0.45"/>` +
     `<path d="M300 ${H + 50} L${W + 200} ${H * 0.35}" stroke="${C.pink}" stroke-width="3" opacity="0.45"/>` +
-    [[260, 220, 60], [1650, 300, 90], [1420, 820, 50], [420, 760, 70]].map(([cx, cy, r]) => `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${C.pink}" opacity="0.08"/>`).join('') +
+    [[260, 220, 60], [1650, 300, 90], [1420, 820, 50], [420, 760, 70]].map(([cx, cy, r]) => `<circle cx="${cx * kx}" cy="${cy * ky}" r="${r}" fill="${C.pink}" opacity="0.08"/>`).join('') +
     `<path d="M0 ${GROUND} L${W} ${GROUND}" stroke="${C.cyan}" stroke-width="3" opacity="0.6"/>`;
   if (u >= 1) return { bg: violet, dark: true };
-  const clip = `<clipPath id="wipe"><path d="M-800 0 L${e} 0 L${e - 700} ${H} L-800 ${H} Z"/></clipPath>`;
-  const edge = `<path d="M${e} 0 L${e - 700} ${H}" stroke="${C.cyan}" stroke-width="8" opacity="0.9"/>`;
+  const clip = `<clipPath id="wipe"><path d="M-800 0 L${e} 0 L${e - slope} ${H} L-800 ${H} Z"/></clipPath>`;
+  const edge = `<path d="M${e} 0 L${e - slope} ${H}" stroke="${C.cyan}" stroke-width="8" opacity="0.9"/>`;
   return { bg: paperBG(W, H, GROUND) + `<defs>${clip}</defs><g clip-path="url(#wipe)">${violet}</g>` + edge, dark: u > 0.5 };
 }
 
@@ -94,7 +99,7 @@ function loop(ts) {
 stage.innerHTML = frame(0);
 document.getElementById('play').onclick = () => requestAnimationFrame(loop);
 
-window.__N = Math.round(DUR * FPS);
+expose({ W, H, FPS, N: Math.round(DUR * FPS), frame });
 window.__exportRange = async (a, b) => {
   for (let i = a; i < Math.min(b, window.__N); i++)
     await saveSVG(frame(i / FPS), `anim/f${String(i).padStart(4, '0')}.png`, W, H);

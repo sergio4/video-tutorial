@@ -1,1 +1,4 @@
-percorso/del/file.mp4
+# fotogrammi PNG intermedi: si rigenerano con render.py (opzione --png)
+01_character/codice/out/anim/
+__pycache__/
+*.pyc

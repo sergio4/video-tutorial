@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<title>«Tocca a te», animatic v1</title>
+<style>
+  body{margin:0;background:#111;color:#ddd;font:14px system-ui;display:flex;flex-direction:column;align-items:center}
+  #bar{padding:8px;display:flex;gap:10px;align-items:center;width:min(100%,560px)}
+  #scrub{flex:1}
+  #stage svg{display:block;max-width:100vw;max-height:calc(100vh - 56px);width:auto;height:auto}
+</style>
+</head>
+<body>
+<div id="bar"><button id="play">Play</button><input id="scrub" type="range" min="0" max="52" step="0.04" value="0"><span id="tc">0.00 s</span></div>
+<div id="stage"></div>
+<script type="module">
+// ?clean=1 toglie la barra dell'animatic e le note di regia (resta solo l'immagine con i supers)
+import { frame, W, H, FPS, DUR } from './animatic.js';
+import { expose } from './export.js';
+
+const clean = new URLSearchParams(location.search).get('clean') === '1';
+const draw = t => frame(t, { clean });
+expose({ W, H, FPS, N: Math.round(DUR * FPS), frame: draw });
+
+const stage = document.getElementById('stage'), tc = document.getElementById('tc'), scrub = document.getElementById('scrub');
+const show = t => { stage.innerHTML = draw(t); tc.textContent = t.toFixed(2) + ' s'; scrub.value = t; };
+let playing = false, t0 = 0, start = 0;
+function loop(ts) {
+  if (!playing) return;
+  const t = (start + (ts - t0) / 1000) % DUR;
+  show(t);
+  requestAnimationFrame(loop);
+}
+document.getElementById('play').onclick = e => {
+  playing = !playing;
+  e.target.textContent = playing ? 'Pausa' : 'Play';
+  if (playing) { start = +scrub.value; t0 = performance.now(); requestAnimationFrame(loop); }
+};
+scrub.oninput = () => { playing = false; document.getElementById('play').textContent = 'Play'; show(+scrub.value); };
+show(0);
+</script>
+</body>
+</html>

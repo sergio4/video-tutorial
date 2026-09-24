@@ -235,6 +235,8 @@ export function ciuffo(p0) {
     q:     `M-50 ${HIP_Y - 22} L46 ${HIP_Y - 22} L50 ${HIP_Y + 58} L-54 ${HIP_Y + 58} Z`,
     side:  `M-34 ${HIP_Y - 22} L32 ${HIP_Y - 22} L36 ${HIP_Y + 58} L-38 ${HIP_Y + 58} Z`,
   }[p.view];
+  // il bacino scende con le anche quando le gambe si piegano (atterraggi, posa seduta)
+  const pelvisSVG = `<g transform="translate(0 ${f(hipDY)})">${shape(pelvis, C.violet)}</g>`;
   const torso = {
     front: `M-56 ${S - 10} L56 ${S - 10} L62 ${S + 60} L56 ${HIP_Y + 18} L-56 ${HIP_Y + 18} L-62 ${S + 60} Z`,
     back:  `M-56 ${S - 10} L56 ${S - 10} L62 ${S + 60} L56 ${HIP_Y + 18} L-56 ${HIP_Y + 18} L-62 ${S + 60} Z`,
@@ -264,22 +266,22 @@ export function ciuffo(p0) {
   switch (p.view) {
     case 'front':
       pre = racket(64, S + 10, 94, S - 110);
-      lowerSVG = legA + legB + shape(pelvis, C.violet);
+      lowerSVG = legA + legB + pelvisSVG;
       upper = neck + shape(torso, C.white) + collar + strapsFront + armA + armB + headSVG;
       break;
     case 'back':
-      lowerSVG = legA + legB + shape(pelvis, C.violet);
+      lowerSVG = legA + legB + pelvisSVG;
       upper = neck + shape(torso, C.white) + collar + racket(20, S + 10, 44, S - 106) + packBack + armA + armB + headSVG;
       break;
     case 'q':
       pre = racket(-62, S + 30, -96, S - 96) + packQ;
-      lowerSVG = legA + shape(pelvis, C.violet) + legB;
+      lowerSVG = legA + pelvisSVG + legB;
       upper = armA + neck + shape(torso, C.white) + collar + strapsQ + armB + headSVG;
       // le gambe B (vicina) va sopra il bacino: già in ordine
       break;
     case 'side':
       pre = racket(-58, S + 30, -94, S - 92) + packSide;
-      lowerSVG = legA + shape(pelvis, C.violet) + legB;
+      lowerSVG = legA + pelvisSVG + legB;
       upper = armA + neck + shape(torso, C.white) + collar + strapSide + armB + headSVG;
       break;
   }

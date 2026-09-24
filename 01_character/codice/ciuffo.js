@@ -54,8 +54,16 @@ function hand(p, a, type, far, phoneRot) {
          `<rect x="-19" y="-34" width="38" height="66" rx="7" fill="${C.ink}" stroke="${C.ink}" stroke-width="${OL}"/>` +
          `<rect x="-14" y="-28" width="28" height="52" rx="3" fill="${C.cyan}" opacity="0.85"/></g>`;
   }
+  if (type === 'racket') { // racchetta impugnata, lungo la direzione dell'avambraccio
+    const neck = seg(p, a, 70), head = seg(p, a, 128);
+    s += tube([p, neck], 16, C.ink);
+    s += `<g transform="translate(${f(head[0])} ${f(head[1])}) rotate(${f(-a)})">` +
+         `<ellipse rx="44" ry="58" fill="${C.white}" fill-opacity="0.35" stroke="${C.ink}" stroke-width="${OL + 10}"/>` +
+         `<ellipse rx="44" ry="58" fill="none" stroke="${C.pink}" stroke-width="9"/>` +
+         `<path d="M-22 -50 L-22 50 M0 -58 L0 58 M22 -50 L22 50 M-40 -22 L40 -22 M-44 0 L44 0 M-40 22 L40 22" stroke="${C.ink}" stroke-width="2" opacity="0.5"/></g>`;
+  }
   s += `<circle cx="${f(p[0])}" cy="${f(p[1])}" r="17" fill="${skin}" stroke="${C.ink}" stroke-width="${OL}"/>`;
-  if (type === 'fist') {
+  if (type === 'fist' || type === 'racket') {
     const [dx, dy] = dir(a + 90);
     s += line(`M${f(p[0] - dx * 8)} ${f(p[1] - dy * 8)} L${f(p[0] + dx * 8)} ${f(p[1] + dy * 8)}`, 3);
   }
@@ -209,7 +217,7 @@ const VIEWS = {
 export const DEFAULT_POSE = {
   view: 'front', x: 0, y: 0, lift: 0, squash: 1, lean: 0, tilt: 0, hair: 0, expr: 'neutro',
   armA: [-8, -4], armB: [8, 4], legA: [-3, 0], legB: [3, 0], handA: 'open', handB: 'open',
-  planted: true, flip: false, scale: 1, phoneRot: -12,
+  planted: true, flip: false, scale: 1, phoneRot: -12, bagRacket: true,
 };
 
 export function ciuffo(p0) {
@@ -258,7 +266,8 @@ export function ciuffo(p0) {
     shape(`M-32 ${S + 80} L32 ${S + 80} L30 ${S + 136} L-30 ${S + 136} Z`, C.greenFar, 4.5) + line(`M-40 ${S + 20} Q0 ${S + 12} 40 ${S + 20}`, 3);
   const packSide = shape(`M-30 ${S - 2} L-84 ${S + 6} Q-96 ${S + 70} -84 ${S + 136} L-32 ${S + 140} Z`, C.green) + line(`M-80 ${S + 60} L-40 ${S + 60}`, 3);
   const packQ = shape(`M-52 ${S} L-86 ${S + 8} Q-96 ${S + 70} -86 ${S + 130} L-52 ${S + 136} Z`, C.greenFar);
-  const racket = (x1, y1, x2, y2) => tube([[x1, y1], [x2, y2]], 22, C.ink, 'round') + quad(lerp([x1, y1], [x2, y2], 0.84), [x2, y2], 24, 24, C.pink);
+  // racchetta nello zaino; bagRacket: false quando la tiene in mano
+  const racket = (x1, y1, x2, y2) => p.bagRacket === false ? '' : tube([[x1, y1], [x2, y2]], 22, C.ink, 'round') + quad(lerp([x1, y1], [x2, y2], 0.84), [x2, y2], 24, 24, C.pink);
 
   const headSVG = `<g transform="translate(${V.headX} ${S - 112}) rotate(${f(p.tilt)} 0 90)">${head(p.view, p.expr, p.hair)}</g>`;
 

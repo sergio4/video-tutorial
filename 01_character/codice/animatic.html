@@ -2,7 +2,7 @@
 <html lang="it">
 <head>
 <meta charset="utf-8">
-<title>«Tocca a te», animatic v1</title>
+<title>«Tocca a te», animatic v2</title>
 <style>
   body{margin:0;background:#111;color:#ddd;font:14px system-ui;display:flex;flex-direction:column;align-items:center}
   #bar{padding:8px;display:flex;gap:10px;align-items:center;width:min(100%,560px)}
@@ -17,7 +17,9 @@
 // ?clean=1 toglie la barra dell'animatic e le note di regia (resta solo l'immagine con i supers)
 import { frame, W, H, FPS, DUR } from './animatic.js';
 import { expose } from './export.js';
+import { loadAssets } from './assets.js';
 
+await loadAssets(); // loghi, tessera e font vanno caricati prima del primo fotogramma
 const clean = new URLSearchParams(location.search).get('clean') === '1';
 const draw = t => frame(t, { clean });
 expose({ W, H, FPS, N: Math.round(DUR * FPS), frame: draw });

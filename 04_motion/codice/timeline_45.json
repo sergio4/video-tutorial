@@ -1,0 +1,180 @@
+{
+ "version": "45",
+ "dur": 45.0,
+ "bpm": 128,
+ "acts": [
+  {
+   "id": "hook",
+   "t0": 0.0,
+   "t1": 5.0,
+   "hits": [
+    0.0,
+    0.469,
+    0.938,
+    1.406,
+    1.875,
+    2.109,
+    2.344,
+    2.578,
+    2.695,
+    2.813,
+    2.93
+   ],
+   "smash": 3.047,
+   "slow0": 3.3,
+   "slow1": 3.6,
+   "impact": 3.75
+  },
+  {
+   "id": "world",
+   "t0": 3.75,
+   "t1": 18.75,
+   "impact": 3.75,
+   "bounce": 4.75,
+   "word1": 4.45,
+   "word2": 4.95,
+   "tag": 5.6,
+   "pull0": 6.8,
+   "pull1": 8.0,
+   "rise0": 7.7,
+   "rise1": 8.9,
+   "morph0": 8.0,
+   "morph1": 8.6,
+   "acct": 9.3,
+   "type1": 9.9,
+   "type2": 10.4,
+   "btn": 11.1,
+   "check": 11.4,
+   "profile": 11.8,
+   "slotTap": 12.5,
+   "fill": 12.65,
+   "lift": 13.2,
+   "hero": 14.2,
+   "edge": 16.2,
+   "edge1": 16.95,
+   "split0": 17.8,
+   "split1": 18.75
+  },
+  {
+   "id": "tornei",
+   "t0": 17.8,
+   "t1": 26.25,
+   "select": 19.3,
+   "tapReg": 21.45,
+   "regOk": 22.45,
+   "flip": 22.9,
+   "cd0": 22.9,
+   "cd1": 23.2,
+   "zero": 24.375,
+   "notify": 24.45,
+   "tap": 25.9,
+   "zoom": 25.95,
+   "confirm0": 21.62,
+   "confirmTap": 22.32
+  },
+  {
+   "id": "campo",
+   "t0": 26.25,
+   "t1": 33.75,
+   "hits": [
+    26.72,
+    27.66,
+    28.59
+   ],
+   "game": 29.06,
+   "crane0": 29.9,
+   "crane1": 31.0,
+   "rounds": [
+    31.875,
+    32.34,
+    32.81
+   ],
+   "dive0": 33.25
+  },
+  {
+   "id": "finale",
+   "t0": 33.75,
+   "t1": 45.0,
+   "anche": 34.05,
+   "w1": 34.69,
+   "w2": 35.16,
+   "drop": 35.4,
+   "periodX": 1395,
+   "periodY": 674,
+   "out0": 37.2,
+   "nodes": [
+    37.5,
+    38.44,
+    39.375,
+    40.31,
+    41.25
+   ],
+   "lock0": 41.6,
+   "tocca": 43.125
+  }
+ ],
+ "vo": [
+  {
+   "id": "A",
+   "t": 0.2,
+   "text": "Sempre le solite amichevoli, su Tennis Clash?"
+  },
+  {
+   "id": "B",
+   "t": 3.95,
+   "text": "C'\u00e8 un circuito ufficiale, che ti aspetta."
+  },
+  {
+   "id": "C",
+   "t": 6.85,
+   "text": "E si entra proprio, dal tuo telefono."
+  },
+  {
+   "id": "D",
+   "t": 9.3,
+   "text": "Scarica l'app myFITP, e crea il tuo account."
+  },
+  {
+   "id": "F",
+   "t": 12.9,
+   "text": "Fai la Tessera eSports FITP."
+  },
+  {
+   "id": "G",
+   "t": 15.1,
+   "text": "\u00c8 la chiave, dei tornei ufficiali."
+  },
+  {
+   "id": "H",
+   "t": 19.0,
+   "text": "Scegli un torneo del tuo livello."
+  },
+  {
+   "id": "I",
+   "t": 21.0,
+   "text": "Tocca \u00abRegistrati\u00bb, e conferma."
+  },
+  {
+   "id": "K",
+   "t": 24.7,
+   "text": "Premi, \u00abVai al tuo match\u00bb."
+  },
+  {
+   "id": "L",
+   "t": 26.5,
+   "text": "E ti ritrovi in campo, dentro Tennis Clash."
+  },
+  {
+   "id": "N",
+   "t": 37.85,
+   "text": "Entra nel mondo eSports FITP, iscriviti e gioca."
+  },
+  {
+   "id": "O",
+   "t": 42.785,
+   "text": "Adesso, tocca a te!"
+  }
+ ],
+ "mix": "audio/mix_45.wav",
+ "srt": "../video/sottotitoli_45s.srt"
+}

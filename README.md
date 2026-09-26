@@ -1,8 +1,35 @@
-# «Tocca a te» · video tutorial eSports FITP
+# «Tocca a te» · video eSports FITP
 
-Video animato che spiega ai nuovi giocatori come entrare nel circuito eSports FITP: account myFITP, Tessera E-Sports FITP, iscrizione a un torneo, match su Tennis Clash. Master verticale 9:16, circa 85 s con voce narrante, musica ed effetti.
+Video che invita una Gen Z / young audience a entrare nel mondo eSports FITP: myFITP, Tessera eSports FITP, tornei, iscrizione, partita su Tennis Clash, tabellone.
 
-**Stato: pre-produzione, tutto in bozza.** Nessun materiale è approvato né pubblicabile.
+**Versione attuale: v4 motion** (`04_motion/`), 16:9, due durate (45 s e 30 s), motion design senza personaggio. Le versioni precedenti con Ciuffo (9:16) restano in `01_character/` e `02_animatic/`.
+
+**Stato: bozza.** Nessun materiale è approvato né pubblicabile.
+
+## v4 motion (`04_motion/`)
+
+| Percorso | Contenuto |
+|---|---|
+| `04_motion/concept.md` | Analisi, visual concept, storyboard 45 s e adattamento 30 s, audio, tecnica |
+| `04_motion/video/` | `tocca_a_te_45s_16x9.mp4`, `tocca_a_te_30s_16x9.mp4` (1920×1080, 25 fps, audio −14 LUFS) e sottotitoli `.srt` |
+| `04_motion/codice/timeline_45.json`, `timeline_30.json` | **Unica fonte dei tempi**: cue di ogni atto e frasi della voce, lette da immagini e audio |
+| `04_motion/codice/engine/` | Motore 2.5D scritto apposta: camera 3D, testo dai contorni dei glifi (opentype.js), glow, motion blur a sottofotogrammi, grana, aberrazione, glitch |
+| `04_motion/codice/shots/` | I cinque atti: `hook` (il loop delle amichevoli), `world` (campo → telefono → myFITP → tessera), `tornei` (carosello, iscrizione, countdown), `campo` (partita Hawk-Eye e tabellone di campi), `finale` (payoff, 5 passi, logo) |
+| `04_motion/codice/audio/` | `vo_cut.py` ritaglia le frasi dalla voce registrata, `synth.py` strumenti ed effetti, `build.py` musica a 128 BPM + effetti sui cue + voce + mix |
+
+### Rigenerare
+
+```
+cd 04_motion/codice
+python audio/vo_cut.py                         # frasi dalla registrazione (assets/voce/)
+python audio/build.py timeline_45.json         # → audio/mix_45.wav + ../video/sottotitoli_45s.srt
+python audio/build.py timeline_30.json         # → audio/mix_30.wav + ../video/sottotitoli_30s.srt
+python render.py --tl timeline_45.json --out ../video/tocca_a_te_45s_16x9.mp4 --audio audio/mix_45.wav
+python render.py --tl timeline_30.json --out ../video/tocca_a_te_30s_16x9.mp4 --audio audio/mix_30.wav
+python render.py --tl timeline_45.json --still 12.5 26.3        # fotogrammi singoli in out/stills
+python render.py --tl timeline_30.json --preview --out prova.mp4  # anteprima veloce a metà risoluzione
+```
+Tempi su 4 core: circa 4 minuti per il 45 s, 2,5 per il 30 s. Requisiti: `pip install playwright imageio-ffmpeg numpy scipy soundfile numba pyloudnorm` e Chromium di Playwright.
 
 ## Cartelle
 

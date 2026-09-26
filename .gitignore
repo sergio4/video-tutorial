@@ -4,3 +4,7 @@
 01_character/codice/audio/mix.wav
 __pycache__/
 *.pyc
+# v4 motion: fotogrammi e still intermedi, si rigenerano con 04_motion/codice/render.py
+04_motion/codice/out/
+# v4 motion: mix audio, si rigenerano con 04_motion/codice/audio/build.py
+04_motion/codice/audio/mix_*.wav

@@ -1,0 +1,157 @@
+{
+ "version": "30",
+ "dur": 30.0,
+ "bpm": 128,
+ "acts": [
+  {
+   "id": "hook",
+   "t0": 0.0,
+   "t1": 5.0,
+   "hits": [
+    0.0,
+    0.469,
+    0.938,
+    1.406,
+    1.875,
+    2.109,
+    2.344,
+    2.578,
+    2.695,
+    2.813,
+    2.93
+   ],
+   "smash": 3.047,
+   "slow0": 3.3,
+   "slow1": 3.6,
+   "impact": 3.75
+  },
+  {
+   "id": "world",
+   "t0": 3.75,
+   "t1": 13.125,
+   "impact": 3.75,
+   "bounce": 4.75,
+   "word1": 4.45,
+   "word2": 4.95,
+   "tag": 5.3,
+   "pull0": 5.75,
+   "pull1": 6.8,
+   "rise0": 6.5,
+   "rise1": 7.4,
+   "morph0": 6.8,
+   "morph1": 7.25,
+   "acct": 7.55,
+   "type1": 7.9,
+   "type2": 8.2,
+   "btn": 8.65,
+   "check": 8.85,
+   "profile": 9.1,
+   "slotTap": 9.5,
+   "fill": 9.6,
+   "lift": 9.9,
+   "hero": 10.6,
+   "edge": 11.7,
+   "edge1": 12.3,
+   "split0": 12.55,
+   "split1": 13.125
+  },
+  {
+   "id": "tornei",
+   "t0": 12.55,
+   "t1": 16.875,
+   "select": 13.5,
+   "tapReg": 14.6,
+   "regOk": 14.75,
+   "flip": 14.95,
+   "cd0": 14.95,
+   "cd1": 15.15,
+   "zero": 15.94,
+   "notify": 16.0,
+   "tap": 16.5
+  },
+  {
+   "id": "campo",
+   "t0": 16.875,
+   "t1": 22.5,
+   "hits": [
+    17.1,
+    17.57,
+    18.04
+   ],
+   "game": 18.34,
+   "crane0": 18.9,
+   "crane1": 19.8,
+   "rounds": [
+    20.2,
+    20.625,
+    21.09
+   ],
+   "dive0": 21.95
+  },
+  {
+   "id": "finale",
+   "t0": 22.5,
+   "t1": 30.0,
+   "anche": 22.75,
+   "w1": 22.97,
+   "w2": 23.2,
+   "drop": 23.22,
+   "periodX": 1395,
+   "periodY": 674,
+   "out0": 24.1,
+   "nodes": [
+    24.375,
+    24.84,
+    25.31,
+    25.78,
+    26.25
+   ],
+   "lock0": 26.55,
+   "tocca": 28.125
+  }
+ ],
+ "vo": [
+  {
+   "id": "A",
+   "t": 0.2,
+   "text": "Sempre le solite amichevoli, su Tennis Clash?"
+  },
+  {
+   "id": "B",
+   "t": 3.95,
+   "text": "C'\u00e8 un circuito ufficiale, che ti aspetta."
+  },
+  {
+   "id": "D",
+   "t": 6.75,
+   "text": "Scarica l'app myFITP, e crea il tuo account."
+  },
+  {
+   "id": "F",
+   "t": 10.0,
+   "text": "Fai la Tessera eSports FITP."
+  },
+  {
+   "id": "H",
+   "t": 13.3,
+   "text": "Scegli un torneo del tuo livello."
+  },
+  {
+   "id": "L2",
+   "t": 17.0,
+   "text": "E ti ritrovi in campo."
+  },
+  {
+   "id": "N",
+   "t": 24.15,
+   "text": "Entra nel mondo eSports FITP, iscriviti e gioca."
+  },
+  {
+   "id": "O",
+   "t": 27.785,
+   "text": "Adesso, tocca a te!"
+  }
+ ],
+ "mix": "audio/mix_30.wav",
+ "srt": "../video/sottotitoli_30s.srt"
+}

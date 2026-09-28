@@ -1,0 +1,17 @@
+{
+ "title": "Spot Tessera eSports FITP 2027",
+ "bpm": 128,
+ "note": "Le scene si susseguono nell'ordine dato; i tempi assoluti si calcolano sommando le durate. Per adattare il video alla voce basta cambiare 'dur' (o usare retime.py). 'vo_in' = quando entra la voce rispetto all'inizio della scena, 'vo_est' = durata stimata della frase.",
+ "scenes": [
+  {"id": "s1", "n": 1, "dur": 3.75, "vo_in": 0.35, "vo_est": 2.3, "vo": "Tutti i giocatori puntano alla vittoria,"},
+  {"id": "s2", "n": 2, "dur": 3.75, "vo_in": 0.15, "vo_est": 2.8, "vo": "ma solo i migliori passano al livello successivo."},
+  {"id": "s3", "n": 3, "dur": 1.875, "vo_in": 0.1, "vo_est": 1.5, "vo": "Diventa un atleta FITP."},
+  {"id": "s4", "n": 4, "dur": 2.8, "vo_in": 0.15, "vo_est": 2.2, "vo": "Partecipa ai tornei ufficiali eSports"},
+  {"id": "s5", "n": 5, "dur": 1.9, "vo_in": 0.1, "vo_est": 1.3, "vo": "e mettiti alla prova"},
+  {"id": "s6", "n": 6, "dur": 3.7, "vo_in": 0.1, "vo_est": 1.5, "vo": "per diventare il migliore."},
+  {"id": "s7", "n": 7, "dur": 3.75, "vo_in": 0.2, "vo_est": 3.4, "vo": "In più, approfitta degli sconti esclusivi dedicati ai tesserati."},
+  {"id": "s10", "n": 10, "dur": 3.3, "vo_in": 0.3, "vo_est": 2.2, "vo": "Scendi in campo da atleta federale."},
+  {"id": "s11", "n": 11, "dur": 2.4, "vo_in": 0.1, "vo_est": 2.2, "vo": "Richiedi ora la tessera eSports FITP"},
+  {"id": "s12", "n": 12, "dur": 2.775, "vo_in": 0.05, "vo_est": 2.3, "vo": "e vivi il gaming da vero protagonista.", "super": "Vivi il gaming da protagonista"}
+ ]
+}

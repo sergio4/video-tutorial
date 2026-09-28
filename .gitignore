@@ -8,3 +8,7 @@ __pycache__/
 04_motion/codice/out/
 # v4 motion: mix audio, si rigenerano con 04_motion/codice/audio/build.py
 04_motion/codice/audio/mix_*.wav
+# spot 2027: fotogrammi intermedi e storyboard dell'agenzia (materiale di Next Different, non va nel repo)
+05_spot_tessera_2027/codice/out/
+05_spot_tessera_2027/storyboard.pdf
+05_spot_tessera_2027/pdf/

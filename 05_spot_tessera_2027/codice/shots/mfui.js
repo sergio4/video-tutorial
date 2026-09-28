@@ -1,7 +1,7 @@
 // Interfaccia myFITP ricostruita fedelmente dalle schermate reali (assets/riferimenti/myfitp): tema chiaro,
 // intestazione blu, pulsanti magenta, pannelli blu notte. Dati inventati (utente, torneo, date).
 // Coordinate dello schermo: origine al centro, 392 × 850 (le misure verticali ricalcano le schermate 1:1).
-import { clamp, lerp, seg, E, rgba, mixc, deg, T, TRS } from '../engine/math.js';
+import { clamp, lerp, seg, env, E, rgba, mixc, deg, T, TRS } from '../engine/math.js';
 import { checkMark } from '../engine/kit.js';
 
 export const SW = 392, SH = 850, HX = SW / 2, HY = SH / 2;
@@ -278,4 +278,32 @@ export function phone(R, t, fn, o = {}) {
   // riflesso sul vetro
   R.poly([-HX, -HY, -HX + 150, -HY, -HX + 20, HY, -HX, HY], { fill: '#ffffff', alpha: 0.04, blend: 'screen' });
   R.rrect(-46, -HY + 14, 92, 26, 13, { fill: '#000' });
+}
+
+// indicatore del tocco (come nelle registrazioni dello schermo): cerchio che arriva, preme, rilascia
+// p: posizione nello schermo del telefono; press: 0..1; a: visibilità
+export function finger(R, x, y, press = 0, a = 1) {
+  if (a <= 0.003) return;
+  const r = 26 - 6 * press;
+  R.circle(x + 3, y + 5, r + 2, { fill: '#000', alpha: a * 0.22, blur: 6 }, 32);
+  R.circle(x, y, r, { fill: '#ffffff', alpha: a * (0.55 + 0.25 * press) }, 32);
+  R.circle(x, y, r, { stroke: '#ffffff', lw: 2.5, alpha: a * 0.95 }, 32);
+}
+
+// traccia del dito: elenco di tocchi {t, x, y}; il dito si sposta tra un tocco e l'altro e preme su ciascuno
+export function fingerTrack(R, t, taps, o = {}) {
+  if (!taps.length) return;
+  const a0 = taps[0].t - 0.45, a1 = taps[taps.length - 1].t + 0.45;
+  const a = seg(t, a0, a0 + 0.2) * (1 - seg(t, a1, a1 + 0.2));
+  if (a <= 0) return;
+  let x = taps[0].x, y = taps[0].y + 120, press = 0;
+  for (let i = 0; i < taps.length; i++) {
+    const T0 = taps[i], P0 = taps[i - 1];
+    const from = P0 ? [P0.x, P0.y] : [T0.x + 40, T0.y + 160];
+    const move0 = P0 ? Math.max(P0.t + 0.2, T0.t - 0.55) : T0.t - 0.45, move1 = T0.t - 0.08;
+    if (t >= move0) { const u = E.inOutCubic(seg(t, move0, move1)); x = lerp(from[0], T0.x, u); y = lerp(from[1], T0.y, u); }
+    press = Math.max(press, env(t, T0.t - 0.06, T0.t, T0.t + 0.1, T0.t + 0.22));
+  }
+  finger(R, x, y, press, a * (o.alpha ?? 1));
+  for (const T0 of taps) tap(R, T0.x, T0.y, t - T0.t, a);
 }

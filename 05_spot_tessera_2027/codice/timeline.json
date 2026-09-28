@@ -1,88 +1,81 @@
 {
- "title": "Spot Tessera eSports FITP 2027",
+ "title": "Spot Tessera eSports FITP 2027 · v3 (45 s)",
  "bpm": 128,
- "note": "Le scene si susseguono nell'ordine dato; i tempi assoluti si calcolano sommando le durate. Per adattare il video alla voce basta cambiare 'dur' (o usare retime.py). 'vo_in' = quando entra la voce rispetto all'inizio della scena, 'vo_est' = durata stimata della frase. Ordine B (approvato): la scena 10 precede la 7.",
+ "note": "Piano v3: Scopri gli eSports FITP → Level up → Fai la tessera → Entra in myFITP → Scopri cosa puoi fare → CTA. Le scene si susseguono nell'ordine dato; i tempi assoluti si calcolano sommando le durate. Per adattare il video alla voce basta cambiare 'dur' (o usare retime.py). 'vo_in' = entrata della voce dall'inizio della scena, 'vo_est' = durata stimata della frase. Testi V.O. in bozza.",
  "scenes": [
   {
-   "id": "s1",
-   "n": 1,
+   "id": "a",
+   "n": "A",
    "dur": 3.75,
-   "vo_in": 0.35,
-   "vo_est": 2.3,
-   "vo": "Tutti i giocatori puntano alla vittoria,"
+   "vo_in": 0.9,
+   "vo_est": 1.3,
+   "vo": "Giochi a Tennis Clash?"
   },
   {
-   "id": "s2",
-   "n": 2,
-   "dur": 3.75,
-   "vo_in": 0.15,
-   "vo_est": 2.8,
-   "vo": "ma solo i migliori passano al livello successivo."
+   "id": "b",
+   "n": "B",
+   "dur": 2.34375,
+   "vo_in": 0.05,
+   "vo_est": 2.2,
+   "vo": "Con gli eSports FITP il tuo gioco sale di livello."
   },
   {
-   "id": "s3",
-   "n": 3,
+   "id": "c",
+   "n": "C",
+   "dur": 5.625,
+   "vo_in": 0.25,
+   "vo_est": 5.1,
+   "vo": "Tornei ufficiali, sfide con la community, classifiche: è il circuito eSports della Federazione Italiana Tennis e Padel."
+  },
+  {
+   "id": "d",
+   "n": "D",
+   "dur": 3.28125,
+   "vo_in": 0.2,
+   "vo_est": 2.6,
+   "vo": "Per entrare in gara ti serve la tessera eSports FITP."
+  },
+  {
+   "id": "e",
+   "n": "E",
    "dur": 1.875,
    "vo_in": 0.1,
-   "vo_est": 1.1,
-   "vo": "Diventa protagonista."
+   "vo_est": 1.6,
+   "vo": "Fatta la tessera, entri in myFITP:"
   },
   {
-   "id": "s4",
-   "n": 4,
-   "dur": 2.8,
-   "vo_in": 0.15,
-   "vo_est": 2.2,
-   "vo": "Partecipa ai tornei ufficiali eSports"
+   "id": "f",
+   "n": "F",
+   "dur": 6.5625,
+   "vo_in": 0.5,
+   "vo_est": 2.8,
+   "vo": "ti iscrivi ai tornei ufficiali e ti metti alla prova"
   },
   {
-   "id": "s5",
-   "n": 5,
-   "dur": 1.9,
-   "vo_in": 0.1,
-   "vo_est": 1.3,
-   "vo": "e mettiti alla prova"
-  },
-  {
-   "id": "s6",
-   "n": 6,
-   "dur": 3.7,
+   "id": "g",
+   "n": "G",
+   "dur": 3.75,
    "vo_in": 0.1,
    "vo_est": 1.5,
    "vo": "per diventare il migliore."
   },
   {
-   "id": "s10",
-   "n": 10,
-   "dur": 3.3,
+   "id": "h",
+   "n": "H",
+   "dur": 9.375,
    "vo_in": 0.3,
-   "vo_est": 2.2,
-   "vo": "Scendi in campo da atleta federale."
+   "vo_est": 6.6,
+   "vo": "In più, approfitta degli sconti sui grandi eventi FITP, del loyalty program, dei vantaggi dei partner e di SuperTennis+ gratis."
   },
   {
-   "id": "s7",
-   "n": 7,
-   "dur": 3.75,
-   "vo_in": 0.2,
-   "vo_est": 3.4,
-   "vo": "In più, approfitta degli sconti esclusivi dedicati ai tesserati."
-  },
-  {
-   "id": "s11",
-   "n": 11,
-   "dur": 2.4,
-   "vo_in": 0.1,
-   "vo_est": 2.2,
-   "vo": "Richiedi ora la tessera eSports FITP"
-  },
-  {
-   "id": "s12",
-   "n": 12,
-   "dur": 2.775,
-   "vo_in": 0.05,
-   "vo_est": 2.3,
-   "vo": "e vivi il gaming da vero protagonista.",
-   "super": "Vivi il gaming da protagonista"
+   "id": "i",
+   "n": "I",
+   "dur": 8.4375,
+   "vo_in": 0.35,
+   "vo_est": 3.8,
+   "vo": "Fai la tua tessera eSports FITP e vivi il gaming da vero protagonista.",
+   "super": "Vivi il gaming da protagonista",
+   "cta": "Fai la tua tessera eSports FITP"
   }
  ]
 }

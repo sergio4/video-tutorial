@@ -1,7 +1,7 @@
 """Adatta le durate delle scene alla voce registrata.
 
 Uso (dalla cartella codice/):
-  python retime.py vo/            cartella con un file per scena: s1.wav, s2.wav … s12.wav (qualsiasi formato audio)
+  python retime.py vo/            cartella con un file per scena: a.wav, b.wav … i.wav (una per scena) (qualsiasi formato audio)
   python retime.py vo/ --scrivi   applica le nuove durate a timeline.json
 
 Per ogni scena: nuova durata = entrata della voce + durata della frase + respiro,
@@ -11,7 +11,7 @@ Senza --scrivi mostra solo il confronto. Poi basta rifare il render.
 import json, os, subprocess, sys, math
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-MIN = {'s1': 3.3, 's2': 3.2, 's3': 1.6, 's4': 2.4, 's5': 1.6, 's6': 2.8, 's7': 3.0, 's10': 2.6, 's11': 2.0, 's12': 2.6}
+MIN = {'a': 3.2, 'b': 2.0, 'c': 5.0, 'd': 3.0, 'e': 1.6, 'f': 6.0, 'g': 3.2, 'h': 8.5, 'i': 7.0}
 TAIL = 0.35
 HALF_BEAT = 60 / 128 / 2
 

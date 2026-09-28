@@ -42,10 +42,11 @@ export function finale(S, TL) {
       const ea = seg(t, claim - 0.2, claim);
       if (ea > 0) {
         const x = 930;
+        const cs = Math.min(92, (92 * (W - x - 70)) / R.measure('da protagonista', 'unb900', 92, -0.03)); // corpo del claim: sta sempre nel quadro
         const lines = [['Vivi il gaming', 420, claim], ['da protagonista', 540, claim + 0.18]];
-        for (const [s, y, ts] of lines) R.text(s, x, y, { font: 'unb900', size: 92, v: 'cap', fill: '#ffffff', tracking: -0.03, shadow: ['rgba(0,0,0,0.5)', 26, 0, 8],
+        for (const [s, y, ts] of lines) R.text(s, x, y, { font: 'unb900', size: cs, v: 'cap', fill: '#ffffff', tracking: -0.03, shadow: ['rgba(0,0,0,0.5)', 26, 0, 8],
           per: (i) => { const u = seg(t, ts + i * 0.018, ts + i * 0.018 + 0.28); return { y: (1 - E.outExpo(u)) * 60, a: seg(t, ts + i * 0.018, ts + i * 0.018 + 0.06) }; } });
-        const bx0 = x + R.measure('da ', 'unb900', 92, -0.03), bw = R.measure('protagonista', 'unb900', 92, -0.03);
+        const bx0 = x + R.measure('da ', 'unb900', cs, -0.03), bw = R.measure('protagonista', 'unb900', cs, -0.03);
         const u = E.inOutCubic(seg(t, claim + 0.45, claim + 0.85));
         if (u > 0) {
           const pts = [], pb = [];
@@ -99,8 +100,6 @@ export function finale(S, TL) {
     collapse(R, t);
     if (t >= t0 + 0.45) {
       R.push(cardPose(t));
-      const fa = seg(t, col1 - 0.2, col1 + 0.2);
-      R.with(T(20, -14, 30), () => R.rrect(-CW / 2 - 12, -CH / 2 - 12, CW + 24, CH + 24, 20, { stroke: PAL.magenta, lw: 1.8, glow: 1, alpha: fa * 0.8 }));
       card(R, t, { flash: env(t, col1 - 0.1, col1, col1, col1 + 0.3) * 0.8 });
       R.pop();
     }

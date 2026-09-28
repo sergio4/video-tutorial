@@ -158,7 +158,7 @@ export function match(S, TL) {
         rows.forEach(([n, sc, hero], i) => {
           const yy = y + i * 64;
           R.rrect(x, yy, 420, 56, 10, { fill: hero ? 'rgba(244,8,188,0.85)' : 'rgba(10,8,40,0.8)', alpha: a });
-          R.text(n, x + 22, yy + 28, { font: 'unb900', size: 24, v: 'cap', fill: '#ffffff', alpha: a });
+          R.text(n, x + 22, yy + 28, { maxW: 250, font: 'unb900', size: 24, v: 'cap', fill: '#ffffff', alpha: a });
           R.rrect(x + 300, yy + 6, 110, 44, 8, { fill: 'rgba(0,0,0,0.35)', alpha: a });
           R.text(sc, x + 355, yy + 28, { font: 'bc900i', size: 34, align: 'center', v: 'cap', fill: hero && won > 0 ? PAL.ball : '#ffffff', alpha: a, glow: hero && won > 0 ? 0.6 : 0 });
           if (hero) R.circle(x + 272, yy + 28, 7, { fill: PAL.ball, alpha: a, glow: 0.7 }, 16);
@@ -199,10 +199,10 @@ export function match(S, TL) {
         const u = E.outExpo(seg(t, ts, ts + 0.3));
         if (u <= 0) return;
         const w = 380, y = H - 150, xx = right ? x - w + (1 - u) * 100 : x - (1 - u) * 100;
-        R.rrect(xx, y, w, 92, 14, { fill: 'rgba(8,5,26,0.8)' });
+        R.rrect(xx, y, w, 92, 14, { fill: 'rgba(8,5,26,0.8)', knock: true });
         R.rrect(xx, y, w, 92, 14, { stroke: col, lw: 2.5, glow: 0.6, glowColor: col });
-        R.text(name, xx + 26, y + 36, { font: 'unb900', size: 30, v: 'cap', fill: '#ffffff' });
-        R.text(lv, xx + 26, y + 70, { font: 'mono800', size: 18, v: 'cap', fill: col, tracking: 0.14 });
+        R.text(name, xx + 26, y + 36, { maxW: w - 52, font: 'unb900', size: 30, v: 'cap', fill: '#ffffff' });
+        R.text(lv, xx + 26, y + 70, { maxW: w - 52, font: 'mono800', size: 18, v: 'cap', fill: col, tracking: 0.14 });
       };
       plate(110, 'MARCO', 'LV 30 · TESSERATO', PAL.ball, t0 + 0.4, false);
       plate(W - 110, 'LUNA.SPIN', 'LV 21 · ROMA', PAL.magenta, t0 + 0.45, true);

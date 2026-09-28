@@ -58,9 +58,9 @@ function backdrop(R, t) {
 function board(R, t, st) {
   const fill = st.fill ?? 1;
   R.with(TRS(P(BD.x, BD.z, BD.top), [0, 0, 0], M), () => {
-    R.rrect(0, 0, BD.w, BD.h + 0.2, 0.25, { fill: 'rgba(12,7,44,0.9)' });
+    R.rrect(0, 0, BD.w, BD.h + 0.2, 0.25, { fill: 'rgba(12,7,44,0.92)', knock: true });
     R.rrect(0, 0, BD.w, BD.h + 0.2, 0.25, { stroke: PAL.cyan, lw: 0.04, glow: 0.8 });
-    R.text('FITP eSERIES BY BMW · TABELLONE UFFICIALE', 0.4, 0.5, { font: 'unb900', size: 0.3, v: 'cap', fill: '#ffffff' });
+    R.text('FITP eSERIES BY BMW · TABELLONE UFFICIALE', 0.4, 0.5, { maxW: BD.w - 0.8 - R.measure('GIOCATORI DA TUTTA ITALIA', 'mono800', 0.2, 0.2) - 0.5, font: 'unb900', size: 0.3, v: 'cap', fill: '#ffffff' });
     R.text('GIOCATORI DA TUTTA ITALIA', BD.w - 0.4, 0.5, { font: 'mono800', size: 0.2, align: 'right', v: 'cap', fill: PAL.cyan, tracking: 0.2 });
     PAIRS.forEach((pr, i) => {
       const [x, y] = pairXY(i);
@@ -75,8 +75,8 @@ function board(R, t, st) {
         R.with([pop, 0, 0, sx + (PW / 2 - 0.55) / 2, 0, pop, 0, y + PH / 2, 0, 0, 1, 0], () => {
           const hot = p[0] === 'LUNA.SPIN';
           R.rrect(-(PW / 2 - 0.55) / 2, -(PH - 0.28) / 2, PW / 2 - 0.55, PH - 0.28, 0.08, { fill: hot ? 'rgba(244,8,188,0.28)' : 'rgba(255,255,255,0.08)' });
-          R.text(p[0], -(PW / 2 - 0.55) / 2 + 0.14, -0.06, { font: 'unb700', size: 0.2, v: 'cap', fill: '#ffffff' });
-          R.text(p[1], -(PW / 2 - 0.55) / 2 + 0.14, 0.17, { font: 'mono800', size: 0.12, v: 'cap', fill: hot ? '#ff9ae4' : '#8e86c8', tracking: 0.1 });
+          R.text(p[0], -(PW / 2 - 0.55) / 2 + 0.14, -0.06, { maxW: PW / 2 - 0.55 - 0.28, font: 'unb700', size: 0.2, v: 'cap', fill: '#ffffff' });
+          R.text(p[1], -(PW / 2 - 0.55) / 2 + 0.14, 0.17, { maxW: PW / 2 - 0.55 - 0.28, font: 'mono800', size: 0.12, v: 'cap', fill: hot ? '#ff9ae4' : '#8e86c8', tracking: 0.1 });
         });
       });
       if (free) {
@@ -85,7 +85,7 @@ function board(R, t, st) {
         const open = st.open || 0, pulse = 0.5 + 0.5 * Math.sin(t * 7);
         R.rrect(sx, y + 0.1, w, PH - 0.2, 0.1, { stroke: open > 0.5 ? PAL.ball : '#ff4f8b', lw: 0.035, alpha: 0.6 + 0.4 * (open > 0.5 ? 1 : pulse * (st.lock || 0.3)), glow: 0.9 });
         if (open > 0) R.rrect(sx, y + 0.1, w, PH - 0.2, 0.1, { fill: rgba(PAL.ball, 0.22 * open) });
-        R.text(open > 0.5 ? 'ISCRIZIONI APERTE' : 'IL TUO POSTO', sx + 0.6, cy, { font: 'unb900', size: open > 0.5 ? 0.15 : 0.19, v: 'cap', fill: open > 0.5 ? PAL.ball : '#ffb3cf' });
+        R.text(open > 0.5 ? 'ISCRIZIONI APERTE' : 'IL TUO POSTO', sx + 0.6, cy, { maxW: w - 0.72, font: 'unb900', size: open > 0.5 ? 0.15 : 0.19, v: 'cap', fill: open > 0.5 ? PAL.ball : '#ffb3cf' });
         const la = (st.lock ?? 1) * (1 - open);
         if (la > 0) {
           const k = E.outBack(Math.min(1, st.lockPop ?? 1), 1.8), up = st.unlock || 0;

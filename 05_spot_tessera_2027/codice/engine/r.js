@@ -412,6 +412,14 @@ export class Renderer {
   // opt: font, size, align ('left'|'center'|'right'), v ('base'|'cap'|'top'), tracking (em), per(i,n,ch,info) → {x,y,z,rx,ry,rz,s,sx,sy,a,skew}
   // stile: fill, stroke, lw, glow, glowColor, alpha, depth (estrusione), side (colore fianchi)
   text(str, x, y, opt) {
+    // maxW: larghezza massima disponibile; se il testo non ci sta, il corpo si riduce (mai testo fuori dalla card)
+    if (opt.maxW) {
+      const w0 = this.fonts.layout(str, opt.font || 'unb900', opt.size || 100, opt.tracking || 0).width;
+      if (w0 > opt.maxW) {
+        opt = { ...opt, size: (opt.size || 100) * (opt.maxW / w0) };
+        if (this.audit) this.audit.push([str, +(opt.maxW / w0).toFixed(2)]);
+      }
+    }
     const L = this.fonts.layout(str, opt.font || 'unb900', opt.size || 100, opt.tracking || 0);
     const al = opt.align || 'left';
     let ox = al === 'center' ? -L.width / 2 : al === 'right' ? -L.width : 0;

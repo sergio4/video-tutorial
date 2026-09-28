@@ -47,7 +47,7 @@
    "id": "f",
    "n": "F",
    "dur": 8.90625,
-   "vo_in": 0.6,
+   "vo_in": 1.5,
    "vo_est": 3.0,
    "vo": "scegli il torneo, iscriviti e mettiti alla prova"
   },
@@ -55,7 +55,7 @@
    "id": "g",
    "n": "G",
    "dur": 4.21875,
-   "vo_in": 0.2,
+   "vo_in": 2.6,
    "vo_est": 1.5,
    "vo": "per diventare il migliore."
   },
@@ -71,7 +71,7 @@
    "id": "i",
    "n": "I",
    "dur": 7.96875,
-   "vo_in": 0.5,
+   "vo_in": 1.4,
    "vo_est": 4.2,
    "vo": "Vivi il gaming da vero protagonista. Richiedi ora la tessera eSports FITP.",
    "super": "Vivi il gaming da protagonista",

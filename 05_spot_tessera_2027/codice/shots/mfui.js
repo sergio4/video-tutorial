@@ -47,7 +47,7 @@ function pill(R, x, y, w, h, fill, label, o = {}) {
   R.rrect(x, y, w, h, h / 2, { fill, alpha: a, stroke: o.stroke, lw: o.lw || 0 });
   let tx = x + w / 2;
   if (o.icon) { icon(R, o.icon, x + h * 0.62, y + h / 2, h * 0.62, o.ink || '#fff', a); tx = x + h * 0.95 + (w - h * 0.95) / 2; }
-  if (label) R.text(label, tx, y + h / 2, { font: o.font || 'rob500', size: o.size || h * 0.55, align: 'center', v: 'cap', fill: o.ink || '#fff', alpha: a, tracking: o.tracking || 0 });
+  if (label) R.text(label, tx, y + h / 2, { maxW: o.icon ? w - h * 0.95 - 8 : w - 12, font: o.font || 'rob500', size: o.size || h * 0.55, align: 'center', v: 'cap', fill: o.ink || '#fff', alpha: a, tracking: o.tracking || 0 });
 }
 
 // ---------------------------------------------------------------- intestazione (blu, con utente, logo, GOLD, campanella)
@@ -116,9 +116,9 @@ function iscrizione(R, x, y, a, cut) {
   const lw = 76, lh = lw * (717 / 1278);
   R.image(R.img.logo, x + 14, y + 72, lw, lh, { alpha: a, sub: 2 });
   if (cut) return;
-  R.text('FITP eSeries by BMW', x + 116, y + 30, { font: 'rob700', size: 13, v: 'cap', fill: '#fff', alpha: a });
-  R.text('GENNAIO #1', x + 116, y + 48, { font: 'rob700', size: 13, v: 'cap', fill: '#fff', alpha: a });
-  R.text('Tennis Clash', x + 116, y + 72, { font: 'rob400', size: 12, v: 'cap', fill: '#fff', alpha: a * 0.6 });
+  R.text('FITP eSeries by BMW', x + 116, y + 30, { maxW: 140, font: 'rob700', size: 13, v: 'cap', fill: '#fff', alpha: a });
+  R.text('GENNAIO #1', x + 116, y + 48, { maxW: 140, font: 'rob700', size: 13, v: 'cap', fill: '#fff', alpha: a });
+  R.text('Tennis Clash', x + 116, y + 72, { maxW: 140, font: 'rob400', size: 12, v: 'cap', fill: '#fff', alpha: a * 0.6 });
 }
 
 // ---------------------------------------------------------------- TORNEI (lista)
@@ -164,10 +164,10 @@ export function listCard(R, L, c = LIST[0], o = {}) {
   R.image(R.img.mf_thumb, L.x + 14, L.y + 13, 80, 80, { alpha: a, sub: 2 });
   R.unclip();
   R.rrect(L.x + L.w - 92, L.y, 92, 18, 8, { fill: MF.mag, alpha: a });
-  R.text('Disponibile', L.x + L.w - 46, L.y + 9, { font: 'rob700i', size: 11, align: 'center', v: 'cap', fill: '#fff', alpha: a });
-  R.text(c.name, L.x + 104, L.y + 50, { font: 'rob400', size: 13.5, v: 'cap', fill: '#fff', alpha: a });
+  R.text('Disponibile', L.x + L.w - 46, L.y + 9, { maxW: 82, font: 'rob700i', size: 11, align: 'center', v: 'cap', fill: '#fff', alpha: a });
+  R.text(c.name, L.x + 104, L.y + 50, { maxW: L.w - 116, font: 'rob400', size: 13.5, v: 'cap', fill: '#fff', alpha: a });
   R.rrect(L.x + 104, L.y + 62, 62, 17, 3, { fill: MF.mag, alpha: a });
-  R.text(c.lv, L.x + 135, L.y + 70.5, { font: 'rob700i', size: 10.5, align: 'center', v: 'cap', fill: '#fff', alpha: a });
+  R.text(c.lv, L.x + 135, L.y + 70.5, { maxW: 56, font: 'rob700i', size: 10.5, align: 'center', v: 'cap', fill: '#fff', alpha: a });
   const B = [[15, 68, 'clock'], [89, 58, 'trophy'], [153, 82, 'people'], [241, 76, 'star']];
   B.forEach(([bx, bw, ic], j) => {
     pill(R, L.x + bx, L.y + 106, bw, 19, '#ffffff', j === 3 ? `${c.badges[j]} PTS` : c.badges[j], { ink: MF.card, icon: ic, size: 11.5, font: 'rob400', alpha: a });
@@ -184,11 +184,11 @@ export function scrTorneo(R, t, st = {}) {
   R.band(-HX + 26, -238, -HX + 44, -238, 2, { fill: MF.title });
   R.text('TORNEO', -HX + 52, -238, { font: 'rob500', size: 16, v: 'cap', fill: MF.title });
   R.rrect(HX - 106, -252, 88, 28, 3, { fill: MF.mag });
-  R.text('Disponibile', HX - 62, -238, { font: 'rob500', size: 12, align: 'center', v: 'cap', fill: '#fff', tracking: 0.12 });
+  R.text('Disponibile', HX - 62, -238, { maxW: 80, font: 'rob500', size: 12, align: 'center', v: 'cap', fill: '#fff', tracking: 0.12 });
   R.clipPoly(R.rrPts(-HX + 16, -203, SW - 32, 204, 8));
   R.image(R.img.mf_banner, -HX + 16, -203, SW - 32, 204, { sub: 4 });
   R.unclip();
-  R.text(TOUR.name, -HX + 18, 32, { font: 'rob500', size: 19.5, v: 'cap', fill: MF.title });
+  R.text(TOUR.name, -HX + 18, 32, { maxW: SW - 36, font: 'rob500', size: 19.5, v: 'cap', fill: MF.title });
   R.text(TOUR.date, -HX + 18, 62, { font: 'rob400', size: 15, v: 'cap', fill: MF.grey });
   pill(R, -HX + 18, 94, 78, 25, MF.badge, TOUR.ora, { icon: 'clock', size: 13, font: 'rob400' });
   pill(R, -HX + 104, 94, 60, 25, MF.badge, '1v1', { icon: 'trophy', size: 13, font: 'rob400' });
@@ -199,7 +199,7 @@ export function scrTorneo(R, t, st = {}) {
   // pannello in basso: conto alla rovescia e REGISTRATI
   R.rrect(-HX, 250, SW, 200, 26, { fill: { lin: [0, 250, 0, 425], stops: [[0, MF.navy2], [1, MF.navy]] } });
   const c = Math.max(0, st.count ?? 27);
-  R.text(`IL TORNEO INIZIERÀ TRA 3g 23h 59m ${String(Math.floor(c)).padStart(2, '0')}s`, 0, 277, { font: 'rob500', size: 12.5, align: 'center', v: 'cap', fill: '#fff' });
+  R.text(`IL TORNEO INIZIERÀ TRA 3g 23h 59m ${String(Math.floor(c)).padStart(2, '0')}s`, 0, 277, { maxW: SW - 30, font: 'rob500', size: 12.5, align: 'center', v: 'cap', fill: '#fff' });
   const pr = st.reg || 0, dn = st.done || 0;
   const sc = 1 - 0.05 * pr;
   R.with([sc, 0, 0, REG_BTN.x, 0, sc, 0, REG_BTN.y, 0, 0, 1, 0], () => {
@@ -228,7 +228,7 @@ export function dialog(R, t, st) {
     R.circle(0, -62, 46, { stroke: '#f5a13a', lw: 3, alpha: a }, 48);
     R.band(0, -86, 0, -52, 5, { fill: '#f5a13a', alpha: a });
     R.circle(0, -38, 3.5, { fill: '#f5a13a', alpha: a }, 12);
-    R.text('Sei sicuro di volerti iscrivere al torneo?', 0, 20, { font: 'rob400', size: 14.5, align: 'center', v: 'cap', fill: '#222', alpha: a });
+    R.text('Sei sicuro di volerti iscrivere al torneo?', 0, 20, { maxW: SW - 76, font: 'rob400', size: 14.5, align: 'center', v: 'cap', fill: '#222', alpha: a });
     if (st.spin > 0 && st.spin < 1) {
       R.arc(-70, 66, 14, t * 9, t * 9 + 4.2, { stroke: MF.blue, lw: 3, alpha: a }, 24);
     } else {
@@ -250,8 +250,8 @@ export function notification(R, t, a, o = {}) {
   R.rrect(-w / 2, y - h / 2, w, h, h / 2, { fill: '#3f3c44', alpha: a * 0.97, shadow: ['rgba(0,0,0,0.35)', 18, 0, 6] });
   R.circle(-w / 2 + 24, y, 14, { fill: '#ffffff', alpha: a }, 24);
   R.text('FITP', -w / 2 + 24, y, { font: 'rob900i', size: 8, align: 'center', v: 'cap', fill: MF.blue, alpha: a });
-  R.text('Notifica da eSports', -w / 2 + 46, y, { font: 'rob700', size: 13, v: 'cap', fill: '#fff', alpha: a });
-  R.text('Hai un nuovo match nel torneo', -w / 2 + 180, y, { font: 'rob400', size: 12.5, v: 'cap', fill: '#fff', alpha: a * 0.92 });
+  R.text('Notifica da eSports', -w / 2 + 46, y, { maxW: 126, font: 'rob700', size: 13, v: 'cap', fill: '#fff', alpha: a });
+  R.text('Hai un nuovo match nel torneo', -w / 2 + 180, y, { maxW: w - 196, font: 'rob400', size: 12.5, v: 'cap', fill: '#fff', alpha: a * 0.92 });
   if (o.press > 0) R.rrect(-w / 2, y - h / 2, w, h, h / 2, { fill: '#ffffff', alpha: a * 0.18 * o.press });
 }
 
@@ -268,7 +268,7 @@ export function tap(R, x, y, dt, a = 1) {
 export const PH = { w: 424, h: 884, r: 58 };
 export function phone(R, t, fn, o = {}) {
   for (let k = 6; k >= 1; k--) R.with(T(0, 0, k * 3.5), () => R.rrect(-PH.w / 2, -PH.h / 2, PH.w, PH.h, PH.r, { fill: mixc('#0c0c16', '#2a2550', k / 6) }));
-  R.rrect(-PH.w / 2, -PH.h / 2, PH.w, PH.h, PH.r, { fill: '#050508' });
+  R.rrect(-PH.w / 2, -PH.h / 2, PH.w, PH.h, PH.r, { fill: '#050508', knock: true });
   R.rrect(-PH.w / 2 + 1, -PH.h / 2 + 1, PH.w - 2, PH.h - 2, PH.r, { stroke: { lin: [-PH.w / 2, -PH.h / 2, PH.w / 2, PH.h / 2], stops: [[0, '#00fcfc'], [0.5, '#8a6bff'], [1, '#f408bc']] }, lw: 3, glow: o.rimGlow ?? 0.7 });
   R.clipPoly(R.rrPts(-HX, -HY, SW, SH, 44));
   fn(R);

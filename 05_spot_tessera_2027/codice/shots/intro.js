@@ -86,10 +86,10 @@ export function intro(S, TL) {
     // HUD di gioco: punteggio e barra esperienza
     const won = seg(t, tPoint, tPoint + 0.1) > 0;
     R.rrect(-HX + 14, -HY + 62, 176, 40, 8, { fill: '#2456e8' });
-    R.text('MARCO', -HX + 28, -HY + 82, { font: 'rob900', size: 16, v: 'cap', fill: '#fff' });
+    R.text('MARCO', -HX + 28, -HY + 82, { maxW: 104, font: 'rob900', size: 16, v: 'cap', fill: '#fff' });
     R.text(won ? '40' : '30', -HX + 172, -HY + 82, { font: 'rob900', size: 20, align: 'right', v: 'cap', fill: won ? PAL.ball : '#fff' });
     R.rrect(HX - 190, -HY + 62, 176, 40, 8, { fill: '#e0602e' });
-    R.text('LUNA.SPIN', HX - 176, -HY + 82, { font: 'rob900', size: 16, v: 'cap', fill: '#fff' });
+    R.text('LUNA.SPIN', HX - 176, -HY + 82, { maxW: 104, font: 'rob900', size: 16, v: 'cap', fill: '#fff' });
     R.text('30', HX - 28, -HY + 82, { font: 'rob900', size: 20, align: 'right', v: 'cap', fill: '#fff' });
     const xp = t < xp0 ? lerp(0.58, 0.74, E.outCubic(seg(t, tPoint + 0.3, tPoint + 0.8))) : lerp(0.74, 1, E.inQuad(seg(t, xp0, xp1)));
     R.rrect(-HX + 20, HY - 70, SW - 40, 44, 14, { fill: 'rgba(8,5,26,0.7)' });

@@ -16,11 +16,12 @@ export function intro(S, TL) {
   const tLvl = b.t0 + 0.4;                // LEVEL UP
   const dive0 = b.t0 + 0.55;              // tuffo nello schermo
 
+  const PHX = 330; // il telefono sta a destra, la domanda a sinistra
   const camKeys = [
-    { t: t0, eye: [30, -40, -1080], tgt: [0, -30, 0], f: 1600, roll: deg(-2) },
-    { t: tPoint, eye: [-40, -10, -1500], tgt: [0, 0, 0], f: 1600, roll: deg(1), ease: 'inOutCubic' },
-    { t: dive0, eye: [0, 0, -1650], tgt: [0, 0, 0], f: 1600 },
-    { t: tEnd, eye: [0, -60, -120], tgt: [0, -60, 0], f: 1600, ease: 'inExpo' },
+    { t: t0, eye: [150, -30, -1300], tgt: [120, -20, 0], f: 1600, roll: deg(-1.5) },
+    { t: tPoint, eye: [40, -10, -1520], tgt: [60, 0, 0], f: 1600, roll: deg(0.5), ease: 'inOutCubic' },
+    { t: dive0, eye: [PHX, 0, -1650], tgt: [PHX, 0, 0], f: 1600, ease: 'inOutCubic' },
+    { t: tEnd, eye: [PHX, -60, -120], tgt: [PHX, -60, 0], f: 1600, ease: 'inExpo' },
   ];
   const camAt = (t) => camTrack(camKeys, t, shake(t, [[tPoint, 8, 0.35], [tLvl, 16, 0.45]]));
 
@@ -103,7 +104,7 @@ export function intro(S, TL) {
     bgNight(R, t, { c1: '#3b1f7a', c2: PAL.magenta, c3: '#1b2cff' });
     bokeh(R, t, 0.8, (t - t0) * 30, 5);
     const lv = seg(t, tLvl - 0.05, tLvl + 0.1);
-    R.push(TRS([0, 0, 0], [deg(3 * Math.sin(t * 0.9)) * (1 - seg(t, dive0, tEnd)), deg(-8 + 6 * Math.sin(t * 0.7)) * (1 - seg(t, dive0, tEnd)), 0], 1));
+    R.push(TRS([PHX, 0, 0], [deg(3 * Math.sin(t * 0.9)) * (1 - seg(t, dive0, tEnd)), deg(-8 + 6 * Math.sin(t * 0.7)) * (1 - seg(t, dive0, tEnd)), 0], 1));
     R.with(T(30, 40, 60), () => R.rrect(-230, -460, 460, 920, 60, { fill: '#000', alpha: 0.45, blur: 40 }));
     phone(R, t, () => {
       game(R, t);
@@ -115,8 +116,19 @@ export function intro(S, TL) {
     const xa = env(t, tPoint + 0.05, tPoint + 0.2, tPoint + 0.95, tPoint + 1.15);
     if (xa > 0) R.hud(() => {
       const k = E.outBack(seg(t, tPoint + 0.05, tPoint + 0.3), 2);
-      R.with([k, 0, 0, W * 0.5 + 250, 0, k, 0, H * 0.34 - (t - tPoint) * 40, 0, 0, 1, 0], () =>
-        R.text('+120 XP', 0, 0, { font: 'unb900', size: 72, align: 'center', v: 'cap', fill: PAL.ball, alpha: xa, glow: 0.6, tracking: -0.02, shadow: ['rgba(0,0,0,0.5)', 20, 0, 6] }));
+      R.with([k, 0, 0, 140, 0, k, 0, 700 - (t - tPoint) * 30, 0, 0, 1, 0], () =>
+        R.text('+120 XP', 0, 0, { font: 'unb900', size: 72, align: 'left', v: 'cap', fill: PAL.ball, alpha: xa, glow: 0.6, tracking: -0.02, shadow: ['rgba(0,0,0,0.5)', 20, 0, 6] }));
+    });
+    // la domanda, grande e leggibile anche senza audio
+    const qa = seg(t, a.t0 + 0.7, a.t0 + 0.9) * (1 - seg(t, tLvl - 0.15, tLvl));
+    if (qa > 0) R.hud(() => {
+      const L = [['GIOCHI A', 470, a.t0 + 0.7, '#ffffff'], ['TENNIS CLASH?', 580, a.t0 + 0.85, PAL.ball]];
+      for (const [str, y, ts, col] of L) {
+        const u = E.outExpo(seg(t, ts, ts + 0.45));
+        R.clipRect(120, y - 80, 900, 110);
+        R.text(str, 140, y + (1 - u) * 110, { font: 'unb900', size: 84, v: 'cap', fill: col, alpha: qa, tracking: -0.03, shadow: ['rgba(0,0,0,0.5)', 24, 0, 8], glow: col === PAL.ball ? 0.25 : 0 });
+        R.unclip();
+      }
     });
     // LEVEL UP: rapido, sbatte e si apre
     const la = seg(t, tLvl, tLvl + 0.06) * (1 - seg(t, dive0 + 0.25, tEnd));

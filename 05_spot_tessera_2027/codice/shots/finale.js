@@ -1,6 +1,6 @@
-// I · «Fai la tua tessera eSports FITP e vivi il gaming da vero protagonista.»
-// I vantaggi rientrano nella tessera (la tessera contiene tutto). CTA grande sotto la tessera; poi il cartello finale:
-// tessera nel terzo sinistro, claim a destra, loghi eSports FITP + FITP piccoli e centrati in basso, senza fondi.
+// I · «Vivi il gaming da vero protagonista. Richiedi ora la tessera eSports FITP.»
+// I vantaggi rientrano nella tessera (la tessera contiene tutto). La tessera va nel terzo sinistro; a destra il claim
+// «Vivi il gaming da protagonista», poi la CTA «Richiedi ora la tessera eSports FITP»; loghi piccoli centrati in basso.
 import { W, H, Cam } from '../engine/r.js';
 import { clamp, lerp, seg, env, E, deg, hash, rgba, mixc, TRS, T } from '../engine/math.js';
 import { PAL } from '../engine/kit.js';
@@ -11,9 +11,8 @@ import { pass, tile, TILES, PASS_GRID } from './benefit.js';
 export function finale(S, TL) {
   const sc = S.i, t0 = sc.t0, t1 = sc.t1;
   const col1 = t0 + 1.0;                 // fine del risucchio dei vantaggi
-  const cta = t0 + 0.9;                  // CTA grande
-  const end0 = t0 + 3.4, end1 = t0 + 4.2; // passaggio al cartello finale
-  const claim = end0 + 0.35, logos = end0 + 0.75;
+  const end0 = t0 + 1.0, end1 = t0 + 1.8; // la tessera va a sinistra
+  const claim = t0 + 1.55, cta = t0 + 2.6, logos = t0 + 3.0;
   const CARD_C = { pos: [0, -95, 0], sc: 1.85 }, CARD_E = { pos: [-455, -30, 0], sc: 1.6 };
 
   function cardPose(t) {
@@ -39,19 +38,11 @@ export function finale(S, TL) {
 
   function texts(R, t) {
     R.hud(() => {
-      // CTA grande sotto la tessera (fase centrale)
-      const ca = seg(t, cta, cta + 0.15) * (1 - seg(t, end0, end0 + 0.3));
-      if (ca > 0) {
-        const u = E.outExpo(seg(t, cta, cta + 0.45));
-        R.text('FAI LA TUA TESSERA', W / 2, 840 + (1 - u) * 60, { font: 'unb900', size: 78, align: 'center', v: 'cap', fill: '#ffffff', alpha: ca, tracking: -0.02, shadow: ['rgba(0,0,0,0.5)', 24, 0, 8] });
-        R.text('eSPORTS FITP', W / 2, 940 + (1 - u) * 60, { font: 'unb900', size: 78, align: 'center', v: 'cap', fill: PAL.ball, alpha: ca * seg(t, cta + 0.1, cta + 0.3), tracking: -0.02, glow: 0.3 });
-      }
       // cartello finale: CTA piccola, claim, pennellata
       const ea = seg(t, claim - 0.2, claim);
       if (ea > 0) {
         const x = 930;
-        R.text('FAI LA TUA TESSERA eSPORTS FITP', x + 4, 330, { font: 'mono800', size: 26, v: 'cap', fill: PAL.cyan, alpha: ea, tracking: 0.16 });
-        const lines = [['Vivi il gaming', 440, claim], ['da protagonista', 560, claim + 0.18]];
+        const lines = [['Vivi il gaming', 420, claim], ['da protagonista', 540, claim + 0.18]];
         for (const [s, y, ts] of lines) R.text(s, x, y, { font: 'unb900', size: 92, v: 'cap', fill: '#ffffff', tracking: -0.03, shadow: ['rgba(0,0,0,0.5)', 26, 0, 8],
           per: (i) => { const u = seg(t, ts + i * 0.018, ts + i * 0.018 + 0.28); return { y: (1 - E.outExpo(u)) * 60, a: seg(t, ts + i * 0.018, ts + i * 0.018 + 0.06) }; } });
         const bx0 = x + R.measure('da ', 'unb900', 92, -0.03), bw = R.measure('protagonista', 'unb900', 92, -0.03);
@@ -59,12 +50,23 @@ export function finale(S, TL) {
         if (u > 0) {
           const pts = [], pb = [];
           for (let i = 0; i <= 30; i++) {
-            const f = (i / 30) * u, px = bx0 + f * bw, py = 626 + Math.sin(f * 3.2) * 5 - f * 7;
+            const f = (i / 30) * u, px = bx0 + f * bw, py = 606 + Math.sin(f * 3.2) * 5 - f * 7;
             const w = 14 * Math.sin(Math.PI * Math.min(1, (i / 30) * 1.05)) + 3;
             pts.push(px, py - w / 2); pb.unshift(px, py + w / 2);
           }
           R.poly(pts.concat(pb), { fill: { screenLin: [bx0, 0, bx0 + bw, 0], stops: [[0, PAL.cyan], [1, PAL.magenta]] }, glow: 0.7 });
         }
+      }
+      // CTA: richiedi ora la tessera, come un pulsante
+      const pa = seg(t, cta, cta + 0.2);
+      if (pa > 0) {
+        const k = E.outBack(seg(t, cta, cta + 0.35), 1.6), x = 930;
+        const txt = 'RICHIEDI ORA LA TESSERA eSPORTS FITP', w = R.measure(txt, 'unb900', 30, -0.01) + 84, y = 730;
+        R.with([k, 0, 0, x, 0, k, 0, y, 0, 0, 1, 0], () => {
+          R.rrect(0, -40, w, 80, 40, { fill: PAL.ball, alpha: pa, shadow: ['rgba(0,0,0,0.4)', 24, 0, 8] });
+          R.rrect(0, -40, w, 80, 40, { stroke: PAL.ball, lw: 3, alpha: pa, glow: 0.6, glowOnly: true });
+          R.text(txt, 42, 0, { font: 'unb900', size: 30, v: 'cap', fill: '#0b0624', alpha: pa, tracking: -0.01 });
+        });
       }
       // loghi piccoli e centrati, senza fondi
       const la = seg(t, logos, logos + 0.35);
@@ -86,7 +88,7 @@ export function finale(S, TL) {
     R.setCam(cam);
     bgNight(R, t, { c1: '#3b1f7a', c2: PAL.magenta, c3: '#1b2cff' });
     // raggi lenti dietro alla tessera (solo nella fase centrale)
-    const ra = seg(t, t0 + 0.6, col1) * (1 - seg(t, end0, end1));
+    const ra = seg(t, t0 + 0.4, col1) * (1 - seg(t, end0, end1));
     if (ra > 0) R.hud(() => {
       for (let i = 0; i < 24; i++) {
         const ang = (i / 24) * Math.PI * 2 + t * 0.06;

@@ -89,9 +89,9 @@ export function legal(R, a) {
 
 export function benefit(S, TL) {
   const h = S.h, t0 = h.t0, t1 = h.t1;
-  const tUnlock = t0 + 0.45, tTap = t0 + 1.25;
-  const out0 = tTap + 0.08, out1 = tTap + 0.8;      // il pass esce dal telefono
-  const grid0 = t0 + 5.1, grid1 = t0 + 5.7;         // il pass si sposta, arrivano i riquadri
+  const tUnlock = t0 + 0.35, tTap = t0 + 1.0;
+  const out0 = tTap + 0.08, out1 = tTap + 0.75;      // il pass esce dal telefono
+  const grid0 = t0 + 4.75, grid1 = t0 + 5.35;         // il pass si sposta, arrivano i riquadri
 
   const camKeys = [
     { t: t0, eye: [120, -10, -1500], tgt: [150, -10, 0], f: 1600 },
@@ -135,11 +135,11 @@ export function benefit(S, TL) {
 
   // colonna destra: sconti ed eventi (fase del pass protagonista)
   function discounts(R, t) {
-    const a = seg(t, out1 + 0.45, out1 + 0.65) * (1 - seg(t, grid0 - 0.2, grid0 + 0.1));
+    const a = seg(t, out1 + 0.3, out1 + 0.5) * (1 - seg(t, grid0 - 0.2, grid0 + 0.1));
     if (a <= 0) return;
     R.hud(() => {
       const x = 1040;
-      const k = (d) => E.outExpo(seg(t, out1 + 0.5 + d, out1 + 0.9 + d));
+      const k = (d) => E.outExpo(seg(t, out1 + 0.35 + d, out1 + 0.75 + d));
       R.text('FINO AL', x, 205, { font: 'mono800', size: 26, v: 'cap', fill: PAL.cyan, alpha: a * k(0), tracking: 0.2 });
       R.text('-10%', x - 6, 300 + (1 - k(0.05)) * 40, { font: 'unb900', size: 124, v: 'cap', fill: PAL.ball, alpha: a * k(0.05), glow: 0.35, tracking: -0.03 });
       R.text('sui biglietti*', x + 390, 300, { font: 'unb600', size: 34, v: 'cap', fill: '#ffffff', alpha: a * k(0.15) });
@@ -147,7 +147,7 @@ export function benefit(S, TL) {
       R.text('sugli abbonamenti*', x + 290, 432, { font: 'unb600', size: 34, v: 'cap', fill: '#ffffff', alpha: a * k(0.35) });
       R.band(x, 520, x + 760, 520, 2, { fill: 'rgba(255,255,255,0.25)', alpha: a * k(0.4) });
       EVENTS.forEach((ev, i) => {
-        const u = k(0.55 + i * 0.3);
+        const u = k(0.5 + i * 0.2);
         R.circle(x + 14, 580 + i * 62, 9, { fill: PAL.ball, alpha: a * u, glow: 0.6 }, 16);
         R.text(ev, x + 42 - (1 - u) * 30, 580 + i * 62, { font: 'unb700', size: 34, v: 'cap', fill: '#ffffff', alpha: a * u });
       });

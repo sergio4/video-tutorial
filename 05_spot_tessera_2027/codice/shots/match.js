@@ -29,15 +29,16 @@ function partial(pts, u) {
 export function match(S, TL) {
   const s6 = S.g;
   const t0 = s6.t0, t1 = s6.t1;
-  const tWin = t0 + 1.4;                        // punto vincente
-  const draw0 = tWin + 0.3, draw1 = tWin + 1.0; // la scia disegna la coppa
-  const tSign = tWin + 0.95;                    // si accende WIN
+  const tM = t0 + 1.05;                         // dopo il VS inizia la partita
+  const tWin = tM + 1.2;                        // punto vincente
+  const draw0 = tWin + 0.25, draw1 = tWin + 0.85; // la scia disegna la coppa
+  const tSign = tWin + 0.8;                     // si accende WIN
 
   // scambio: tratti [t inizio, t fine, da (x,z metri), a (x,z), altezza dell'arco]
   const R0 = [
-    [t0 - 0.1, t0 + 0.42, [-11.2, 2.2], [10.2, -2.8], 1.3],
-    [t0 + 0.42, t0 + 0.9, [10.2, -2.8], [-9.8, 3.4], 1.5],
-    [t0 + 0.9, tWin, [-9.8, 3.4], [9.6, -4.05], 1.1], // vincente sulla riga laterale
+    [tM - 0.1, tM + 0.38, [-11.2, 2.2], [10.2, -2.8], 1.3],
+    [tM + 0.38, tM + 0.8, [10.2, -2.8], [-9.8, 3.4], 1.5],
+    [tM + 0.8, tWin, [-9.8, 3.4], [9.6, -4.05], 1.1], // vincente sulla riga laterale
   ];
   const CUP_POS = P(15.5, 0, 0.8); // base della coppa: sospesa sopra il fondo campo avversario
   // punto del profilo della coppa in coordinate mondo (piano rivolto alla camera)
@@ -58,7 +59,7 @@ export function match(S, TL) {
   }
 
   const camKeys = [
-    { t: t0, eye: P(-20.5, 0.6, 7.2), tgt: P(-1, 0, 0), f: 1350, roll: deg(-2) },
+    { t: tM, eye: P(-20.5, 0.6, 7.2), tgt: P(-1, 0, 0), f: 1350, roll: deg(-2) },
     { t: tWin, eye: P(-19.2, 0.2, 6.6), tgt: P(0, -0.3, 0.2), f: 1350, roll: deg(1) },
     { t: tWin + 0.75, eye: P(-5, 0, 5.0), tgt: P(15.5, 2.6, 6.6), f: 1350, roll: deg(0), ease: 'inOutCubic' },
     { t: t1, eye: P(-3.2, -0.4, 4.8), tgt: P(15.5, 2.9, 6.8), f: 1350, roll: deg(-1.5) },
@@ -148,7 +149,7 @@ export function match(S, TL) {
 
   // tabellone in stile gioco (nomi inventati)
   function scoreboard(R, t) {
-    const a = seg(t, t0 + 0.15, t0 + 0.35) * (1 - seg(t, tWin + 0.7, tWin + 0.95));
+    const a = seg(t, tM + 0.15, tM + 0.35) * (1 - seg(t, tWin + 0.7, tWin + 0.95));
     if (a > 0) {
       const won = seg(t, tWin, tWin + 0.1);
       R.hud(() => {
@@ -179,6 +180,36 @@ export function match(S, TL) {
     R.hud(() => R.with(T(470 - drift, H + 230 + (1 - u) * 1300, 0), () => charCard(R, 'hero', 1180, { glow: 0.9 })));
   }
 
+  // VS prima della partita: MARCO contro LUNA.SPIN, la sfida del tabellone
+  function versus(R, t) {
+    if (t >= tM + 0.05) return;
+    const a = seg(t, t0, t0 + 0.12);
+    R.hud(() => {
+      R.rect(0, 0, W, H, { fill: { lin: [0, 0, W, H], stops: [[0, '#1a0b52'], [0.5, '#0b0624'], [1, '#3a0b45']] }, alpha: a });
+      const cut = E.outExpo(seg(t, t0, t0 + 0.3));
+      R.poly([W * 0.5 + 180, 0, W, 0, W, H, W * 0.5 - 180, H], { fill: 'rgba(244,8,188,0.18)', alpha: a * cut });
+      R.band(W / 2 + 180 * cut, -20, W / 2 - 180 * cut, H + 20, 8, { fill: '#ffffff', alpha: a, glow: 1.2, glowColor: PAL.magenta });
+      const inL = E.outExpo(seg(t, t0 + 0.05, t0 + 0.4)), inR = E.outExpo(seg(t, t0 + 0.12, t0 + 0.47));
+      R.with(T(560 - (1 - inL) * 500, H + 120, 0), () => charCard(R, 'hero', 1050, { glow: 0.8 }));
+      R.with(T(1380 + (1 - inR) * 500, H + 120, 0), () => charCard(R, 'opp', 1050, { glow: 0.8 }));
+      const k = E.outBack(seg(t, t0 + 0.3, t0 + 0.55), 2.2);
+      R.with([k, 0, 0, W / 2, 0, k, 0, H * 0.46, 0, 0, 1, 0], () => R.text('VS', 0, 0, { font: 'unb900', size: 200, align: 'center', v: 'cap', skew: 0.18, fill: '#ffffff', depth: 16, depthSteps: 8,
+        side: (u) => rgba(mixc(PAL.magenta, '#2a0a50', u), 1), shadow: ['rgba(0,0,0,0.5)', 30, 0, 10] }));
+      const plate = (x, name, lv, col, ts, right) => {
+        const u = E.outExpo(seg(t, ts, ts + 0.3));
+        if (u <= 0) return;
+        const w = 380, y = H - 150, xx = right ? x - w + (1 - u) * 100 : x - (1 - u) * 100;
+        R.rrect(xx, y, w, 92, 14, { fill: 'rgba(8,5,26,0.8)' });
+        R.rrect(xx, y, w, 92, 14, { stroke: col, lw: 2.5, glow: 0.6, glowColor: col });
+        R.text(name, xx + 26, y + 36, { font: 'unb900', size: 30, v: 'cap', fill: '#ffffff' });
+        R.text(lv, xx + 26, y + 70, { font: 'mono800', size: 18, v: 'cap', fill: col, tracking: 0.14 });
+      };
+      plate(110, 'MARCO', 'LV 30 · TESSERATO', PAL.ball, t0 + 0.4, false);
+      plate(W - 110, 'LUNA.SPIN', 'LV 21 · ROMA', PAL.magenta, t0 + 0.45, true);
+      R.text('FITP eSERIES BY BMW · PRIMO TURNO', W / 2, 90, { font: 'mono800', size: 24, align: 'center', v: 'cap', fill: PAL.cyan, alpha: seg(t, t0 + 0.35, t0 + 0.55), tracking: 0.2 });
+    });
+  }
+
   function draw(R, t) {
     const cam = camAt(t);
     R.setCam(cam);
@@ -194,8 +225,9 @@ export function match(S, TL) {
     hero(R, t);
     confetti(R, t);
     scoreboard(R, t);
-    const inA = 1 - seg(t, t0, t0 + 0.22);
+    const inA = 1 - seg(t, tM, tM + 0.22);
     if (inA > 0) R.hud(() => R.rect(0, 0, W, H, { fill: '#ffffff', alpha: inA * 0.9 }));
+    versus(R, t);
     const out = E.inCubic(seg(t, t1 - 0.22, t1));
     if (out > 0) R.hud(() => R.rect(0, 0, W, H, { fill: '#ffffff', alpha: out }));
   }

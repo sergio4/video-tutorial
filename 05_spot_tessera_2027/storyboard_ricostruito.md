@@ -1,4 +1,4 @@
-# Spot Tessera eSports FITP 2027 · piano v3
+# Spot Tessera eSports FITP 2027 · piano v4
 
 BOZZA · 16:9 · master 45 s · versione visiva senza audio, pronta per il voice over.
 
@@ -10,17 +10,17 @@ Fonte di partenza: storyboard «Spot Tesseramento eSports 2027» di Next Differe
 
 ## Blocchi
 
-| # | Tempo | Cosa succede | Testi a schermo | V.O. (bozza) | Ruolo |
-|---|---|---|---|---|---|
-| A | 0,00–3,75 | Smartphone nel buio con una partita di tennis in corso, MARCO contro LUNA.SPIN; punto vinto | punteggio, barra LV 29, «+120 XP» | Giochi a Tennis Clash? | Aggancio: chi gioca si riconosce |
-| B | 3,75–6,09 | La barra XP si riempie di colpo, LEVEL UP, la camera si tuffa nello schermo; MARCO si materializza nell'arena eSports FITP | LEVEL UP, «MARCO · LV 30» | Con gli eSports FITP il tuo gioco sale di livello. | Ingresso in un mondo nuovo |
-| C | 6,09–11,72 | C1 si accende il tabellone FITP eSeries by BMW; C2 arriva LUNA.SPIN, chat «Ti aspetto in finale!» / «Ci vediamo lì.», VS; C3 classifica, MARCO sale al 3° posto | 01 TORNEI UFFICIALI · 02 COMMUNITY · 03 CLASSIFICHE; super «eSports FITP · il circuito ufficiale della Federazione Italiana Tennis e Padel» | Tornei ufficiali, sfide con la community, classifiche: è il circuito eSports della Federazione Italiana Tennis e Padel. | Cosa sono gli eSports FITP |
-| D | 11,72–15,00 | Portale TORNEO UFFICIALE chiuso da un lucchetto; la tessera si rivela, entra nel lucchetto, il portale si apre | SERVE LA TESSERA eSPORTS FITP; TESSERA eSPORTS FITP 2027 · IL TUO PASS PER I TORNEI UFFICIALI | Per entrare in gara ti serve la tessera eSports FITP. | La tessera come chiave: il primo passo |
-| E | 15,00–16,88 | La tessera si gira: ATTIVA; vola nello smartphone | TESSERAMENTO COMPLETATO | Fatta la tessera, entri in myFITP: | Decisione completata |
-| F | 16,88–23,44 | myFITP reale (dati inventati): tessera aggiunta → Tornei → FITP eSeries by BMW → REGISTRATI → conferma → SEI ISCRITTO → notifica del match. Dito visibile, un tocco ogni ~1,3 s | didascalie 01 LA TUA TESSERA · 02 SCEGLI IL TORNEO · 03 ISCRIVITI · 04 SEI IN GARA | ti iscrivi ai tornei ufficiali e ti metti alla prova | Cosa fai con la tessera |
-| G | 23,44–27,19 | Match (scia di luce, tabellone MARCO – LUNA.SPIN), GAME · SET · MATCH, coppa al neon, MARCO esulta sotto WIN | GAME · SET · MATCH, WIN | per diventare il migliore. | Payoff della competizione |
-| H | 27,19–36,56 | myFITP: «Benefit Tesserati sbloccati dopo il tuo primo torneo»; tocco → pass GRANDI EVENTI FITP protagonista con sconti ed eventi; poi i quattro riquadri degli altri vantaggi | FINO AL -10% sui biglietti* · -5% sugli abbonamenti* · Internazionali BNL d'Italia · BNL Italy Major Premier Padel · Davis Cup Final 8 · Nitto ATP Finals; E CON LA TESSERA ANCHE… Competizioni ufficiali · Loyalty program FITP · Sconti partner · SuperTennis+ gratis; nota legale | In più, approfitta degli sconti sui grandi eventi FITP, del loyalty program, dei vantaggi dei partner e di SuperTennis+ gratis. | Ecosistema di vantaggi, grandi eventi al primo posto |
-| I | 36,56–45,00 | I vantaggi rientrano nella tessera; CTA grande; cartello finale: tessera a sinistra, claim a destra, loghi piccoli centrati | FAI LA TUA TESSERA eSPORTS FITP; Vivi il gaming da protagonista; loghi eSports FITP + FITP | Fai la tua tessera eSports FITP e vivi il gaming da vero protagonista. | CTA |
+| # | Tempo | Cosa succede | Testi a schermo | V.O. (bozza) |
+|---|---|---|---|---|
+| A | 0,00–3,75 | Smartphone con una partita di tennis, MARCO contro LUNA.SPIN; punto vinto | GIOCHI A TENNIS CLASH? · +120 XP | Giochi a Tennis Clash? |
+| B | 3,75–6,09 | La barra XP si riempie, LEVEL UP, tuffo nello schermo; MARCO si materializza nell'arena eSports FITP | LEVEL UP | Con gli eSports FITP il tuo gioco sale di livello. |
+| C | 6,09–10,78 | L'arena con il logo eSports FITP; il tabellone FITP eSeries by BMW si riempie di giocatori da tutta Italia; resta un posto chiuso, «IL TUO POSTO», contro LUNA.SPIN | IL CIRCUITO UFFICIALE DELLA FEDERAZIONE ITALIANA TENNIS E PADEL · TORNEI UFFICIALI · SFIDE IN TUTTA ITALIA | Il circuito ufficiale FITP: tornei e sfide con giocatori da tutta Italia. |
+| D | 10,78–14,06 | Il posto ha un lucchetto; la tessera lo apre: ISCRIZIONI APERTE | SERVE LA TESSERA eSPORTS FITP · TESSERA eSPORTS FITP 2027 · IL TUO POSTO È SBLOCCATO | Per entrare in gara ti serve la tessera eSports FITP. |
+| E | 14,06–15,94 | La tessera si gira: ATTIVA; vola nello smartphone | TESSERAMENTO COMPLETATO | Fatta la tessera, entri in myFITP: |
+| F | 15,94–24,84 | myFITP: tessera aggiunta → Tornei → FITP eSeries by BMW → REGISTRATI → conferma → SEI ISCRITTO → notifica del match; un tocco ogni ~1,7 s | 01 LA TUA TESSERA · 02 SCEGLI IL TORNEO · 03 ISCRIVITI · 04 SEI IN GARA | scegli il torneo, iscriviti e mettiti alla prova |
+| G | 24,84–29,06 | VS MARCO contro LUNA.SPIN (la sfida del tabellone), scambio, GAME · SET · MATCH, coppa, MARCO esulta | VS · GAME · SET · MATCH · WIN | per diventare il migliore. |
+| H | 29,06–37,03 | Benefit Tesserati sbloccati dopo il primo torneo; pass GRANDI EVENTI FITP con sconti ed eventi; poi i quattro riquadri degli altri vantaggi | FINO AL -10% sui biglietti* · -5% sugli abbonamenti* · Internazionali BNL d'Italia · BNL Italy Major Premier Padel · Davis Cup Final 8 · Nitto ATP Finals · Competizioni ufficiali · Loyalty program FITP · Sconti partner · SuperTennis+ gratis; nota legale | In più, sconti sui grandi eventi FITP, loyalty program, vantaggi dei partner e SuperTennis+ gratis. |
+| I | 37,03–45,00 | I vantaggi rientrano nella tessera; tessera a sinistra, claim a destra, poi la CTA; loghi piccoli centrati | Vivi il gaming da protagonista · RICHIEDI ORA LA TESSERA eSPORTS FITP | Vivi il gaming da vero protagonista. Richiedi ora la tessera eSports FITP. |
 
 Nota legale (blocco H): «*Fino al 10% sui biglietti e fino al 5% sugli abbonamenti. Valido per chi ha partecipato ad almeno un torneo eSports FITP.»
 

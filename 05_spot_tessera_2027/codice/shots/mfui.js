@@ -83,8 +83,7 @@ export function scrMenu(R, t, st = {}) {
   R.image(R.img.mf_menu, -HX + 15, -208, 362, 78, { sub: 3 });
   if (st.hotA > 0) {
     const [x, y] = MENU_ICON(st.hot);
-    R.circle(x, y + 4, 38 + 6 * Math.sin(t * 20) * st.hotA, { fill: MF.mag, alpha: 0.14 * st.hotA }, 40);
-    R.circle(x, y + 4, 40, { stroke: MF.mag, lw: 2.5, alpha: 0.8 * st.hotA }, 40);
+    R.circle(x, y + 2, 44, { fill: MF.mag, alpha: 0.16 * st.hotA, blur: 6 }, 40);
   }
   if (st.lock > 0) {
     // lucchetto sull'icona Benefit: si apre quando il benefit si sblocca
@@ -258,8 +257,7 @@ export function notification(R, t, a, o = {}) {
 
 // tocco del dito: cerchio che si allarga
 export function tap(R, x, y, dt, a = 1) {
-  if (dt < -0.12 || dt > 0.5) return;
-  if (dt < 0) { R.circle(x, y, 20, { fill: '#ffffff', alpha: a * 0.35 * (1 + dt / 0.12) }, 28); return; }
+  if (dt < 0 || dt > 0.5) return;
   const u = dt / 0.5;
   R.circle(x, y, lerp(16, 60, E.outCubic(u)), { stroke: '#ffffff', lw: 3, alpha: a * (1 - u), glow: 0.3 }, 40);
   R.circle(x, y, 18, { fill: '#ffffff', alpha: a * 0.45 * (1 - u) }, 28);
@@ -290,20 +288,17 @@ export function finger(R, x, y, press = 0, a = 1) {
   R.circle(x, y, r, { stroke: '#ffffff', lw: 2.5, alpha: a * 0.95 }, 32);
 }
 
-// traccia del dito: elenco di tocchi {t, x, y}; il dito si sposta tra un tocco e l'altro e preme su ciascuno
+// traccia del dito: elenco di tocchi {t, x, y}. Per ogni tocco il dito compare poco prima, arriva sul bersaglio,
+// preme e sparisce: non resta mai sospeso su elementi che non ci sono più.
 export function fingerTrack(R, t, taps, o = {}) {
-  if (!taps.length) return;
-  const a0 = taps[0].t - 0.45, a1 = taps[taps.length - 1].t + 0.45;
-  const a = seg(t, a0, a0 + 0.2) * (1 - seg(t, a1, a1 + 0.2));
-  if (a <= 0) return;
-  let x = taps[0].x, y = taps[0].y + 120, press = 0;
-  for (let i = 0; i < taps.length; i++) {
-    const T0 = taps[i], P0 = taps[i - 1];
-    const from = P0 ? [P0.x, P0.y] : [T0.x + 40, T0.y + 160];
-    const move0 = P0 ? Math.max(P0.t + 0.2, T0.t - 0.55) : T0.t - 0.45, move1 = T0.t - 0.08;
-    if (t >= move0) { const u = E.inOutCubic(seg(t, move0, move1)); x = lerp(from[0], T0.x, u); y = lerp(from[1], T0.y, u); }
-    press = Math.max(press, env(t, T0.t - 0.06, T0.t, T0.t + 0.1, T0.t + 0.22));
+  for (const T0 of taps) {
+    const a = seg(t, T0.t - 0.55, T0.t - 0.4) * (1 - seg(t, T0.t + 0.3, T0.t + 0.45));
+    if (a > 0) {
+      const u = E.outCubic(seg(t, T0.t - 0.55, T0.t - 0.08));
+      const x = lerp(T0.x + 50, T0.x, u), y = lerp(T0.y + 150, T0.y, u);
+      const press = env(t, T0.t - 0.06, T0.t, T0.t + 0.1, T0.t + 0.22);
+      finger(R, x, y, press, a * (o.alpha ?? 1));
+    }
+    tap(R, T0.x, T0.y, t - T0.t, 1);
   }
-  finger(R, x, y, press, a * (o.alpha ?? 1));
-  for (const T0 of taps) tap(R, T0.x, T0.y, t - T0.t, a);
 }

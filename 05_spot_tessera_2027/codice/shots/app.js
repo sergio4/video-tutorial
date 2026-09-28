@@ -15,9 +15,9 @@ export function app(S, TL) {
   const flip0 = t0 + 0.08, flip1 = t0 + 0.45, act0 = t0 + 0.35;   // la tessera si gira: ATTIVA
   const ph0 = t0 + 1.15, ph1 = t0 + 1.65;                         // arriva il telefono
   const fly0 = t0 + 1.35, fly1 = F0 + 0.2;                       // la tessera entra in «Le Mie Tessere»
-  const tNav = F0 + 1.25, tCard = F0 + 2.55, tDet = tCard + 0.3;
-  const tReg = F0 + 3.95, tOk = F0 + 4.85, tNot = F0 + 5.65, tTapN = F0 + 6.1;
-  const zoom0 = F0 + 6.2;
+  const tNav = F0 + 1.6, tCard = F0 + 3.3, tDet = tCard + 0.35;
+  const tReg = F0 + 5.2, tOk = F0 + 6.35, tNot = F0 + 7.55, tTapN = F0 + 8.15;
+  const zoom0 = F0 + 8.3;
   const PHX = 250;
 
   function phonePose(t) {
@@ -32,7 +32,8 @@ export function app(S, TL) {
     { t: ph1, eye: [-60, 0, -1620], tgt: [-60, 0, 0], f: 1600, ease: 'inOutCubic' },
     { t: tCard - 0.2, eye: [-50, 0, -1560], tgt: [-50, 0, 0], f: 1600, ease: 'inOutCubic' },
     { t: tReg - 0.3, eye: [-50, 20, -1540], tgt: [-50, 20, 0], f: 1600, ease: 'inOutCubic' },
-    { t: tOk + 0.3, eye: [-50, 10, -1540], tgt: [-50, 10, 0], f: 1600 },
+    { t: tReg + 0.4, eye: [-20, 50, -1330], tgt: [-20, 50, 0], f: 1600, ease: 'inOutCubic' },
+    { t: tOk + 0.6, eye: [-20, 60, -1330], tgt: [-20, 60, 0], f: 1600 },
     { t: tNot, eye: [-50, -20, -1540], tgt: [-50, -20, 0], f: 1600, ease: 'inOutCubic' },
     { t: zoom0, eye: [-20, -120, -1380], tgt: [0, -150, 0], f: 1600 },
   ];
@@ -60,8 +61,8 @@ export function app(S, TL) {
   }
 
   function screen(R, t) {
-    const slideT = E.inOutCubic(seg(t, tNav + 0.08, tNav + 0.42));
-    const slideD = E.inOutCubic(seg(t, tDet, tDet + 0.35));
+    const slideT = E.inOutCubic(seg(t, tNav + 0.1, tNav + 0.5));
+    const slideD = E.inOutCubic(seg(t, tDet, tDet + 0.4));
     if (slideT < 1) R.with(T(-slideT * SW * 0.3, 0, 0), () => {
       scrMenu(R, t, { hot: 1, hotA: env(t, fly1 - 0.05, fly1 + 0.05, tNav - 0.3, tNav) });
       const ta = env(t, fly1, fly1 + 0.15, tNav - 0.05, tNav + 0.1);
@@ -71,19 +72,19 @@ export function app(S, TL) {
       }
     });
     if (slideT > 0 && slideD < 1) R.with(T((1 - slideT) * SW - slideD * SW * 0.3, 0, 0), () => {
-      scrTornei(R, t, { appear: t - (tNav + 0.25), press: 0, pressA: env(t, tCard - 0.06, tCard, tCard + 0.2, tCard + 0.4) });
+      scrTornei(R, t, { appear: t - (tNav + 0.3), press: 0, pressA: env(t, tCard - 0.06, tCard, tCard + 0.3, tCard + 0.5) });
     });
     if (slideD > 0) R.with(T((1 - slideD) * SW, 0, 0), () => {
-      const done = E.outCubic(seg(t, tOk + 0.4, tOk + 0.62));
+      const done = E.outCubic(seg(t, tOk + 0.45, tOk + 0.7));
       scrTorneo(R, t, { reg: env(t, tReg - 0.06, tReg, tReg + 0.1, tReg + 0.25), done, count: 27 - (t - tDet) });
-      const da = seg(t, tReg + 0.1, tReg + 0.35) * (1 - seg(t, tOk + 0.32, tOk + 0.45));
-      dialog(R, t, { a: da, press: env(t, tOk - 0.05, tOk, tOk + 0.08, tOk + 0.2), spin: seg(t, tOk + 0.05, tOk + 0.32) });
+      const da = seg(t, tReg + 0.15, tReg + 0.4) * (1 - seg(t, tOk + 0.35, tOk + 0.48));
+      dialog(R, t, { a: da, press: env(t, tOk - 0.05, tOk, tOk + 0.08, tOk + 0.2), spin: seg(t, tOk + 0.05, tOk + 0.35) });
     });
   }
 
   // didascalie dei passaggi, grandi e leggibili, a sinistra del telefono
   function captions(R, t) {
-    const C = [['01', 'LA TUA TESSERA', 'è in myFITP', fly1 - 0.05, tNav + 0.2], ['02', 'SCEGLI IL TORNEO', 'FITP eSeries by BMW', tNav + 0.25, tReg - 0.35], ['03', 'ISCRIVITI', 'un tocco e sei in gara', tReg - 0.3, tNot - 0.1], ['04', 'SEI IN GARA', 'arriva il tuo match', tNot - 0.05, zoom0 + 0.05]];
+    const C = [['01', 'LA TUA TESSERA', 'è in myFITP', fly1 - 0.05, tNav + 0.2], ['02', 'SCEGLI IL TORNEO', 'FITP eSeries by BMW', tNav + 0.3, tReg - 0.45], ['03', 'ISCRIVITI', 'REGISTRATI e conferma', tReg - 0.4, tNot - 0.15], ['04', 'SEI IN GARA', 'arriva il tuo match', tNot - 0.1, zoom0 + 0.05]];
     R.hud(() => {
       for (const [n, s, sub, a0, a1] of C) {
         const a = seg(t, a0, a0 + 0.15) * (1 - seg(t, a1, a1 + 0.15));
@@ -107,20 +108,10 @@ export function app(S, TL) {
       R.push(phonePose(t));
       R.with(T(30, 40, 60), () => R.rrect(-230, -460, 460, 920, 60, { fill: '#000', alpha: 0.45, blur: 40 }));
       phone(R, t, () => screen(R, t));
-      // la card del torneo toccata si solleva dal vetro
-      const lu = seg(t, tCard + 0.05, tCard + 0.3), lo = seg(t, tDet + 0.05, tDet + 0.3);
-      if (lu > 0 && lo < 1) {
-        const L = LIST_CARD(0), e2 = E.outBack(lu, 1.4);
-        R.with(TRS([L.x + L.w / 2 - e2 * 30, L.y + L.h / 2 - e2 * 16 - lo * 90, -e2 * 90 + lo * 50], [deg(-5 * e2), deg(8 * e2), 0], 1 + 0.1 * e2 - lo * 0.2), () => {
-          listCard(R, { x: -L.w / 2, y: -L.h / 2, w: L.w, h: L.h }, undefined, { alpha: 1 - lo, shadow: ['rgba(0,0,0,0.45)', 40, 0, 20] });
-          R.rrect(-L.w / 2, -L.h / 2, L.w, L.h, 10, { stroke: MF.mag, lw: 3, alpha: (1 - lo) * 0.9, glow: 0.8, glowColor: PAL.magenta });
-        });
-      }
       // notifica del match, esce leggermente dal vetro
       const na = seg(t, tNot, tNot + 0.2);
       if (na > 0) {
-        const pop = E.outCubic(seg(t, tNot + 0.1, tNot + 0.35));
-        R.with(TRS([0, (1 - E.outBack(na, 1.6)) * -70 + pop * 6, -pop * 40], [0, 0, 0], 1 + pop * 0.1), () => notification(R, t, na, { press: env(t, tTapN - 0.05, tTapN, tTapN + 0.1, tTapN + 0.25) }));
+        R.with(T(0, (1 - E.outBack(na, 1.6)) * -70, 0), () => notification(R, t, na, { press: env(t, tTapN - 0.05, tTapN, tTapN + 0.1, tTapN + 0.25) }));
       }
       // il dito: arriva, preme, rilascia
       const L0 = LIST_CARD(0);
@@ -129,7 +120,7 @@ export function app(S, TL) {
         { t: tCard, x: L0.x + L0.w * 0.55, y: L0.y + L0.h * 0.45 },
         { t: tReg, x: REG_BTN.x + 40, y: REG_BTN.y },
         { t: tOk, x: DLG_OK.x, y: 96 },
-        { t: tTapN, x: -110, y: -HY + 40 },
+        { t: tTapN, x: -60, y: -HY + 40 },
       ]);
       R.pop();
     }

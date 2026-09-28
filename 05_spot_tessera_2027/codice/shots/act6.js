@@ -1,5 +1,5 @@
 // SCENE 11-12 · «Richiedi ora la tessera eSports FITP e vivi il gaming da vero protagonista.»
-// Dal logo sulla maglia allo stesso logo sulla tessera fisica, che arretra fino al cartello finale;
+// Il pass GRANDI EVENTI gira di taglio e si apre sulla tessera fisica, che resta come cartello finale;
 // poi il super «Vivi il gaming da protagonista» sul keyvisual e il logo FITP.
 import { W, H, Cam } from '../engine/r.js';
 import { clamp, lerp, seg, env, E, deg, hash, rgba, mixc, TRS, T } from '../engine/math.js';
@@ -7,23 +7,20 @@ import { PAL } from '../engine/kit.js';
 import { bgNight, dust, shake } from './common.js';
 
 const CW = 340, CH = 226;
-// posizione del logo eSports sull'arte della tessera (coordinate della carta, centro = 0)
-const LOGO = [-95, -69];
 
 export function act6(S, TL) {
   const s11 = S.s11, s12 = S.s12, t0 = s11.t0, t1 = s12.t1;
-  const hero = t0 + 0.75;
+  const hero = t0 + 0.45;
   const sup = s12.t0 + 0.1;
   const logoIn = s12.t0 + 1.1;
 
   function cardPose(t) {
-    // parte con il logo della tessera a tutto schermo, poi arretra fino alla posa da cartello
-    const u = E.outExpo(seg(t, t0, hero));
-    const sc = lerp(16, 2.7, u);
-    const lx = lerp(-LOGO[0] * sc, 0, u), ly = lerp(-LOGO[1] * sc, -40, u);
-    const idle = seg(t, hero - 0.2, hero + 0.4);
+    // raccordo dal pass della scena 7: arriva di taglio (90°) e si apre sulla tessera fisica
+    const u = E.outCubic(seg(t, t0, hero));
+    const idle = seg(t, hero - 0.1, hero + 0.5);
     const s12u = E.inOutCubic(seg(t, s12.t0 - 0.2, s12.t0 + 0.5));
-    return TRS([lx, lerp(ly, -70, s12u), lerp(0, -40, s12u)], [deg(6 * Math.sin(t * 1.2)) * idle * (1 - s12u), deg(-12 + 10 * Math.sin(t * 0.9)) * idle * (1 - s12u * 0.8), deg(-2) * idle * (1 - s12u)], sc * lerp(1, 1.08, s12u));
+    const sc = lerp(2.3, 2.7, u) * lerp(1, 1.08, s12u);
+    return TRS([0, lerp(-40, -70, s12u), lerp(0, -40, s12u)], [deg(6 * Math.sin(t * 1.2)) * idle * (1 - s12u), lerp(deg(-90), 0, u) + deg(-12 + 10 * Math.sin(t * 0.9)) * idle * (1 - s12u * 0.8), deg(-2) * idle * (1 - s12u)], sc);
   }
 
   function card(R, t) {
@@ -99,7 +96,7 @@ export function act6(S, TL) {
 
   function fx(t) {
     const f = {};
-    if (t < hero) f.mb = 8;
+    if (t < hero) f.mb = 7;
     if (t >= sup && t < sup + 0.3) f.mb = 5;
     if (t >= logoIn && t < logoIn + 0.25) { const u = (t - logoIn) / 0.25; f.flash = ['#ffffff', 0.15 * (1 - u)]; }
     return f;

@@ -101,3 +101,19 @@ export function textRows(R, word, t, o = {}) {
     }
   }
 }
+
+// fari fuori fuoco (tele): dischi morbidi che scorrono con ox (pixel di spostamento della camera)
+export function bokeh(R, t, a, ox = 0, seed = 0) {
+  if (a <= 0) return;
+  R.hud(() => {
+    for (let i = 0; i < 22; i++) {
+      const j = i + seed * 31;
+      const x = ((hash(j * 3.1) * W * 1.6 - ox * (0.4 + hash(j) * 0.6)) % (W * 1.6) + W * 1.6) % (W * 1.6) - W * 0.3;
+      const y = H * (0.05 + hash(j * 5.3) * 0.75) + Math.sin(t * 0.5 + j) * 6;
+      const r = 30 + hash(j * 7.7) * 90;
+      const c = hash(j * 9.1) > 0.75 ? PAL.magenta : hash(j * 2.3) > 0.7 ? PAL.cyan : '#fff4dc';
+      R.circle(x, y, r, { fill: c, alpha: a * (0.07 + hash(j * 4.4) * 0.1), glow: 0.25 }, 40);
+      R.circle(x, y, r, { stroke: c, lw: 2, alpha: a * 0.12 }, 40);
+    }
+  });
+}

@@ -131,3 +131,30 @@ export function figure(R, pose, o = {}, st = {}) {
   if (o.wrist) for (const hd of [J.hdA, J.hdB]) R.circle(hd[0], hd[1] - 5, 3.4, { fill: o.wrist, alpha: a * 0.9, glow: 0.7 }, 12);
   return J;
 }
+
+// ombra proiettata a terra della sagoma: nessun corpo visibile, solo la sua presenza.
+// Va disegnata dentro una trasformazione che schiaccia il piano della sagoma sul terreno (vedi groundShadow).
+export function shadowFig(R, pose, o = {}, st = {}) {
+  const { S, rk } = shapes(pose, o);
+  const a = st.alpha ?? 0.7;
+  if (rk && rk.kind === 'tennis') {
+    const ring = ellipse(rk.c, rk.rx, rk.ry, rk.rot, 32);
+    const inner = ellipse(rk.c, rk.rx - 2.4, rk.ry - 2.4, rk.rot, 32);
+    R.shape([ring, inner], { fill: st.fill || '#05030f', alpha: a * 0.9, blur: st.blur ?? 0, rule: 'evenodd' });
+    const c = Math.cos(rk.rot), s = Math.sin(rk.rot);
+    for (let k = -3; k <= 3; k++) {
+      const u = (k / 4) * rk.rx, h = rk.ry * Math.sqrt(Math.max(0, 1 - (u / rk.rx) ** 2)) * 0.92;
+      R.line([rk.c[0] + u * c + h * s, rk.c[1] + u * s - h * c, rk.c[0] + u * c - h * s, rk.c[1] + u * s + h * c], { stroke: st.fill || '#05030f', lw: 0.6, alpha: a * 0.5 });
+    }
+  }
+  R.shape(S, { fill: st.fill || '#05030f', alpha: a, blur: st.blur ?? 0 });
+}
+
+// matrice che proietta il piano della sagoma (x avanti, y giù, altezza ~180) sul terreno y=0:
+// l'ombra parte dai piedi in p (mondo) e si allunga di len volte l'altezza verso la direzione dir [dx, dz].
+export function groundShadow(p, sc, dir, len, yaw = 0) {
+  const c = Math.cos(yaw), s = Math.sin(yaw);
+  const [dx, dz] = dir;
+  // x locale → di lato rispetto alla direzione dell'ombra; y locale (negativa in alto) → lungo dir
+  return [c * sc, -dx * sc * len, 0, p[0], 0, 0, 0, p[1] - 0.5, s * sc, -dz * sc * len, 0, p[2]];
+}

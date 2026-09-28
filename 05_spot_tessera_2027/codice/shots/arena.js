@@ -6,15 +6,28 @@ import { PAL, courtLines } from '../engine/kit.js';
 export const M = 40; // unità per metro
 export const P = (x, z, h = 0) => [x * M, -h * M, z * M];
 
+// superfici: esterno, fascia, campo (due toni)
+export const SURF = {
+  hard: ['#1a2f96', '#1d45c8', '#2a60f2', '#2152e0'],
+  clay: ['#8a3a22', '#a8472a', '#c85a33', '#b8502e'],
+  grass: ['#23602f', '#2c7438', '#3f9447', '#358a40'],
+  night: ['#070a2c', '#0b1450', '#12206e', '#0e1a60'],
+};
+
 // campo con la lunghezza lungo x, centrato in (cx, cz) metri
 export function court(R, cx, cz, a = 1, o = {}) {
   R.with(TRS(P(cx, cz, 0), [deg(-90), deg(90), 0], M), () => {
-    R.rect(-9, -18, 18, 36, { fill: o.out || '#1a2f96', alpha: a });
-    R.rect(-6.4, -13.1, 12.8, 26.2, { fill: '#1d45c8', alpha: a });
-    R.rect(-5.485, -11.885, 10.97, 23.77, { fill: { lin: [0, -11.885, 0, 11.885], stops: [[0, '#2a60f2'], [1, '#2152e0']] }, alpha: a });
+    const sf = SURF[o.surf || 'hard'];
+    R.rect(-9, -18, 18, 36, { fill: o.out || sf[0], alpha: a });
+    R.rect(-6.4, -13.1, 12.8, 26.2, { fill: sf[1], alpha: a });
+    R.rect(-5.485, -11.885, 10.97, 23.77, { fill: { lin: [0, -11.885, 0, 11.885], stops: [[0, sf[2]], [1, sf[3]]] }, alpha: a });
     for (const [u0, v0, u1, v1] of courtLines()) R.band(u0, v0, u1, v1, 0.07, { fill: '#ffffff', alpha: a, glow: 0.45, glowColor: '#cfe8ff' });
   });
-  // rete (tra le due metà, lungo z)
+  if (!o.noNet) net(R, cx, cz, a);
+}
+
+// rete (tra le due metà, lungo z)
+export function net(R, cx, cz, a = 1) {
   const nw = 6.4;
   const top = [], bot = [];
   for (let k = 0; k <= 16; k++) { const z = cz - nw + (2 * nw * k) / 16; top.push(P(cx, z, 0.95)); bot.push(P(cx, z, 0)); }

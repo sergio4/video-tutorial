@@ -72,7 +72,8 @@ export class Fonts {
     if (!font) throw new Error('font mancante: ' + name);
     const upm = font.unitsPerEm, k = size / upm;
     const chars = [...str];
-    const gl = font.stringToGlyphs(str);
+    // senza sostituzioni OpenType: alcune (es. Roboto) usano formati che opentype.js non gestisce
+    const gl = Array.from(str, (ch) => font.charToGlyph(ch));
     const glyphs = [];
     let pen = 0;
     for (let i = 0; i < gl.length; i++) {

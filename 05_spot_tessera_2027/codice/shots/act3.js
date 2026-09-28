@@ -1,18 +1,18 @@
 // SCENA 6 · «per diventare il migliore.»
-// Dal tap entriamo nella luce: una scia disegna al neon una coppa con le racchette incrociate,
-// la camera arretra e la coppa è tra le mani del protagonista, sotto l'insegna WIN, tra i coriandoli.
-import { W, H, Cam } from '../engine/r.js';
-import { clamp, lerp, seg, env, E, deg, hash, rgba, mixc, TRS, T, apply } from '../engine/math.js';
-import { PAL, ballScreen } from '../engine/kit.js';
-import { camTrack, shake, bgNight } from './common.js';
-import { figure, POSE, jointsOf } from './figure.js';
-
-const FS = 3.4; // scala della sagoma
-const TS = 0.3; // scala della coppa nel sistema della sagoma
+// Dal tocco sulla notifica entriamo nella partita: vista televisiva su un campo notturno, lo scambio è una scia di luce
+// e il tabellone MARCO – LUNA.SPIN. Il punto vincente accende GAME · SET · MATCH;
+// la pallina schizza in alto e la sua scia disegna al neon la coppa sotto l'insegna WIN; MARCO entra in primo piano ed esulta.
+import { W, H } from '../engine/r.js';
+import { clamp, lerp, seg, env, E, deg, hash, rgba, mixc, TRS, T } from '../engine/math.js';
+import { PAL, ball as ball3 } from '../engine/kit.js';
+import { camTrack, shake } from './common.js';
+import { M, P, court, crowd, towers, sky } from './arena.js';
+import { charCard } from './chars.js';
 
 // profilo della coppa (metà destra), da specchiare: y verso il basso, base a 0
 const CUP = [[0, -300], [120, -300], [112, -250], [92, -200], [60, -160], [22, -132], [16, -92], [18, -64], [46, -44], [52, -20], [74, -14], [74, 0], [0, 0]];
 const HANDLE = [[112, -262], [168, -258], [176, -214], [140, -180], [84, -176]];
+const CS = 0.018 * M; // scala della coppa: 300 unità di profilo ≈ 5,4 m
 
 function pathLen(pts) { let l = 0; for (let i = 1; i < pts.length; i++) l += Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]); return l; }
 function partial(pts, u) {
@@ -29,28 +29,75 @@ function partial(pts, u) {
 export function act3(S, TL) {
   const s6 = S.s6;
   const t0 = s6.t0, t1 = s6.t1;
-  const draw0 = t0 + 0.05, draw1 = t0 + 0.95; // la coppa si disegna
-  const pull0 = t0 + 0.9, pull1 = t0 + 1.7;   // la camera arretra e rivela il protagonista
-  const win = t0 + 1.35;                       // l'insegna WIN si accende
+  const tWin = t0 + 1.4;                        // punto vincente
+  const draw0 = tWin + 0.3, draw1 = tWin + 1.0; // la scia disegna la coppa
+  const tSign = tWin + 0.95;                    // si accende WIN
 
-  const liftJ = jointsOf(POSE.lift);
-  const cupBase = [0, liftJ.hdA[1] - 6]; // tra le mani (sistema della sagoma)
-  const cupWorld = (x, y) => [(cupBase[0] + x * TS) * FS, (cupBase[1] + y * TS) * FS, 0];
-  const cupCenter = cupWorld(0, -160);
+  // scambio: tratti [t inizio, t fine, da (x,z metri), a (x,z), altezza dell'arco]
+  const R0 = [
+    [t0 - 0.1, t0 + 0.42, [-11.2, 2.2], [10.2, -2.8], 1.3],
+    [t0 + 0.42, t0 + 0.9, [10.2, -2.8], [-9.8, 3.4], 1.5],
+    [t0 + 0.9, tWin, [-9.8, 3.4], [9.6, -4.05], 1.1], // vincente sulla riga laterale
+  ];
+  const CUP_POS = P(15.5, 0, 0.8); // base della coppa: sospesa sopra il fondo campo avversario
+  // punto del profilo della coppa in coordinate mondo (piano rivolto alla camera)
+  const cupPt = (x, y) => [CUP_POS[0], CUP_POS[1] + y * CS, CUP_POS[2] - x * CS];
+
+  function ballAt(t) {
+    for (const [a, b, p0, p1, h] of R0) if (t >= a && t < b) {
+      const u = (t - a) / (b - a);
+      return P(lerp(p0[0], p1[0], u), lerp(p0[1], p1[1], u), 0.15 + Math.sin(u * Math.PI) * h + (1 - u) * 0.9);
+    }
+    if (t >= tWin) {
+      // dopo il rimbalzo la pallina sale verso la coppa e diventa la punta che la disegna
+      const u = E.outCubic(seg(t, tWin, draw0));
+      const top = cupPt(CUP[0][0], CUP[0][1]), from = P(9.6, -4.05, 0);
+      return [lerp(from[0], top[0], u), lerp(0, top[1], u) - Math.sin(u * Math.PI) * 1.5 * M, lerp(from[2], top[2], u)];
+    }
+    return null;
+  }
 
   const camKeys = [
-    { t: t0, eye: [cupCenter[0], cupCenter[1], cupCenter[2] - 420], tgt: cupCenter, f: 1500, roll: deg(-6) },
-    { t: pull0, eye: [cupCenter[0] + 20, cupCenter[1] + 20, cupCenter[2] - 560], tgt: cupCenter, f: 1500, roll: deg(-2) },
-    { t: pull1, eye: [60, -540, -1780], tgt: [0, -520, 0], f: 1500, roll: deg(1.5), ease: 'inOutCubic' },
-    { t: t1, eye: [-40, -520, -1600], tgt: [0, -520, 0], f: 1500, roll: deg(-1) },
+    { t: t0, eye: P(-20.5, 0.6, 7.2), tgt: P(-1, 0, 0), f: 1350, roll: deg(-2) },
+    { t: tWin, eye: P(-19.2, 0.2, 6.6), tgt: P(0, -0.3, 0.2), f: 1350, roll: deg(1) },
+    { t: tWin + 0.75, eye: P(-5, 0, 5.0), tgt: P(15.5, 2.6, 6.6), f: 1350, roll: deg(0), ease: 'inOutCubic' },
+    { t: t1, eye: P(-3.2, -0.4, 4.8), tgt: P(15.5, 2.9, 6.8), f: 1350, roll: deg(-1.5) },
   ];
-  const camAt = (t) => camTrack(camKeys, t, shake(t, [[win, 12, 0.5]]));
+  const camAt = (t) => camTrack(camKeys, t, shake(t, [[tWin, 16, 0.5], [tSign, 10, 0.4]]));
+
+  function rally(R, t) {
+    if (t >= draw1) return;
+    const pts = [];
+    for (let i = 0; i <= 24; i++) { const p = ballAt(t - 0.22 + (i / 24) * 0.22); if (p) pts.push(p); }
+    if (pts.length > 2) R.trail(pts, { w0: 0, w1: 0.16 * M, a0: 0, a1: 0.9, color: (u) => rgba(mixc(PAL.cyan, PAL.ball, u), 1), glow: 1 });
+    const p = ballAt(t);
+    if (p && t < draw0) {
+      ball3(R, p, 0.05 * M, { spin: [t * 12, t * 7, 0], glow: 1.2 });
+      R.with(TRS([p[0], 0, p[2]], [deg(-90), 0, 0], 1), () => R.circle(0, 0, 0.06 * M, { fill: '#000', alpha: 0.5, blur: 2 }, 16));
+    }
+    // colpi: onde di luce sui due fondi campo
+    for (const [a, , p0] of R0) {
+      const u = seg(t, a, a + 0.25);
+      if (u > 0 && u < 1) R.with(TRS(P(p0[0], p0[1], 0.02), [deg(-90), 0, 0], M), () => R.circle(0, 0, lerp(0.3, 2.2, E.outCubic(u)), { stroke: '#ffffff', lw: 0.06, alpha: 1 - u, glow: 1 }, 40));
+    }
+  }
+
+  function winSplash(R, t) {
+    const u = seg(t, tWin, tWin + 0.6);
+    if (u <= 0 || u >= 1) return;
+    R.with(TRS(P(9.6, -4.05, 0.02), [deg(-90), 0, 0], M), () => {
+      R.circle(0, 0, lerp(0.3, 5, E.outCubic(u)), { stroke: PAL.ball, lw: 0.12 * (1 - u) + 0.02, alpha: 1 - u, glow: 1.3 }, 64);
+      R.circle(0, 0, lerp(0.2, 2.2, E.outCubic(u)), { fill: PAL.ball, alpha: (1 - u) * 0.6, glow: 1 }, 40);
+    });
+  }
 
   function trophy(R, t) {
     const u = seg(t, draw0, draw1);
+    if (u <= 0) return;
     const glowK = 0.9 + 0.3 * Math.sin(t * 12);
-    R.push(TRS(cupWorld(0, 0), [0, 0, 0], FS * TS));
-    // riempimento vetroso quando il disegno è completo
+    // la coppa si solleva appena finita (segnaposto del personaggio che la alza)
+    const lift = E.outBack(seg(t, draw1, draw1 + 0.5), 1.5) * 0.5 * M;
+    R.push(TRS([CUP_POS[0], CUP_POS[1] - lift, CUP_POS[2]], [0, deg(90), 0], CS));
     const full = seg(t, draw1 - 0.1, draw1 + 0.3);
     if (full > 0) {
       const poly = CUP.slice(0, -1).concat(CUP.slice(0, -1).reverse().map(([x, y]) => [-x, y]));
@@ -59,12 +106,10 @@ export function act3(S, TL) {
     for (const side of [1, -1]) {
       const cup = partial(CUP.map(([x, y]) => [x * side, y]), u);
       R.line(cup.flat(), { stroke: '#ffffff', lw: 7, glow: 1.2 * glowK, glowColor: side > 0 ? PAL.cyan : PAL.magenta });
-      const hu = seg(t, draw0 + 0.35, draw1);
+      const hu = seg(t, draw0 + 0.3, draw1);
       if (hu > 0) R.line(partial(HANDLE.map(([x, y]) => [x * side, y]), hu).flat(), { stroke: '#ffffff', lw: 6, glow: 1.1 * glowK, glowColor: side > 0 ? PAL.cyan : PAL.magenta });
-      // punta luminosa che disegna
-      if (u < 1) { const p = cup[cup.length - 1]; R.circle(p[0], p[1], 10, { fill: '#ffffff', glow: 2 }, 16); }
+      if (u < 1) { const p = cup[cup.length - 1]; R.circle(p[0], p[1], 12, { fill: '#ffffff', glow: 2 }, 16); }
     }
-    // racchette incrociate sul corpo della coppa
     const ru = seg(t, draw1 - 0.2, draw1 + 0.3);
     if (ru > 0) for (const side of [1, -1]) R.with(TRS([0, -222, 0], [0, 0, deg(28 * side)], 1), () => {
       R.band(0, 10, 0, 60 * ru, 5, { fill: '#ffffff', glow: 0.9, glowColor: PAL.magenta });
@@ -73,26 +118,12 @@ export function act3(S, TL) {
     R.pop();
   }
 
-  function skyline(R, t, a) {
-    R.hud(() => {
-      for (let i = 0; i < 26; i++) {
-        const w = 60 + hash(i) * 90, h = 120 + hash(i * 3) * 300, x = i * 78 - 40;
-        R.rect(x, H - h, w, h, { fill: '#0c0726', alpha: a });
-        for (let j = 0; j < 14; j++) {
-          const wx = x + 10 + (j % 3) * (w / 3.2), wy = H - h + 20 + Math.floor(j / 3) * 28;
-          if (wy > H - 10 || hash(i * 31 + j) < 0.45) continue;
-          R.rect(wx, wy, 8, 12, { fill: hash(i + j * 7) > 0.8 ? PAL.magenta : '#ffd9a8', alpha: a * 0.7, glow: 0.3 });
-        }
-      }
-    });
-  }
-
   function winSign(R, t) {
-    const on = seg(t, win - 0.08, win);
-    const flick = t < win + 0.35 ? (Math.sin(t * 70) > -0.2 ? 1 : 0.25) : 1;
+    const on = seg(t, tSign - 0.08, tSign);
+    const flick = t < tSign + 0.35 ? (Math.sin(t * 70) > -0.2 ? 1 : 0.25) : 1;
     const a = on * flick;
     if (a <= 0) return;
-    R.with(TRS([0, -470, 900], [0, 0, 0], 1.55), () => {
+    R.with(TRS(P(30, 0, 11.8), [0, deg(90), 0], 0.8), () => {
       R.rrect(-470, -170, 940, 340, 40, { stroke: PAL.magenta, lw: 10, alpha: a, glow: 1.4 });
       R.rrect(-440, -140, 880, 280, 30, { stroke: '#8a6bff', lw: 4, alpha: a * 0.8, glow: 0.8 });
       R.text('WIN', 0, 0, { font: 'unb900', size: 250, align: 'center', v: 'cap', skew: 0.18, fill: 'rgba(138,107,255,0.25)', stroke: '#ffffff', lw: 5, alpha: a, glow: 1.3, glowColor: '#b38cff', tracking: 0.04 });
@@ -100,7 +131,7 @@ export function act3(S, TL) {
   }
 
   function confetti(R, t) {
-    const u = t - win;
+    const u = t - tSign;
     if (u < 0) return;
     R.hud(() => {
       for (let i = 0; i < 140; i++) {
@@ -109,42 +140,72 @@ export function act3(S, TL) {
         const x = x0 + burst + Math.sin(u * 3 + i) * 30, y = -40 + sp * u + (hash(i * 5.5) * 300) * (1 - Math.exp(-u * 3)) - 200 * Math.exp(-u * 4) + hash(i) * 200;
         const flip = Math.cos(u * (4 + hash(i) * 8) + i);
         const c = [PAL.cyan, PAL.magenta, PAL.ball, '#8a6bff', '#ffffff'][i % 5];
-        const L = 9 + hash(i * 2) * 8;
-        const ang = u * 3 + i;
+        const L = 9 + hash(i * 2) * 8, ang = u * 3 + i;
         R.with([Math.cos(ang) * flip, -Math.sin(ang), 0, x, Math.sin(ang) * flip, Math.cos(ang), 0, y, 0, 0, 1, 0], () => R.rect(-L, -L * 0.45, 2 * L, L * 0.9, { fill: c, alpha: 0.95, glow: 0.4 }));
       }
     });
   }
 
+  // tabellone in stile gioco (nomi inventati)
+  function scoreboard(R, t) {
+    const a = seg(t, t0 + 0.15, t0 + 0.35) * (1 - seg(t, tWin + 0.7, tWin + 0.95));
+    if (a > 0) {
+      const won = seg(t, tWin, tWin + 0.1);
+      R.hud(() => {
+        const x = 70, y = 70;
+        const rows = [['MARCO', won > 0 ? 'GAME' : '40', true], ['LUNA.SPIN', '30', false]];
+        rows.forEach(([n, sc, hero], i) => {
+          const yy = y + i * 64;
+          R.rrect(x, yy, 420, 56, 10, { fill: hero ? 'rgba(244,8,188,0.85)' : 'rgba(10,8,40,0.8)', alpha: a });
+          R.text(n, x + 22, yy + 28, { font: 'unb900', size: 24, v: 'cap', fill: '#ffffff', alpha: a });
+          R.rrect(x + 300, yy + 6, 110, 44, 8, { fill: 'rgba(0,0,0,0.35)', alpha: a });
+          R.text(sc, x + 355, yy + 28, { font: 'bc900i', size: 34, align: 'center', v: 'cap', fill: hero && won > 0 ? PAL.ball : '#ffffff', alpha: a, glow: hero && won > 0 ? 0.6 : 0 });
+          if (hero) R.circle(x + 272, yy + 28, 7, { fill: PAL.ball, alpha: a, glow: 0.7 }, 16);
+        });
+      });
+    }
+    const g = env(t, tWin + 0.02, tWin + 0.12, tWin + 0.6, tWin + 0.8);
+    if (g > 0) R.hud(() => R.text('GAME · SET · MATCH', W / 2, H * 0.5, { font: 'unb900', size: 96, align: 'center', v: 'cap', fill: '#ffffff', alpha: g, tracking: -0.02, depth: 10, depthSteps: 6,
+      side: (u) => rgba(mixc(PAL.magenta, '#2a0a50', u), 1),
+      per: (i) => { const u = seg(t, tWin + 0.02 + i * 0.012, tWin + 0.2 + i * 0.012); return { s: lerp(1.6, 1, E.outExpo(u)), a: seg(t, tWin + 0.02 + i * 0.012, tWin + 0.06 + i * 0.012) }; } }));
+  }
+
+  // il protagonista (personaggio ufficiale) entra in primo piano ed esulta mentre si accende WIN
+  function hero(R, t) {
+    const k = seg(t, tSign - 0.12, tSign + 0.3);
+    if (k <= 0) return;
+    const u = E.outBack(k, 1.3);
+    const drift = (t - tSign) * 12;
+    R.hud(() => R.with(T(470 - drift, H + 230 + (1 - u) * 1300, 0), () => charCard(R, 'hero', 1180, { glow: 0.9 })));
+  }
+
   function draw(R, t) {
     const cam = camAt(t);
     R.setCam(cam);
-    // entrata nella luce dal pulsante
-    bgNight(R, t, { top: '#140630', bottom: '#050214', c1: '#3b1f7a', c2: PAL.magenta, c3: '#1b2cff' });
-    const rev = seg(t, pull0, pull1);
-    skyline(R, t, rev);
-    // fasci di luce verticali dietro alla coppa
-    R.hud(() => {
-      for (let i = 0; i < 9; i++) {
-        const x = W / 2 + (i - 4) * 210 + Math.sin(t * 0.8 + i) * 30;
-        R.poly([x - 6, 0, x + 6, 0, x + 90, H, x - 90, H], { fill: { screenLin: [0, 0, 0, H], stops: [[0, rgba(i % 2 ? PAL.cyan : PAL.magenta, 0.0)], [1, rgba(i % 2 ? PAL.cyan : PAL.magenta, 0.12 * rev)]] }, blend: 'lighter' });
-      }
-    });
+    sky(R, 0.7);
+    towers(R, 0, 1);
+    crowd(R, t, 0, 1, { z0: 13, rows: 9, span: 70 });
+    crowd(R, t, 0, 1, { z0: -13 - 9 * 1.4, rows: 9, span: 70 });
+    court(R, 0, 0, 1, { surf: 'night' });
     winSign(R, t);
-    // protagonista con la coppa sopra la testa
-    R.with(TRS([0, 0, 0], [0, 0, 0], FS), () => figure(R, POSE.lift, { band: PAL.ball, wrist: PAL.ball }, { rimA: PAL.ball, rimB: PAL.magenta, rim: 2.2, glow: 0.9 }));
+    rally(R, t);
+    winSplash(R, t);
     trophy(R, t);
+    hero(R, t);
     confetti(R, t);
-    // lampo d'ingresso (continua lo zoom nel pulsante)
-    const inA = 1 - seg(t, t0, t0 + 0.2);
-    if (inA > 0) R.hud(() => R.rect(0, 0, W, H, { fill: PAL.ball, alpha: inA * 0.85 }));
+    scoreboard(R, t);
+    const inA = 1 - seg(t, t0, t0 + 0.22);
+    if (inA > 0) R.hud(() => R.rect(0, 0, W, H, { fill: '#ffffff', alpha: inA * 0.9 }));
+    const out = E.inCubic(seg(t, t1 - 0.22, t1));
+    if (out > 0) R.hud(() => R.rect(0, 0, W, H, { fill: '#ffffff', alpha: out }));
   }
 
   function fx(t) {
     const f = {};
-    if (t < t0 + 0.25) f.mb = 6;
-    if (t >= pull0 && t < pull1) f.mb = 6;
-    if (t >= win && t < win + 0.3) { const u = (t - win) / 0.3; f.flash = [PAL.magenta, 0.3 * (1 - u)]; f.ca = 0.008 * (1 - u); }
+    if (t < tWin) f.mb = 6;
+    if (t >= tWin && t < tWin + 0.8) f.mb = 7;
+    if (t >= tWin && t < tWin + 0.3) { const u = (t - tWin) / 0.3; f.flash = [PAL.ball, 0.25 * (1 - u)]; f.ca = 0.01 * (1 - u); }
+    if (t >= tSign && t < tSign + 0.3) { const u = (t - tSign) / 0.3; f.flash = [PAL.magenta, 0.3 * (1 - u)]; f.ca = 0.008 * (1 - u); }
     return f;
   }
 

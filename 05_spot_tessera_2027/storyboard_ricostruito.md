@@ -1,26 +1,35 @@
-# Spot Tessera eSports FITP 2027 · storyboard ricostruito e regia
+# Spot Tessera eSports FITP 2027 · storyboard ricostruito e regia (v2)
 
 BOZZA · 16:9 · 30 s · versione visiva senza audio, pronta per il voice over.
 
-Fonte del contenuto: storyboard «Spot Tesseramento eSports 2027» di Next Different (PDF, 10 scene numerate 1-7 e 10-12: **le scene 8 e 9 non sono nel documento**). Fonte dello stile: la v4 motion (`04_motion/`). Il PDF non è nel repository: è materiale dell'agenzia.
+Fonte del contenuto: storyboard «Spot Tesseramento eSports 2027» di Next Different (PDF, scene 1-7 e 10-12; **le scene 8 e 9 non sono nel documento**). Fonte dello stile: la v4 motion (`04_motion/`). Il PDF non è nel repository: è materiale dell'agenzia.
 
-## Struttura narrativa
+## Decisioni approvate (v2)
 
-Tre movimenti: **ambizione** (tutti vogliono vincere, solo i migliori salgono di livello) → **percorso** (tessera, tornei ufficiali, vittoria, vantaggi) → **identità** (atleta federale, richiedi la tessera, «vivi il gaming da protagonista»).
+- **Ordine B:** la scena 10 (stadio) viene prima della 7 (sconti), così i vantaggi chiudono con «In più…» e il pass si trasforma nella tessera finale.
+- **Personaggi:** due pose ufficiali Tennis Clash ricevute. L'uomo con il pugno chiuso è il protagonista **MARCO**; la donna con la racchetta in spalla è l'avversaria **LUNA.SPIN**. Sono usati nelle scene 6 e 10, con luce di bordo neon e correzione colore applicate alle immagini (`codice/media/tc_*`). Nelle scene 1-2 restano i segnaposto: ombre dei fari, pallina, racchetta.
+- **myFITP fedele:** interfaccia ricostruita dalle schermate reali (`assets/riferimenti/myfitp`), con colori reali e dati inventati (utente MARCO, torneo «FITP eSeries by BMW - GENNAIO #1», martedì 12 gennaio).
+- **Pass:** solo «Grandi eventi», senza nomi di eventi e senza percentuali.
+- **V.O. scena 3:** «Diventa protagonista.» al posto di «Diventa un atleta FITP» (parola chiave del claim).
+- **FITP eSeries by BMW:** nome valido fino al 2028. Nei testi si scrive «alle FITP eSeries», non «ai».
+
+## Filo conduttore
+
+La tessera è l'oggetto di gioco che il protagonista sblocca, usa e di cui raccoglie i vantaggi. Livello successivo → oggetto sbloccato → in myFITP → iscrizione al torneo → match → vittoria → stadio → benefit sbloccato dopo il primo torneo (condizione reale della tessera eSports) → pass → tessera fisica.
 
 ## Scene, messaggio, resa
 
-| # | Storyboard | V.O. | Resa cinematografica | Raccordo con la scena dopo |
+| # | Storyboard | V.O. | Resa | Raccordo |
 |---|---|---|---|---|
-| 1 | Personaggi di Tennis Clash che si preparano al servizio | Tutti i giocatori puntano alla vittoria | Carrellata laterale veloce su una fila di campi notturni: quattro giocatori (sagome in controluce con luce di bordo neon) palleggiano e lanciano; la camera sosta su ciascuno e frusta al successivo | La camera arriva sul protagonista mentre lancia la palla |
-| 2 | Focus sul protagonista, barra di caricamento che si riempie | ma solo i migliori passano al livello successivo | Bullet-time: il tempo si ferma sul lancio, la camera gira attorno al protagonista, linee di velocità; LEVEL UP e barra a 8 segmenti che scattano fino al 100% | Il colpo di servizio: lampo, la barra piena… |
-| 3 | Compare la tessera FITP | Diventa un atleta FITP | …si apre nella Tessera eSports FITP (arte ufficiale), cornice neon sfalsata, «2027» gigante dietro | La tessera gira su se stessa… |
-| 4 | Interfaccia myFITP: come iscriversi a un torneo | Partecipa ai tornei ufficiali eSports | …e diventa il tablet con il sito del circuito: «Partecipa ai FITP eSeries by BMW», Tesserati ora | La pagina scorre |
-| 5 | Le schermate continuano | e mettiti alla prova | Tornei GP365 #3 e #4, tap su «Iscriviti ora su myFITP» → ISCRITTO ✓ | La camera entra nel pulsante |
-| 6 | Il protagonista solleva una coppa | per diventare il migliore | Una scia disegna al neon la coppa con le racchette incrociate; la camera arretra: la coppa è tra le mani del protagonista, in controluce davanti all'insegna WIN, skyline e coriandoli | Un coriandolo diventa… |
-| 7 | Biglietto: sconti sui grandi eventi | In più, approfitta degli sconti esclusivi dedicati ai tesserati | …il biglietto GRANDI EVENTI (tagliando «Sconti tesserati») sopra uno stadio notturno | Il tagliando si strappa: fessura di luce |
-| 10 | Il protagonista entra nello stadio verso gli avversari | Scendi in campo da atleta federale | Uscita dal tunnel nella luce dei fari: protagonista di spalle con il logo eSports sulla maglia, quattro avversari schierati (tennis e padel), FITP gigante sopra lo stadio | La camera entra nel logo sulla schiena… |
-| 11 | Cartello finale con la tessera fisica | Richiedi ora la tessera eSports FITP | …che diventa lo stesso logo sulla tessera: la carta arretra fino al cartello, con le cornici neon | Il cartello resta |
+| 1 | Personaggi di Tennis Clash che si preparano al servizio | Tutti i giocatori puntano alla vittoria | Carrellata a frusta su quattro campi (cemento, terra, erba, cemento): le ombre lunghe dei giocatori palleggiano e servono; targhetta del giocatore (nome e livello) | Sul protagonista la camera segue il lancio verso il cielo |
+| 2 | Focus sul protagonista, barra che si riempie | ma solo i migliori passano al livello successivo | Bullet-time sulla pallina sospesa contro i fari fuori fuoco; LEVEL UP e barra a 8 segmenti fino al 100% («MARCO · LV 29 › 30»); entra la racchetta e colpisce | Lampo del colpo: la barra piena… |
+| 3 | Compare la tessera FITP | Diventa protagonista. | …si apre come «oggetto sbloccato»: la Tessera eSports FITP 2027 con raggi da carta rara e «2027» gigante dietro | La tessera vola nello smartphone |
+| 4 | Interfaccia myFITP: come iscriversi a un torneo | Partecipa ai tornei ufficiali eSports | La tessera entra in «Le Mie Tessere» («Tessera eSports 2027 aggiunta»); Tornei → lista → tocco su FITP eSeries by BMW; la card esce dal vetro in 3D; i badge del torneo galleggiano accanto al telefono | Dettaglio del torneo |
+| 5 | Le schermate continuano | e mettiti alla prova | REGISTRATI → «Sei sicuro di volerti iscrivere al torneo?» → Conferma → SEI ISCRITTO ✓ → notifica «Hai un nuovo match nel torneo» | Tocco sulla notifica: la camera ci entra |
+| 6 | Il protagonista solleva una coppa | per diventare il migliore | Il match: vista televisiva su campo notturno, scambio come scia di luce, tabellone MARCO – LUNA.SPIN; punto vincente sulla riga, GAME · SET · MATCH; la pallina sale e disegna al neon la coppa sotto l'insegna WIN; **MARCO entra in primo piano ed esulta** tra i coriandoli | La luce del WIN diventa l'uscita dal tunnel |
+| 10 | Il protagonista entra nello stadio verso gli avversari | Scendi in campo da atleta federale | Soggettiva: siamo noi il protagonista, racchetta in mano, la nostra ombra lunga sul campo, insegna FITP sulla curva. Scatto fino a rete, si accendono i fari: **faccia a faccia MARCO contro LUNA.SPIN** con VS in stile gioco e targhette (MARCO · LV 30 · Tesserato FITP) | I fari sparano bianco |
+| 7 | Biglietto: sconti sui grandi eventi | In più, approfitta degli sconti esclusivi dedicati ai tesserati | myFITP: avviso «Benefit Tesserati sbloccati dopo il tuo primo torneo», si apre il lucchetto su Benefit Tesserati; tocco → il pass GRANDI EVENTI (tagliando «Sconti tesserati») esce dal telefono; nota legale in basso | Il pass gira di taglio… |
+| 11 | Cartello finale con la tessera fisica | Richiedi ora la tessera eSports FITP | …e si apre sulla tessera fisica con le cornici neon | Il cartello resta |
 | 12 | Super con keyvisual e logo FITP | SUPER e V.O.: e vivi il gaming da vero protagonista | Super «Vivi il gaming da protagonista» sulla tessera, pennellata ciano-magenta, logo FITP | Fine |
 
 ## Voice over: dove entra
@@ -31,18 +40,18 @@ Tempi sulla timeline attuale (30 s, griglia 128 BPM). Le durate delle frasi sono
 |---|---|---|---|---|---|
 | 1 | 0.00 | 3.75 | 0.35 | 2.3 s | Tutti i giocatori puntano alla vittoria, |
 | 2 | 3.75 | 7.50 | 3.90 | 2.8 s | ma solo i migliori passano al livello successivo. |
-| 3 | 7.50 | 9.38 | 7.60 | 1.5 s | Diventa un atleta FITP. |
+| 3 | 7.50 | 9.38 | 7.60 | 1.1 s | Diventa protagonista. |
 | 4 | 9.38 | 12.18 | 9.53 | 2.2 s | Partecipa ai tornei ufficiali eSports |
 | 5 | 12.18 | 14.08 | 12.28 | 1.3 s | e mettiti alla prova |
 | 6 | 14.08 | 17.78 | 14.18 | 1.5 s | per diventare il migliore. |
-| 7 | 17.78 | 21.53 | 17.98 | 3.4 s | In più, approfitta degli sconti esclusivi dedicati ai tesserati. |
-| 10 | 21.53 | 24.83 | 21.83 | 2.2 s | Scendi in campo da atleta federale. |
+| 10 | 17.78 | 21.08 | 18.08 | 2.2 s | Scendi in campo da atleta federale. |
+| 7 | 21.08 | 24.83 | 21.28 | 3.4 s | In più, approfitta degli sconti esclusivi dedicati ai tesserati. |
 | 11 | 24.83 | 27.23 | 24.93 | 2.2 s | Richiedi ora la tessera eSports FITP |
 | 12 | 27.23 | 30.00 | 27.28 | 2.3 s | e vivi il gaming da vero protagonista. |
 
-Pause volute: dopo la scena 6 (circa 2 s di coppa e coriandoli senza voce, il momento emotivo) e prima del super finale.
+Pause volute: dopo «il migliore» (coppa, WIN e coriandoli senza voce, circa 2 s) e prima del super finale.
 
-**Sincronie da rispettare:** «livello successivo» con la barra che arriva al 100%; «Diventa un atleta FITP» con la tessera che si apre; «mettiti alla prova» con il tap; «il migliore» con la coppa; «Richiedi ora la tessera» con il cartello; il super con «vivi il gaming».
+**Sincronie da rispettare:** «livello successivo» con la barra al 100%; «Diventa protagonista» con la tessera che si sblocca; «Partecipa ai tornei» con la lista Tornei; «mettiti alla prova» con REGISTRATI e conferma; «il migliore» con GAME · SET · MATCH e la coppa; «sconti esclusivi» con il pass che esce; «Richiedi ora la tessera» con la tessera fisica; il super con «vivi il gaming».
 
 ## Adattarlo alla voce registrata
 
@@ -54,9 +63,11 @@ Ogni scena ha una durata in `codice/timeline.json` e tutte le animazioni interne
 
 Se la voce arriva in un file unico, la divido io sulle pause.
 
-## Da decidere
+## Da decidere / verificare
 
-- **Scene 8 e 9 mancanti nel PDF**: se esistono vanno aggiunte (la timeline accetta scene nuove).
-- **Personaggi**: lo storyboard mostra personaggi 3D di Tennis Clash; qui sono sagome in controluce coerenti con la v4 (nessun asset di gioco disponibile). Con i render ufficiali dei personaggi forniti da WildLife si possono sostituire le sagome mantenendo camera e tempi.
-- **Nomi sul sito**: «FITP eSeries by BMW» e «Torneo GP365 #3/#4» sono presi dallo storyboard.
-- **Super finale**: lo storyboard scrive «da protagonista» nel super e «da vero protagonista» nel V.O.; ho seguito lo storyboard.
+- **Altre pose Tennis Clash:** per completare servirebbero pose al servizio (lancio, colpo) per le scene 1-2 e, se c'è, il protagonista che solleva la coppa (scena 6: ora esulta a pugno chiuso accanto alla coppa). Va confermato con WildLife l'uso dei personaggi nello spot.
+- **«Scendi in campo da atleta federale»:** la tessera eSports è una categoria diversa dalla tessera Atleta; da validare con ufficio tesseramento o legale prima di registrare.
+- **Nota legale scena 7:** testo in bozza («Benefit attivi dopo la partecipazione ad almeno un torneo eSports FITP. Si applicano condizioni.»), da validare.
+- **Interfaccia myFITP:** la finestra di conferma e lo stato «SEI ISCRITTO» sono ricostruiti in modo plausibile; va verificato con chi gestisce l'app che corrispondano al flusso reale.
+- **Scene 8 e 9 mancanti nel PDF:** se esistono vanno aggiunte.
+- **Super finale:** «da protagonista» nel super, «da vero protagonista» nel V.O.; ho seguito lo storyboard.

@@ -30,16 +30,16 @@ function partial(pts, u) {
 export function match(S, TL) {
   const s6 = S.h;
   const t0 = s6.t0, t1 = s6.t1;
-  const tM = t0 + 1.05;                         // dopo il VS inizia la partita
-  const tWin = tM + 1.2;                        // punto vincente
-  const draw0 = tWin + 0.25, draw1 = tWin + 0.85; // la scia disegna la coppa
-  const tSign = tWin + 0.8;                     // si accende WIN
+  const tM = t0 + 0.62;                         // dopo il VS inizia la partita
+  const tWin = tM + 0.95;                        // punto vincente
+  const draw0 = tWin + 0.2, draw1 = tWin + 0.65; // la scia disegna la coppa
+  const tSign = tWin + 0.6;                     // si accende WIN
 
   // scambio: tratti [t inizio, t fine, da (x,z metri), a (x,z), altezza dell'arco]
   const R0 = [
-    [tM - 0.1, tM + 0.38, [-11.2, 2.2], [10.2, -2.8], 1.3],
-    [tM + 0.38, tM + 0.8, [10.2, -2.8], [-9.8, 3.4], 1.5],
-    [tM + 0.8, tWin, [-9.8, 3.4], [9.6, -4.05], 1.1], // vincente sulla riga laterale
+    [tM - 0.1, tM + 0.3, [-11.2, 2.2], [10.2, -2.8], 1.3],
+    [tM + 0.3, tM + 0.62, [10.2, -2.8], [-9.8, 3.4], 1.5],
+    [tM + 0.62, tWin, [-9.8, 3.4], [9.6, -4.05], 1.1], // vincente sulla riga laterale
   ];
   const CUP_POS = P(15.5, 0, 0.8); // base della coppa: sospesa sopra il fondo campo avversario
   // punto del profilo della coppa in coordinate mondo (piano rivolto alla camera)

@@ -1,19 +1,14 @@
-"""Colonna sonora della v7 (41 s): musica originale a 128 BPM e sound design sui cue del video, senza voce.
+"""Colonna sonora della v8 (30 s): musica originale a 128 BPM, continua e uniforme, con il sound design sui cue.
 
 Uso (dalla cartella 05_spot_tessera_2027/codice):  python audio/build.py
-Scrive out/musica_v7.wav (48 kHz stereo, -14 LUFS). La musica si abbassa da sola nelle finestre V.O. della timeline.
-Ogni colpo della pallina (filo conduttore) ha il suo suono: esce dal telefono, rimbalza, svela, colpisce le card,
-accende la tessera e i vantaggi, gioca la partita, preme la CTA.
+Scrive out/musica_v8.wav (48 kHz stereo, -14 LUFS).
 
 Struttura (fa minore · Fm Db Ab Eb):
-  01 apertura   ostinato filtrato + kick smorzato; il filtro si apre con la domanda, rullata e riser fino al punto
-  02 level up   impatto (la pallina arriva sulla camera), drop pieno
-  03 mondo      transizione breve: rimbalzo e shimmer
-  05 card       groove pieno con basso; colpo su ogni card
-  06 tessera    lift largo; impatto sulla tessera, quattro note sui vantaggi
-  07 myFITP     groove asciutto; download, tap, conferma
-  08 match      stab del VS, colpi dello scambio, impatto e folla sul punto vincente
-  09 CTA        crescendo e colpo sul pulsante, accordo finale
+  intro (0 – level up)     ostinato che si apre, kick in quattro già dal primo battere, charleston, riser
+  groove (level up – fine) un solo groove continuo fino alla fine: kick, clap, charleston, basso in ottavi,
+                           accordi, arpeggio. Nessuna pausa e nessun abbassamento automatico: l'energia cresce
+                           con filtro e strati, colpo sul pulsante della CTA, accordo finale sull'ultima battuta.
+La musica non si abbassa sotto la voce: il ducking si fa nel mix finale, quando la voce registrata c'è davvero.
 """
 import json
 import os
@@ -41,28 +36,26 @@ N = int((DUR + 0.5) * SR)
 A, B, C, E_, F, G, Hm, I = (SC[k] for k in 'abcefghi')
 
 # cue visivi (stessi valori degli shot)
-HITS_A = [A['t0'] + x for x in (0.5, 1.2, 2.5, 3.3, 4.25)]
-POINT = A['t0'] + 5.5
-LU = POINT + 0.34                      # la pallina arriva sulla camera: LEVEL UP
-Q_IN = A['t0'] + 1.3                   # la domanda si costruisce
-DROP = 12 * BEAT
-BOUNCE_C = C['t0'] + 0.3
+HITS_A = [A['t0'] + x for x in (1.0, 1.8, 2.75)]
+POINT = A['t0'] + 4.0
+LU = POINT + 0.34
+DROP = round(LU / BEAT - 0.3) * BEAT          # primo battere del groove (subito prima dell'impatto)
+BOUNCE_C = C['t0'] + 0.22
 STEP_E = E_['dur'] / 3
-HITS_E = [E_['t0'] + 0.3, E_['t0'] + STEP_E - 0.42, E_['t0'] + 2 * STEP_E - 0.42]
-HANG = F['t0'] + 0.6                   # il pass si ferma sul laccetto
-TES = F['t0'] + 0.7                    # la pallina accende la tessera
-PANELS = []
-GRID_B = F['t0'] + 3.3                 # SCOPRI TUTTI I VANTAGGI
-GRID = [GRID_B + 0.55 + i * 0.28 for i in range(4)]
-DL1, NAV, CARD, REG = G['t0'] + 1.45, G['t0'] + 2.05, G['t0'] + 3.3, G['t0'] + 4.4
-BALL_G = G['t1'] - 1.0
-TM = Hm['t0'] + 1.05
-RALLY = [TM - 0.1, TM + 0.38, TM + 0.8]
-WIN = TM + 1.2
-SIGN = WIN + 0.8
-LAND_I = I['t0'] + 0.85
-BOUNCE_I, CTA = I['t0'] + 2.55, I['t0'] + 2.95
-TEND = CTA + 0.7
+HITS_E = [E_['t0'] + 0.25, E_['t0'] + STEP_E - 0.28, E_['t0'] + 2 * STEP_E - 0.28]
+TES = F['t0'] + 0.62
+UP_F, GRID_B = F['t0'] + 2.1, F['t0'] + 2.35
+GRID = [GRID_B + 0.4 + i * 0.22 for i in range(4)]
+SCR_G = [G['t0'] + x for x in (0.72, 1.25, 1.8, 2.45)]
+REG = G['t0'] + 2.95
+BALL_G = G['t1'] - 0.65
+TM = Hm['t0'] + 0.62
+RALLY = [TM - 0.1, TM + 0.3, TM + 0.62]
+WIN = TM + 0.95
+SIGN = WIN + 0.6
+LAND_I = I['t0'] + 0.6
+BOUNCE_I, CTA = I['t0'] + 1.85, I['t0'] + 2.2
+END_CHORD = DUR - BAR                          # l'accordo finale occupa l'ultima battuta
 
 
 class Bus:
@@ -81,17 +74,6 @@ class Bus:
 
 drums, bass, synth, fx = Bus(), Bus(), Bus(), Bus()
 kicks = []
-
-
-def sec(t):
-    if t < DROP:
-        return 'a'
-    for k in 'bcefghi':
-        if SC[k]['t0'] <= t < SC[k]['t1']:
-            return k
-    return 'b' if t < SC['b']['t1'] else 'end'
-
-
 PROG = [(41, [65, 68, 72]), (37, [65, 68, 73]), (44, [63, 68, 72]), (39, [63, 67, 70])]  # Fm, Db, Ab, Eb
 
 
@@ -99,208 +81,125 @@ def chord(t):
     return PROG[int(np.floor((t - DROP) / BAR + 1e-6)) % 4]
 
 
-def pad(t, dur, notes, g, cut, att=0.2):
-    n = int((dur + 0.4) * SR)
-    s = supersaw(midi(notes), n, 0.012) * env_adsr(n, att, 0.2, 0.8, 0.4, dur)[:, None]
-    synth.add(np.stack([svf(s[:, c], cut, 0.7, 'lp') for c in range(2)], 1), t, g)
-
-
-def stab(t, g=0.35, cut=4200):
-    root, notes = chord(t + 0.01)
-    n = int(0.6 * SR)
-    s = supersaw(midi(notes + [notes[0] + 12]), n, 0.014) * env_adsr(n, 0.003, 0.3, 0.0, 0.2)[:, None]
-    synth.add(np.stack([svf(s[:, c], cut, 0.8, 'lp') for c in range(2)], 1), t, g)
-
-
-PADS = {'b': (0.44, 5200, 0.01, True), 'c': (0.3, 1600, 0.3, False), 'e': (0.2, 2400, 0.05, False),
-        'f': (0.32, 3200, 0.2, True), 'g': (0.18, 1800, 0.1, False), 'h': (0.2, 3000, 0.05, False), 'i': (0.22, 2600, 0.2, True)}
+def energy(t):
+    """0..1: cresce lentamente nel groove, con un gradino sulla CTA (automazione continua, mai a zero)."""
+    if t < DROP:
+        return 0.0
+    return float(np.clip(0.55 + 0.35 * (t - DROP) / (CTA - DROP), 0, 0.9) + 0.1 * (t >= CTA))
 
 
 def music():
+    # accordi: una battuta ciascuno dal groove all'accordo finale, filtro che si apre con l'energia
     b = DROP
-    while b < TEND:
-        name = sec(b + 0.01)
+    while b < END_CHORD - 1e-6:
         root, notes = chord(b + 0.01)
-        if name in PADS:
-            g, cut, att, octave = PADS[name]
-            if name == 'i':
-                cut = 2000 + 3200 * np.clip((b - I['t0']) / (CTA - I['t0']), 0, 1)
-            pad(b, BAR, notes + ([notes[0] + 12] if octave else []), g, cut, att)
-        if name in ('b', 'c', 'f', 'i'):
-            bass.add(np.sin(2 * np.pi * float(midi(root - 12)) * T(BAR)) * env_adsr(int(BAR * SR), 0.03, 0.1, 0.9, 0.15), b, 0.5)
+        dur = min(BAR, END_CHORD - b)
+        n = int((dur + 0.3) * SR)
+        cut = 1600 + 3600 * energy(b)
+        s = supersaw(midi(notes + [notes[0] + 12]), n, 0.012) * env_adsr(n, 0.02, 0.2, 0.8, 0.3, dur)[:, None]
+        synth.add(np.stack([svf(s[:, c], cut, 0.7, 'lp') for c in range(2)], 1), b, 0.26)
         b += BAR
-    # ostinato dell'apertura: il filtro si apre verso la domanda e il punto
-    for s in range(int(DROP / S16)):
-        t = s * S16
-        if t >= POINT - 0.2:
-            break
-        m = [65, 72, 68, 72, 65, 75, 68, 72][s % 8] - 12 * (s % 2 == 1 and t < Q_IN)
-        cut = 900 + 3800 * np.clip((t - 0.3) / (POINT - 0.3), 0, 1) ** 1.6
-        if s % 2 == 0 or t > Q_IN:
-            synth.add(stereo(lp(pluck(float(midi(m)), 0.28, 0.5, 0.26), cut), 0.25 * np.sin(s * 1.3)), t)
+    # sequencer a sedicesimi
     for s in range(int(DUR / S16) + 1):
         t = s * S16
-        name = sec(t)
+        if t >= DUR:
+            break
         pos, beat = s % 16, s % 4 == 0
         root, notes = chord(t)
-        k = 0
-        if name == 'a' and beat and t < POINT - 0.25:
-            k = 0.4 if t < Q_IN else 0.62
-        if name in ('b', 'e') and beat:
-            k = 1.0
-        if name == 'c' and beat:
-            k = 0.6
-        if name == 'f' and beat:
-            k = 0.8
-        if name == 'g' and beat and t < BALL_G:
-            k = 0.7
-        if name == 'h' and beat and TM <= t < WIN:
-            k = 0.85
-        if name == 'i' and beat and t >= CTA - 0.02 and t < TEND + BAR * 2:
-            k = 0.9
-        if k:
-            kk = kick(k, punch=0.4 if (name == 'a' and t < Q_IN) else 1.0)
-            if name == 'a' and t < Q_IN:
-                kk = lp(kk, 300)
+        intro = t < DROP
+        end = t >= END_CHORD - 1e-6
+        # kick in quattro fino all'accordo finale (smorzato nell'intro)
+        if beat and not end:
+            k = 0.55 if intro else 0.95
+            kk = kick(k, punch=0.5 if intro else 1.0)
+            if intro:
+                kk = lp(kk, 400 + 1800 * t / DROP)
             drums.add(kk, t)
-            if name != 'a':
-                kicks.append((t, 0.5 if name in ('b', 'e') else 0.3))
-        if (name in ('b', 'e', 'f', 'g') or (name == 'h' and TM <= t < WIN) or (name == 'i' and CTA <= t < TEND + BAR * 2)) and pos in (4, 12):
-            drums.add(clap(0.75 if name in ('b', 'e') else 0.55), t)
-        if name == 'a' and t > 1.0 and s % 2 == 0 and t < POINT - 0.25:
-            drums.add(hat(0.18 + 0.3 * t / POINT), t, 1.0, 0.35)
-        if name in ('c', 'g') and s % 4 == 2:
-            drums.add(hat(0.45), t, 1.0, 0.25)
-        if name in ('b', 'e', 'f') or (name == 'i' and CTA <= t < TEND + BAR * 2):
+            if not intro:
+                kicks.append((t, 0.42))
+        if not intro and not end:
+            if pos in (4, 12):
+                drums.add(clap(0.62), t)
+            drums.add(hat(0.2 + 0.12 * (s % 2 == 0) + 0.08 * energy(t)), t, 1.0, 0.3)
             if s % 4 == 2:
-                drums.add(hat(0.45, True), t, 1.0, -0.2)
-            else:
-                drums.add(hat(0.26 + 0.1 * (s % 2 == 0)), t, 1.0, 0.3)
-        # rullate: verso il punto, verso l'impatto sulla tessera, verso la CTA
-        for r0, r1 in ((HITS_A[3], POINT - 0.2), (C['t0'], C['t1'] - 0.05), (CTA - BEAT * 3, CTA)):
-            if r0 <= t < r1:
-                u = (t - r0) / (r1 - r0)
-                if s % (2 if u < 0.5 else 1) == 0:
-                    drums.add(snare(0.2 + 0.55 * u, 1 + 0.35 * u), t)
-        if name in ('b', 'e') and s % 2 == 0:
-            pat = [0, 0, 12, 0, 0, 12, 7, 12][(s // 2) % 8]
-            bass.add(bassline(float(midi(root - 12 + pat)), S16 * 1.8, 0.62, growl=0.7 * (name == 'b'), lfo_hz=1 / (S16 * 2)), t)
-        if name in ('g', 'h') and s % 2 == 0 and not (name == 'g' and t >= BALL_G):
-            pat = [0, 0, 12, 0, 0, 12, 0, 7][(s // 2) % 8]
-            bass.add(bassline(float(midi(root - 12 + pat)), S16 * 1.7, 0.5), t)
-        if name == 'i' and s % 2 == 0 and CTA <= t < TEND + BAR * 2:
-            pat = [0, 0, 12, 0, 0, 12, 7, 12][(s // 2) % 8]
-            bass.add(bassline(float(midi(root - 12 + pat)), S16 * 1.8, 0.55), t)
-        if name in ('c', 'f'):
+                drums.add(hat(0.34, True), t, 1.0, -0.2)
+            if s % 2 == 0:
+                pat = [0, 0, 12, 0, 0, 12, 7, 12][(s // 2) % 8]
+                bass.add(bassline(float(midi(root - 12 + pat)), S16 * 1.8, 0.58), t)
             seq = notes + [n + 12 for n in notes]
             m = seq[[0, 1, 2, 3, 4, 3, 2, 1][s % 8]] + 12
-            synth.add(stereo(pluck(float(midi(m)), 0.32, 0.8, 0.18), 0.3 * np.sin(s)), t)
-        if name == 'e' and s % 4 == 2 and (s // 4) % 2 == 1:
-            n = int(0.25 * SR)
-            st = supersaw(midi(notes), n, 0.01) * env_adsr(n, 0.003, 0.12, 0.0, 0.05)[:, None]
-            synth.add(np.stack([svf(st[:, c], 2600, 0.8, 'lp') for c in range(2)], 1), t, 0.2)
-    for tt in HITS_E + [TES, Hm['t0'] + 0.3, SIGN]:
-        stab(tt, 0.34)
-    # note dei quattro vantaggi: salgono con i rimbalzi della pallina
-    for i, tt in enumerate(GRID):
-        synth.add(stereo(pluck(float(midi([77, 80, 84, 87][i])), 0.7, 1.0, 0.32), -0.4 + 0.27 * i), tt)
-    # accordo finale: la bemolle maggiore con nona
-    n = int((DUR - TEND + 0.3) * SR)
-    s = supersaw(midi([56, 63, 68, 72, 75, 82]), n, 0.013) * env_adsr(n, 0.01, 0.8, 0.6, 1.6, n / SR - 1.6)[:, None]
-    synth.add(np.stack([svf(s[:, c], 5000, 0.7, 'lp') for c in range(2)], 1), TEND, 0.4)
-    bass.add(np.sin(2 * np.pi * float(midi(32)) * T(n / SR)) * env_adsr(n, 0.01, 0.5, 0.7, 1.4, n / SR - 1.4), TEND, 0.5)
+            synth.add(stereo(lp(pluck(float(midi(m)), 0.3, 0.8, 0.14), 2500 + 4000 * energy(t)), 0.3 * np.sin(s)), t)
+        if intro:
+            # ostinato che si apre verso il level up
+            m = [65, 72, 68, 72, 65, 75, 68, 72][s % 8]
+            if s % 2 == 0 or t > 1.0:
+                synth.add(stereo(lp(pluck(float(midi(m)), 0.28, 0.5, 0.24), 900 + 4200 * (t / DROP) ** 1.5), 0.25 * np.sin(s * 1.3)), t)
+            if t > 0.9 and s % 2 == 0:
+                drums.add(hat(0.14 + 0.24 * t / DROP), t, 1.0, 0.35)
+            if t > DROP - 1.2:
+                u = (t - (DROP - 1.2)) / 1.2
+                if s % (2 if u < 0.5 else 1) == 0:
+                    drums.add(snare(0.2 + 0.5 * u, 1 + 0.3 * u), t)
+    # accordo finale: la bemolle maggiore con nona, sull'ultima battuta, con un colpo di kick e crash
+    n = int((DUR - END_CHORD + 0.4) * SR)
+    s = supersaw(midi([56, 63, 68, 72, 75, 82]), n, 0.013) * env_adsr(n, 0.01, 0.5, 0.75, 0.9, n / SR - 0.9)[:, None]
+    synth.add(np.stack([svf(s[:, c], 5200, 0.7, 'lp') for c in range(2)], 1), END_CHORD, 0.42)
+    bass.add(np.sin(2 * np.pi * float(midi(32)) * T(n / SR)) * env_adsr(n, 0.01, 0.4, 0.7, 0.9, n / SR - 0.9), END_CHORD, 0.55)
+    drums.add(kick(1.0), END_CHORD)
+    drums.add(crash(0.7, 2.0), END_CHORD)
 
 
 def sfx():
-    # 01: i colpi veri della partita, la domanda
-    for i, t in enumerate(HITS_A):
-        fx.add(pock(0.7, 1 + 0.02 * i), t, 1.0, -0.4 if i % 2 == 0 else 0.4)
-    fx.add(whoosh(0.9, 200, 3000, 0.5), A['t0'])
-    fx.add(swish(0.3, 0.35, 400, 3000), Q_IN)
-    fx.add(riser(POINT - 2.4, 0.5), 2.4)
-    fx.add(revcym(1.0, 0.55), POINT - 1.0)
-    # 02: la pallina esce dal telefono e arriva sulla camera
-    fx.add(pock(1.1, 0.95), POINT)
-    fx.add(whoosh(LU - POINT + 0.05, 300, 5000, 0.8), POINT - 0.05)
-    fx.add(impact(1.25), LU)
-    fx.add(crash(0.9), LU)
-    fx.add(chime([77, 81, 84, 89], 0.06, 0.8), LU + 0.2)
-    fx.add(whoosh(0.7, 3000, 300, 0.55, up=False), B['t1'] - 0.75)
-    # 03: rimbalzo sotto il logo (transizione breve)
-    fx.add(whoosh(0.35, 5000, 400, 0.5, up=False), C['t0'])
-    fx.add(pock(1.1, 0.85), BOUNCE_C)
-    fx.add(impact(0.9, 1.4, 60), BOUNCE_C)
-    fx.add(shimmer(0.9, 0.4), BOUNCE_C + 0.05)
-    fx.add(whoosh(0.35, 300, 6000, 0.6), C['t1'] - 0.35)
-    # 05: colpi sulle card
+    g = 0.8   # sound design sotto la musica: accompagna, non spezza
+    for t in HITS_A:
+        fx.add(pock(0.6), t, g)
+    fx.add(riser(DROP - 1.4, 0.45), 1.4)
+    fx.add(pock(1.0, 0.95), POINT, g)
+    fx.add(impact(1.1), LU, g)
+    fx.add(crash(0.8), DROP)
+    fx.add(pock(0.9, 0.85), BOUNCE_C, g)
+    fx.add(impact(0.6, 1.2, 60), BOUNCE_C, g)
+    fx.add(whoosh(0.3, 300, 6000, 0.5), C['t1'] - 0.3, g)
     for tt in HITS_E:
-        fx.add(swish(0.25, 0.4, 600, 4000), tt - 0.25)
-        fx.add(pock(1.0, 1.05), tt)
-        fx.add(lp(kick(0.6, 0.25, 0.6), 900), tt)
-        fx.add(whoosh(0.42, 250, 4000, 0.5), tt + 0.05)
-    fx.add(whoosh(0.35, 300, 6000, 0.7), E_['t1'] - 0.35)
-    # 05: il pass scende sul laccetto, la pallina lo accende, i vantaggi
-    fx.add(whoosh(0.55, 3000, 300, 0.55, up=False), F['t0'])
-    fx.add(swish(0.3, 0.35, 400, 2500), HANG)
-    fx.add(pock(1.0, 0.9), TES)
-    fx.add(impact(1.1, 2.0, 60), TES)
-    fx.add(shimmer(1.4, 0.5, 88), TES + 0.1)
-    for tt in PANELS:
-        fx.add(swish(0.3, 0.4, 500, 3500), tt)
-    fx.add(whoosh(0.45, 300, 4000, 0.55), GRID_B - 0.3)
+        fx.add(pock(0.9, 1.05), tt, g)
+        fx.add(whoosh(0.3, 250, 4000, 0.4), tt + 0.03, g)
+    fx.add(whoosh(0.28, 300, 6000, 0.5), E_['t1'] - 0.28, g)
+    fx.add(whoosh(0.5, 300, 4000, 0.45), F['t0'], g)
+    fx.add(pock(0.9, 0.9), TES, g)
+    fx.add(impact(0.8, 1.6, 60), TES, g)
+    fx.add(shimmer(1.2, 0.4, 88), TES + 0.1, g)
+    fx.add(whoosh(0.35, 400, 4000, 0.4), UP_F, g)
     for i, tt in enumerate(GRID):
-        fx.add(pock(0.75, 1.05 + 0.04 * i), tt, 1.0, -0.4 + 0.27 * i)
-        fx.add(blip(2200 + 180 * i, 0.3), tt + 0.03, 1.0, -0.4 + 0.27 * i)
-    # 07: myFITP
-    fx.add(whoosh(0.55, 300, 4500, 0.55), G['t0'])
-    fx.add(chime([84, 88, 91], 0.07, 0.6), DL1)
-    for tt in (NAV, CARD, REG):
-        fx.add(tap(1.1), tt)
-    fx.add(chime([72, 79, 84], 0.07, 0.8), REG + 0.2)
-    fx.add(whoosh(G['t1'] - BALL_G, 400, 6000, 0.8), BALL_G)
-    # 08: match
-    fx.add(impact(0.9, 1.4, 60), Hm['t0'])
-    fx.add(glitch(0.2, 0.4), Hm['t0'] + 0.3)
+        fx.add(pock(0.6, 1.05 + 0.04 * i), tt, g, -0.4 + 0.27 * i)
+        fx.add(blip(2200 + 180 * i, 0.22), tt + 0.03, g)
+    fx.add(whoosh(0.35, 300, 4500, 0.45), G['t0'], g)
+    for tt in SCR_G:
+        fx.add(swish(0.12, 0.25, 800, 4000), tt, g)
+    fx.add(tap(0.9), REG, g)
+    fx.add(chime([72, 79, 84], 0.06, 0.6), REG + 0.18, g)
+    fx.add(whoosh(G['t1'] - BALL_G, 400, 6000, 0.6), BALL_G, g)
+    fx.add(impact(0.7, 1.2, 60), Hm['t0'], g)
     for i, tt in enumerate(RALLY):
-        fx.add(pock(1.05, 1.0 - 0.04 * i), tt, 1.0, -0.3 if i % 2 == 0 else 0.3)
-    fx.add(pock(1.1, 0.95), WIN)
-    fx.add(impact(1.1), WIN)
-    fx.add(cheer(3.0, 0.9), WIN + 0.05)
-    fx.add(neon(0.45, 0.45), SIGN)
-    fx.add(whoosh(0.3, 300, 6000, 0.6), Hm['t1'] - 0.25)
-    # 09: CTA
-    fx.add(impact(0.9, 1.8, 60), LAND_I)
-    fx.add(shimmer(1.4, 0.5, 91), LAND_I + 0.1)
-    fx.add(swish(0.5, 0.4, 400, 3000), I['t0'] + 1.0)
-    fx.add(riser(CTA - I['t0'] - 1.4, 0.4, 500, 9000), I['t0'] + 1.4)
-    fx.add(pock(1.0, 0.9), BOUNCE_I)
-    fx.add(pock(1.1, 1.0), CTA)
-    fx.add(impact(1.25, 2.6), CTA)
-    fx.add(crash(0.8, 2.6), CTA)
-    fx.add(neon(0.4, 0.25), TEND)
+        fx.add(pock(0.95, 1.0 - 0.04 * i), tt, g, -0.3 if i % 2 == 0 else 0.3)
+    fx.add(pock(1.0, 0.95), WIN, g)
+    fx.add(impact(0.9), WIN, g)
+    fx.add(cheer(2.2, 0.6), WIN + 0.05, g)
+    fx.add(neon(0.4, 0.35), SIGN, g)
+    fx.add(impact(0.7, 1.4, 60), LAND_I, g)
+    fx.add(pock(0.8, 0.9), BOUNCE_I, g)
+    fx.add(pock(1.0, 1.0), CTA, g)
+    fx.add(impact(1.1, 2.0), CTA, g)
+    fx.add(crash(0.6, 2.0), CTA)
 
 
 def sidechain(n):
     g = np.ones(n)
-    sh = np.arange(int(0.32 * SR)) / SR
+    sh = np.arange(int(0.3 * SR)) / SR
     for t, depth in kicks:
         i = int(t * SR)
-        seg_ = 1 - depth * np.exp(-sh / 0.085)
+        seg_ = 1 - depth * np.exp(-sh / 0.08)
         j = min(n, i + len(seg_))
         g[i:j] = np.minimum(g[i:j], seg_[: j - i])
-    return g
-
-
-def vo_duck(n, depth=0.5):
-    """Spazio alla voce: la musica scende nelle finestre V.O. stimate (rampe di 0,15 s)."""
-    g = np.ones(n)
-    tt = np.arange(n) / SR
-    for s in SC.values():
-        if not s['vo_est']:
-            continue
-        a, b = s['t0'] + s['vo_in'] - 0.1, s['t0'] + s['vo_in'] + s['vo_est'] + 0.1
-        w = np.clip(np.minimum((tt - a) / 0.15, (b - tt) / 0.15), 0, 1)
-        g = np.minimum(g, 1 - depth * w)
     return g
 
 
@@ -319,24 +218,23 @@ def limiter(x, ceil=0.89, release=0.08):
 def main():
     music()
     sfx()
-    ir = reverb_ir(2.2)
+    ir = reverb_ir(2.0)
     sc = sidechain(N)[:, None]
     syn = synth.x * sc
-    syn = syn + convolve(syn, ir) * 0.26
+    syn = syn + convolve(syn, ir) * 0.24
     bas = bass.x * np.minimum(1, sc * 1.1)
-    fxx = fx.x + convolve(fx.x, ir) * 0.18
-    duck = vo_duck(N, 0.4)[:, None]
-    mix = (drums.x * 0.5 + bas * 0.6 + syn * 3.0) * duck + fxx * (0.5 + 0.5 * duck) * 0.42
+    fxx = fx.x + convolve(fx.x, ir) * 0.16
+    mix = drums.x * 0.5 + bas * 0.6 + syn * 3.0 + fxx * 0.3
     mix = mix[: int(DUR * SR)]
     import pyloudnorm as pyln
     meter = pyln.Meter(SR)
     mix *= 10 ** ((-14 - meter.integrated_loudness(mix)) / 20)
     mix = limiter(mix, 0.89)
-    fade = int(0.4 * SR)
-    mix[-fade:] *= np.linspace(1, 0, fade)[:, None] ** 1.5
-    out = os.path.join(CODE, 'out', 'musica_v7.wav')
+    fade = int(0.5 * SR)
+    mix[-fade:] *= np.linspace(1, 0, fade)[:, None] ** 1.3
+    out = os.path.join(CODE, 'out', 'musica_v8.wav')
     sf.write(out, mix.astype(np.float32), SR, subtype='PCM_16')
-    print(f'{out}  {DUR:.2f} s  {meter.integrated_loudness(mix):.1f} LUFS  picco {np.abs(mix).max():.2f}')
+    print(f'{out}  {DUR:.2f} s  {meter.integrated_loudness(mix):.1f} LUFS  picco {np.abs(mix).max():.2f}  groove da {DROP:.2f} s')
 
 
 if __name__ == '__main__':

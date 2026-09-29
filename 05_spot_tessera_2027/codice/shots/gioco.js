@@ -13,10 +13,10 @@ import { flyBall, impact } from './ball.js';
 
 export function gioco(S, TL) {
   const a = S.a, b = S.b;
-  const t0 = a.t0, tPoint = t0 + 5.5, t1 = b.t1;
+  const t0 = a.t0, tPoint = t0 + 4.0, t1 = b.t1;   // v8: il gameplay parte 1,5 s più avanti, il punto cade a 4,0 s
   const tHit = tPoint + 0.34;              // la pallina arriva sulla camera: LEVEL UP
   const tAway = t1 - 0.75;                 // la pallina riparte verso l'alto
-  const frame = (t) => clamp(Math.floor((t - t0) * 25), 0, 159);
+  const frame = (t) => clamp(Math.floor((t - t0 + 1.5) * 25), 0, 159);
 
   // camera quasi frontale: il telefono si legge dritto e solido; solo una lenta carrellata in avanti e una
   // leggera deriva laterale (parallasse con fari e pulviscolo)
@@ -89,7 +89,7 @@ export function gioco(S, TL) {
       { s: 'IL PROSSIMO', size: 90 },
       { s: 'CAMPIONE', size: 124, col: BR.lilac, glow: 0.25, glowColor: BR.magenta },
       { s: 'ESPORTS?', size: 124, col: BR.lilac, glow: 0.25, glowColor: BR.magenta },
-    ], 120, 280, t, t0 + 0.05, tPoint - 0.55, { lineGap: 0.3 });
+    ], 120, 280, t, t0 + 0.05, tPoint - 0.45, { lineGap: 0.24 });
 
     // LEVEL UP: il punto vinto fa uscire la pallina dal gioco
     const veil = seg(t, tPoint, tHit) * (1 - seg(t, t1 - 0.3, t1));

@@ -1,4 +1,4 @@
-// 03 · Entra nel mondo eSports FITP — transizione breve (1,9 s) fra il level up e le card.
+// 03 · Entra nel mondo eSports FITP — transizione breve (1,4 s) fra il level up e le card.
 // Gerarchia: in alto «ENTRA NEL MONDO ESPORTS FITP», in basso il logo eSports FITP, che nasce dal rimbalzo della pallina.
 import { W, H } from '../engine/r.js';
 import { clamp, lerp, seg, env, E, deg, hash, rgba } from '../engine/math.js';
@@ -24,12 +24,12 @@ export function stage(R, t, a = 1) {
 
 export function mondo(S, TL) {
   const c = S.c, t0 = c.t0, t1 = c.t1;
-  const tB = t0 + 0.3;            // rimbalzo sotto il logo
-  const tOut = t1 - 0.3;
+  const tB = t0 + 0.22;           // rimbalzo sotto il logo
+  const tOut = t1 - 0.22;
   const FY = 930, LY = 700;       // quota del rimbalzo, centro del logo
   const path = segPath([
     [t0 - 0.05, tB, [W / 2 + 40, -120, 16], [W / 2, FY, 30], 0, E.inQuad],
-    [tB, tB + 0.6, [W / 2, FY, 30], [W + 140, 260, 22], 220, E.outQuad],
+    [tB, tB + 0.5, [W / 2, FY, 30], [W + 140, 260, 22], 220, E.outQuad],
   ]);
 
   function draw(R, t) {
@@ -42,7 +42,7 @@ export function mondo(S, TL) {
     kin(R, [
       { s: 'ENTRA NEL MONDO', size: 96 },
       { s: 'ESPORTS FITP', size: 140, col: BR.lilac, glow: 0.25, glowColor: BR.magenta },
-    ], W / 2, 230, t, t0 + 0.02, tOut, { align: 'center', lineGap: 0.12, stagger: 0.012 });
+    ], W / 2, 230, t, t0 + 0.02, tOut, { align: 'center', lineGap: 0.08, stagger: 0.01 });
     // in basso: il logo eSports FITP, nato dal rimbalzo
     R.hud(() => {
       const la = seg(t, tB, tB + 0.1) * (1 - seg(t, tOut, tOut + 0.25));

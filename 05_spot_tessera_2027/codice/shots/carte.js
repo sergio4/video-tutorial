@@ -23,16 +23,16 @@ const AREA = (i) => (i === 0 ? { x0: -CW / 2 + 64, x1: GP_X - 44 } : { x0: -CW /
 
 export function carte(S, TL) {
   const d = S.e, t0 = d.t0, t1 = d.t1, step = (t1 - t0) / 3;
-  const HITS = [t0 + 0.3, t0 + step - 0.42, t0 + 2 * step - 0.42];
+  const HITS = [t0 + 0.25, t0 + step - 0.28, t0 + 2 * step - 0.28];   // v8: passaggio fra le card 0,28 s
   const HP = [W / 2 + 560, 330, 34];     // punto d'impatto: angolo alto destro della card attiva
   const path = segPath(HITS.flatMap((th) => [
-    [th - 0.28, th, [W + 120, -80, 20], HP, 0, E.inQuad],
-    [th, th + 0.4, HP, [W + 160, 140, 22], 90, E.outQuad],
+    [th - 0.22, th, [W + 120, -80, 20], HP, 0, E.inQuad],
+    [th, th + 0.32, HP, [W + 160, 140, 22], 90, E.outQuad],
   ]));
-  // posizione del carosello: la card colpita scivola via (0,4 s) e arriva la successiva
+  // posizione del carosello: la card colpita scivola via (0,28 s) e arriva la successiva
   const pos = (t) => {
     let p = -1 + E.outExpo(seg(t, t0, t0 + 0.45));
-    for (let k = 1; k < 3; k++) p += E.inOutCubic(seg(t, HITS[k], HITS[k] + 0.42));
+    for (let k = 1; k < 3; k++) p += E.inOutCubic(seg(t, HITS[k], HITS[k] + 0.28));
     return p;
   };
 
@@ -50,7 +50,7 @@ export function carte(S, TL) {
     R.with(T(30, 40, 50), () => R.rrect(-CW / 2, -CH / 2, CW, CH, 34, { fill: '#000', alpha: 0.5, blur: 50 }));
     R.rrect(-CW / 2, -CH / 2, CW, CH, 34, { fill: BR.night, knock: true });
     R.clipPoly(R.rrPts(-CW / 2, -CH / 2, CW, CH, 34));
-    const local = t - (i === 0 ? t0 : HITS[i] + 0.42);
+    const local = t - (i === 0 ? t0 : HITS[i] + 0.2);
     if (C.kind === 'gp') {
       const fi = clamp(Math.floor(Math.max(0, t - t0 + 0.4) * 25), 0, 79);
       R.image(R.img.gpBBlur[fi], -CW / 2, -CW * (850 / 392) / 2 + 60, CW, CW * (850 / 392), { sub: 2 });
@@ -79,10 +79,10 @@ export function carte(S, TL) {
     const base = 70 - ys[ys.length - 1] / 2;   // blocco centrato poco sotto la metà della card, lontano dal bordo
     C.lines.forEach((L, j) => {
       const y = base + ys[j], size = sz[j];
-      const u = E.outExpo(seg(local, 0.05 + j * 0.1, 0.6 + j * 0.1)) * a;
+      const u = E.outExpo(seg(local, 0.03 + j * 0.07, 0.45 + j * 0.07)) * a;
       R.clipRect(-CW / 2, y - size * 0.95, CW, size * 1.7);
       R.text(L.s, cx, y + (1 - u) * size * 1.1, { font: 'glyB', size, align: 'center', v: 'cap', fill: L.col || BR.white, alpha: a, tracking: -0.01, glow: L.col ? 0.25 : 0, glowColor: L.col, shadow: ['rgba(8,4,24,0.8)', 26, 0, 6],
-        per: (g) => ({ rx: (1 - E.outExpo(seg(local, 0.05 + j * 0.1 + g * 0.015, 0.6 + j * 0.1 + g * 0.015))) * deg(-60) }) });
+        per: (g) => ({ rx: (1 - E.outExpo(seg(local, 0.03 + j * 0.07 + g * 0.01, 0.45 + j * 0.07 + g * 0.01))) * deg(-60) }) });
       R.unclip();
     });
     R.unclip();
@@ -94,7 +94,7 @@ export function carte(S, TL) {
     stage(R, t, 0.7);
     const cam = new Cam();
     const sw = Math.sin((t - t0) * 0.8) * 30;
-    const dive = E.inCubic(seg(t, t1 - 0.35, t1)) * 1100; // uscita: la camera entra nella card (→ 05)
+    const dive = E.inCubic(seg(t, t1 - 0.28, t1)) * 1100; // uscita: la camera entra nella card (→ 05)
     cam.look([sw, 0, -1500 + dive], [0, 0, 0], deg(Math.sin((t - t0) * 0.6) * 0.6), 1600);
     R.setCam(cam);
     const p = pos(t);
@@ -113,14 +113,14 @@ export function carte(S, TL) {
     // ingresso dalla transizione «Entra nel mondo»
     const wh = 1 - E.outCubic(seg(t, t0, t0 + 0.25));
     if (wh > 0) R.hud(() => R.rect(0, 0, W, H, { fill: BR.deep2, alpha: wh * 0.9 }));
-    const out = E.inCubic(seg(t, t1 - 0.3, t1));
+    const out = E.inCubic(seg(t, t1 - 0.22, t1));
     if (out > 0) R.hud(() => R.rect(0, 0, W, H, { fill: BR.deep2, alpha: out }));
   }
 
   function fx(t) {
     const f = { grain: 0.04 };
-    for (const th of HITS) if (t > th - 0.3 && t < th + 0.45) f.mb = 7;
-    if (t > t1 - 0.35) f.mb = 8;
+    for (const th of HITS) if (t > th - 0.25 && t < th + 0.35) f.mb = 7;
+    if (t > t1 - 0.28) f.mb = 8;
     return f;
   }
 

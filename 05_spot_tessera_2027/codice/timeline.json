@@ -1,20 +1,20 @@
 {
-  "title": "Spot TESSERA ESPORTS FITP 2027 · v7 (41 s)",
+  "title": "Spot TESSERA ESPORTS FITP 2027 · v8 (30 s)",
   "bpm": 128,
-  "note": "Piano v7: correzioni scena per scena sulla v6. Rimossa la scena FITP eSeries by BMW, «Entra nel mondo» ridotta a transizione. Tempi a battute (128 BPM). 'vo_in' = entrata della voce dall'inizio del blocco, 'vo_est' = durata stimata. V.O. in bozza.",
+  "note": "Piano v8: 30 s (64 battute a 128 BPM) con tutte le scene della v7, ritmo più serrato. 'vo_in' = entrata della voce dall'inizio del blocco, 'vo_est' = durata stimata. V.O. in bozza.",
   "scenes": [
     {
       "id": "a",
       "n": "01 · Apertura: smartphone e domanda",
-      "dur": 5.625,
-      "vo_in": 0.5,
-      "vo_est": 3.4,
+      "dur": 4.21875,
+      "vo_in": 0.4,
+      "vo_est": 3.2,
       "vo": "Giochi a Tennis Clash? Allora sai cosa vuol dire salire di livello."
     },
     {
       "id": "b",
       "n": "02 · Level up",
-      "dur": 1.875,
+      "dur": 1.40625,
       "vo_in": 0,
       "vo_est": 0,
       "vo": ""
@@ -22,7 +22,7 @@
     {
       "id": "c",
       "n": "03 · Entra nel mondo eSports FITP (transizione)",
-      "dur": 1.875,
+      "dur": 1.40625,
       "vo_in": 0,
       "vo_est": 0,
       "vo": ""
@@ -30,42 +30,42 @@
     {
       "id": "e",
       "n": "04 · Tornei, finali live, montepremi",
-      "dur": 7.5,
-      "vo_in": 0.3,
-      "vo_est": 4.2,
-      "vo": "Sfidi i migliori player d'Italia, fino al palco dei grandi eventi."
+      "dur": 5.15625,
+      "vo_in": 0.4,
+      "vo_est": 3.3,
+      "vo": "Sfida i migliori d'Italia, fino al palco dei grandi eventi."
     },
     {
       "id": "f",
       "n": "05 · TESSERA ESPORTS FITP e vantaggi",
-      "dur": 7.5,
+      "dur": 5.625,
       "vo_in": 0.4,
-      "vo_est": 4.6,
-      "vo": "È il tuo pass per i tornei ufficiali. E i vantaggi non finiscono qui."
+      "vo_est": 3.9,
+      "vo": "Con la TESSERA ESPORTS FITP giochi sul serio. E i vantaggi non finiscono qui."
     },
     {
       "id": "g",
       "n": "06 · myFITP",
-      "dur": 6.5625,
-      "vo_in": 3.2,
-      "vo_est": 2.0,
-      "vo": "Bastano pochi tocchi e sei in gara."
+      "dur": 4.21875,
+      "vo_in": 2.2,
+      "vo_est": 1.5,
+      "vo": "Pochi tocchi e sei in gara."
     },
     {
       "id": "h",
       "n": "07 · GAME · SET · MATCH",
-      "dur": 4.21875,
-      "vo_in": 2.2,
+      "dur": 3.28125,
+      "vo_in": 1.5,
       "vo_est": 1.6,
       "vo": "Il resto lo decide il tuo gioco."
     },
     {
       "id": "i",
       "n": "08 · CTA",
-      "dur": 6.09375,
-      "vo_in": 0.4,
-      "vo_est": 5.0,
-      "vo": "Vivi il gaming da protagonista. Richiedi ora la TESSERA ESPORTS FITP su esports.fitp.it."
+      "dur": 4.6875,
+      "vo_in": 0.3,
+      "vo_est": 3.7,
+      "vo": "Vivi il gaming da protagonista. Richiedila ora su esports.fitp.it."
     }
   ]
 }

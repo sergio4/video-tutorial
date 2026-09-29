@@ -11,11 +11,11 @@ import { flyBall, impact, segPath } from './ball.js';
 
 export function finale(S, TL) {
   const sc = S.i, t0 = sc.t0, t1 = sc.t1;
-  const tIn = t0 + 0.25, tLand = t0 + 0.85;      // la tessera arriva al centro
-  const m0 = t0 + 1.0, m1 = t0 + 1.6;             // la tessera va a sinistra
-  const tClaim = t0 + 1.35;
-  const tBounce = t0 + 2.55, tCta = t0 + 2.95;    // rimbalzo sulla pennellata, impatto sul pulsante
-  const tUrl = tCta + 0.4, tLogo = tCta + 0.7;
+  const tIn = t0 + 0.15, tLand = t0 + 0.6;      // la tessera arriva al centro
+  const m0 = t0 + 0.7, m1 = t0 + 1.15;             // la tessera va a sinistra
+  const tClaim = t0 + 0.95;
+  const tBounce = t0 + 1.85, tCta = t0 + 2.2;    // rimbalzo sulla pennellata, impatto sul pulsante
+  const tUrl = tCta + 0.3, tLogo = tCta + 0.5;
   const CX = 1340, COLW = 1000;                   // asse e larghezza della colonna destra
   const Y1 = 330, BY = 625, UY = 730, LOGO_Y = 835; // claim (prima riga), pulsante, sito, loghi
   const CTA_TXT = 'RICHIEDI ORA LA TESSERA ESPORTS FITP';
@@ -31,7 +31,7 @@ export function finale(S, TL) {
   }
 
   const path = (t) => segPath([
-    [tBounce - 0.4, tBounce, [W + 100, 120, 18], [ul.x1 - 60, ul.y, 26], 0, E.inQuad],
+    [tBounce - 0.35, tBounce, [W + 100, 120, 18], [ul.x1 - 60, ul.y, 26], 0, E.inQuad],
     [tBounce, tCta, [ul.x1 - 60, ul.y, 26], [CX - 180, BY, 34], 150, E.lin],
   ])(t);
 
@@ -74,7 +74,7 @@ export function finale(S, TL) {
       const w2 = R.measure('da protagonista', 'glyB', cs, -0.012);
       const bx0 = CX - w2 / 2 + R.measure('da ', 'glyB', cs, -0.012), bw = R.measure('protagonista', 'glyB', cs, -0.012);
       ul = { x0: bx0, x1: bx0 + bw, y: y2 + cs * 0.36 + 24 };
-      const u = E.inOutCubic(seg(t, tClaim + 0.6, tClaim + 1.0));
+      const u = E.inOutCubic(seg(t, tClaim + 0.45, tClaim + 0.8));
       if (u > 0) {
         const pts = [], pb = [];
         for (let i = 0; i <= 30; i++) {

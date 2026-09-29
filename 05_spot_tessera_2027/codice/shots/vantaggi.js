@@ -1,12 +1,12 @@
 // 05 · TESSERA ESPORTS FITP e vantaggi
-// 05a (0:24): la tessera è l'unico elemento in scena. Scende appesa al suo laccetto come un pass da evento e oscilla;
-//      la pallina la colpisce e la accende. Sotto: «RICHIEDI LA TESSERA E-SPORTS» e, in seconda gerarchia,
-//      «IL PASS PER ACCEDERE AI TORNEI UFFICIALI». Nessun altro elemento.
-// 05b (0:27): «SCOPRI TUTTI I VANTAGGI» e quattro riquadri illustrati, testi centrati. Nel riquadro degli oggetti
+// 05a: la tessera è l'unico elemento in scena, trattata come una carta da gioco rara: sale dal basso girando su sé stessa,
+//      si posa fluttuando con riflesso olografico, alone e raggi alle spalle; la pallina la colpisce e la accende.
+//      Sotto: «RICHIEDI LA TESSERA E-SPORTS» e, in seconda gerarchia, «IL PASS PER ACCEDERE AI TORNEI UFFICIALI».
+// 05b: «SCOPRI TUTTI I VANTAGGI» e quattro riquadri illustrati, testi centrati. Nel riquadro degli oggetti
 //      esclusivi ci sono gli oggetti veri di Tennis Clash (racchetta e corda eSports FITP): mostrano cosa si ottiene.
 //      La pallina tocca i riquadri uno dopo l'altro: ogni riquadro compare quando viene toccato.
 import { W, H, Cam } from '../engine/r.js';
-import { clamp, lerp, seg, env, E, deg, TRS, T, RZ, mmul, rgba } from '../engine/math.js';
+import { clamp, lerp, seg, env, E, deg, TRS, T, rgba } from '../engine/math.js';
 import { BR, brandBg, kin, ptext } from './type.js';
 import { stage } from './mondo.js';
 import { card } from './card.js';
@@ -44,45 +44,31 @@ function bicon(R, kind, x, y, s, c, a) {
 
 export function vantaggi(S, TL) {
   const f = S.f, t0 = f.t0, t1 = f.t1;
-  const tDrop = t0 + 0.05, tHang = t0 + 0.6;   // la tessera scende sul laccetto
-  const tHit = t0 + 0.7;                        // la pallina la accende
-  const tUp = t0 + 3.0;                         // il pass risale, arrivano i vantaggi
-  const tB = t0 + 3.3;
-  const HITS = [0, 1, 2, 3].map((i) => tB + 0.55 + i * 0.28);
+  const tIn = t0, tLand = t0 + 0.6;             // la carta sale e si posa
+  const tHit = t0 + 0.62;                        // la pallina la accende
+  const tUp = t0 + 2.1;                          // la carta esce, arrivano i vantaggi
+  const tB = t0 + 2.35;
+  const HITS = [0, 1, 2, 3].map((i) => tB + 0.4 + i * 0.22);
   const topC = (i) => [tileX(i) + TW / 2, TY + 6, 26];
   const path = segPath([
-    [tHit - 0.35, tHit, [W / 2 + 420, -120, 18], [W / 2, 470, 40], 0, E.inQuad],
-    [HITS[0] - 0.3, HITS[0], [-120, 120, 20], topC(0), 60, E.lin],
+    [tHit - 0.3, tHit, [W / 2 + 420, -120, 18], [W / 2, 440, 40], 0, E.inQuad],
+    [HITS[0] - 0.25, HITS[0], [-120, 120, 20], topC(0), 60, E.lin],
     [HITS[0], HITS[1], topC(0), topC(1), 110, E.lin],
     [HITS[1], HITS[2], topC(1), topC(2), 110, E.lin],
     [HITS[2], HITS[3], topC(2), topC(3), 110, E.lin],
     [HITS[3], HITS[3] + 0.4, topC(3), [W + 140, 120, 22], 100, E.lin],
   ]);
 
-  // pass appeso: tutto (laccetto, gancio, tessera) oscilla attorno al punto d'aggancio sopra il quadro
-  const PIV = -900;
-  function swing(t) {
-    const dt = Math.max(0, t - tHang), dh = Math.max(0, t - tHit);
-    return deg(5 * Math.exp(-dt * 1.6) * Math.sin(dt * 5.2) + 3.5 * Math.exp(-dh * 1.4) * Math.sin(dh * 5.6));
-  }
-
-  function pass(R, t) {
-    const down = E.outBack(seg(t, tDrop, tHang), 1.2), up = E.inBack(seg(t, tUp, tUp + 0.45), 1.4);
-    const dy = lerp(-900, 0, down) - up * 1100;
-    R.push(mmul(mmul(T(0, PIV + dy, 0), RZ(swing(t))), T(0, -PIV, 0)));
-    // laccetto: due nastri che salgono fuori dal quadro
-    for (const sgn of [-1, 1]) {
-      R.poly([sgn * 150, -1000, sgn * 196, -1000, sgn * 44, -300, sgn * 4, -300], { fill: { lin: [0, -1000, 0, -300], stops: [[0, BR.violet], [1, BR.magenta]] } });
-      R.line([sgn * 172, -1000, sgn * 24, -300], { stroke: '#ffffff', lw: 1.5, alpha: 0.25 });
-    }
-    // gancio metallico
-    R.circle(0, -300, 20, { stroke: '#dcd6ee', lw: 6 }, 32);
-    R.rrect(-16, -300, 32, 34, 6, { fill: '#bdb6d6' });
-    R.push(TRS([0, -70, 0], [deg(3 * Math.sin(t * 1.1)), deg(8 * Math.sin(t * 0.8)), 0], 1.8));
-    card(R, t, { flash: 1 - seg(t, tHit, tHit + 0.5) });
-    // asola del pass
-    R.rrect(-22, -110, 44, 9, 4.5, { fill: '#0b0624' });
-    R.pop();
+  // la tessera come carta da gioco: entra dal basso con un giro completo, si posa e fluttua; poi esce verso l'alto
+  function gcard(R, t) {
+    const u = E.outBack(seg(t, tIn, tLand), 1.3), o = E.inBack(seg(t, tUp, tUp + 0.35), 1.4);
+    const idle = seg(t, tLand, tLand + 0.4);
+    const y = lerp(700, -100, u) - o * 900 + Math.sin(t * 1.6) * 8 * idle;
+    const spin = (1 - E.outCubic(seg(t, tIn, tLand))) * Math.PI * 2;
+    R.push(TRS([0, y, lerp(500, 0, u)], [deg(-6 * Math.sin(t * 1.1)) * idle, deg(10 * Math.sin(t * 0.8)) * idle + spin, deg(-2 * Math.sin(t * 0.7)) * idle], 1.9 * lerp(0.6, 1, u)));
+    // alone della carta
+    R.with(T(0, 0, 20), () => R.rrect(-190, -130, 380, 260, 30, { fill: BR.violet, alpha: 0.35 * idle * (1 - o), blur: 50, glow: 0.8 }));
+    card(R, t, { flash: env(t, tHit - 0.02, tHit, tHit, tHit + 0.45) });
     R.pop();
   }
 
@@ -108,11 +94,19 @@ export function vantaggi(S, TL) {
     const cam = new Cam();
     cam.look(CAM.eye, [0, 0, 0], 0, CAM.f);
     R.setCam(cam);
-    if (t < tB + 0.2) pass(R, t);
-    impact(R, W / 2, 470, seg(t, tHit, tHit + 0.7), { scale: 2.2, col: BR.magenta });
+    // raggi alle spalle della carta (rivelazione), solo finché la carta è in scena
+    const ra = seg(t, tLand - 0.1, tLand + 0.3) * (1 - seg(t, tUp, tUp + 0.3));
+    if (ra > 0) R.hud(() => {
+      for (let i = 0; i < 18; i++) {
+        const ang = (i / 18) * Math.PI * 2 + t * 0.15, w = 0.05;
+        R.poly([W / 2, 440, W / 2 + Math.cos(ang - w) * 1200, 440 + Math.sin(ang - w) * 1200, W / 2 + Math.cos(ang + w) * 1200, 440 + Math.sin(ang + w) * 1200], { fill: { rad: [W / 2, 440, 900], stops: [[0, rgba(i % 2 ? BR.magenta : BR.cyan, 0.22 * ra)], [1, 'rgba(0,0,0,0)']] }, blend: 'lighter' });
+      }
+    });
+    if (t < tB + 0.2) gcard(R, t);
+    impact(R, W / 2, 440, seg(t, tHit, tHit + 0.7), { scale: 2.2, col: BR.magenta });
     // 05a: messaggio sotto il pass
-    kin(R, [{ s: 'RICHIEDI LA TESSERA E-SPORTS', size: 84 }], W / 2, 810, t, tHang - 0.05, tUp - 0.1, { align: 'center', stagger: 0.014 });
-    kin(R, [{ s: 'IL PASS PER ACCEDERE AI TORNEI UFFICIALI', size: 40, font: 'glySB', col: BR.cyan, tracking: 0.03 }], W / 2, 910, t, tHit + 0.25, tUp - 0.1, { align: 'center', stagger: 0.008 });
+    kin(R, [{ s: 'RICHIEDI LA TESSERA E-SPORTS', size: 84 }], W / 2, 790, t, tLand - 0.2, tUp - 0.1, { align: 'center', stagger: 0.014 });
+    kin(R, [{ s: 'IL PASS PER ACCEDERE AI TORNEI UFFICIALI', size: 40, font: 'glySB', col: BR.cyan, tracking: 0.03 }], W / 2, 890, t, tHit + 0.1, tUp - 0.1, { align: 'center', stagger: 0.008 });
     // 05b: vantaggi
     kin(R, [{ s: 'SCOPRI TUTTI I VANTAGGI', size: 84 }], W / 2, 170, t, tB, t1 - 0.3, { align: 'center', stagger: 0.014 });
     R.hud(() => {
@@ -121,7 +115,7 @@ export function vantaggi(S, TL) {
       const fs = Math.min(40, ...TILES.flatMap((T_) => T_.lines.map((l) => (40 * inner) / R.measure(l, 'glyB', 40, 0))));
       TILES.forEach((T_, i) => {
         const th = HITS[i];
-        const u = E.outBack(seg(t, th - 0.02, th + 0.35), 1.7), a = seg(t, th - 0.02, th + 0.08) * (1 - seg(t, t1 - 0.3, t1));
+        const u = E.outBack(seg(t, th - 0.02, th + 0.3), 1.7), a = seg(t, th - 0.02, th + 0.08) * (1 - seg(t, t1 - 0.3, t1));
         if (a <= 0) return;
         const x = tileX(i), cx = x + TW / 2, cy = TY + TH / 2, k = lerp(0.7, 1, u);
         const lit = env(t, th, th + 0.05, th + 0.1, th + 0.6);
@@ -143,7 +137,7 @@ export function vantaggi(S, TL) {
 
   function fx(t) {
     const g = { grain: 0.04 };
-    if (t < tHang + 0.1 || (t > tUp && t < tB + 0.4)) g.mb = 7;
+    if (t < tLand + 0.1 || (t > tUp && t < tB + 0.4)) g.mb = 7;
     if (t >= tHit && t < tHit + 0.25) { const u = (t - tHit) / 0.25; g.flash = [BR.magenta, 0.3 * (1 - u)]; }
     return g;
   }

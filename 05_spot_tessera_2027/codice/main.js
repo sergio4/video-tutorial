@@ -1,8 +1,10 @@
 import { Renderer, W, H, FPS } from './engine/r.js';
 import { Fonts } from './engine/text.js';
 import { drawScene, fxAt } from './shots/index.js';
-const FONTS = { unb900: 'fonts/unbounded-latin-900-normal.woff', unb700: 'fonts/unbounded-latin-700-normal.woff', unb600: 'fonts/unbounded-latin-600-normal.woff', unb400: 'fonts/unbounded-latin-400-normal.woff', mono800: 'fonts/jetbrains-mono-latin-800-normal.woff', mono700: 'fonts/jetbrains-mono-latin-700-normal.woff', mono500: 'fonts/jetbrains-mono-latin-500-normal.woff', bc900i: 'fonts/barlow-condensed-latin-900-italic.woff', bc800i: 'fonts/barlow-condensed-latin-800-italic.woff', bc700i: 'fonts/barlow-condensed-latin-700-italic.woff', rob400: 'fonts/roboto-latin-400-normal.woff', rob500: 'fonts/roboto-latin-500-normal.woff', rob700: 'fonts/roboto-latin-700-normal.woff', rob900: 'fonts/roboto-latin-900-normal.woff', rob700i: 'fonts/roboto-latin-700-italic.woff', rob900i: 'fonts/roboto-latin-900-italic.woff' };
-const IMGS = { logo: 'media/esports_fitp.png', tessera: 'media/tessera_fronte.png', fitp: 'media/fitp_logo.png', fitp_neg: 'media/fitp_logo_neg.png', mf_banner: 'media/mf_banner.png', mf_thumb: 'media/mf_thumb.png', mf_promo: 'media/mf_promo.png', mf_nav: 'media/mf_nav.png', mf_logo: 'media/mf_logo.png', mf_menu: 'media/mf_menu.png', tc_hero_lit: 'media/tc_hero_lit.png', tc_hero_glow: 'media/tc_hero_glow.png', tc_opp_lit: 'media/tc_opp_lit.png', tc_opp_glow: 'media/tc_opp_glow.png' };
+const FONTS = { unb900: 'fonts/unbounded-latin-900-normal.woff', unb700: 'fonts/unbounded-latin-700-normal.woff', unb600: 'fonts/unbounded-latin-600-normal.woff', unb400: 'fonts/unbounded-latin-400-normal.woff', mono800: 'fonts/jetbrains-mono-latin-800-normal.woff', mono700: 'fonts/jetbrains-mono-latin-700-normal.woff', mono500: 'fonts/jetbrains-mono-latin-500-normal.woff', bc900i: 'fonts/barlow-condensed-latin-900-italic.woff', bc800i: 'fonts/barlow-condensed-latin-800-italic.woff', bc700i: 'fonts/barlow-condensed-latin-700-italic.woff', rob400: 'fonts/roboto-latin-400-normal.woff', rob500: 'fonts/roboto-latin-500-normal.woff', rob700: 'fonts/roboto-latin-700-normal.woff', rob900: 'fonts/roboto-latin-900-normal.woff', rob700i: 'fonts/roboto-latin-700-italic.woff', rob900i: 'fonts/roboto-latin-900-italic.woff', glyB: 'fonts/Glancyr-Bold.otf', glyBI: 'fonts/Glancyr-BoldItalic.otf', glySB: 'fonts/Glancyr-SemiBold.otf', glyM: 'fonts/Glancyr-Medium.otf', glyR: 'fonts/Glancyr-Regular.otf', glyL: 'fonts/Glancyr-Light.otf' };
+const IMGS = { logo: 'media/esports_fitp.png', tessera: 'media/tessera_fronte.png', fitp: 'media/fitp_logo.png', fitp_neg: 'media/fitp_logo_neg.png', mf_banner: 'media/mf_banner.png', mf_thumb: 'media/mf_thumb.png', mf_promo: 'media/mf_promo.png', mf_nav: 'media/mf_nav.png', mf_logo: 'media/mf_logo.png', mf_menu: 'media/mf_menu.png', tc_hero_lit: 'media/tc_hero_lit.png', tc_hero_glow: 'media/tc_hero_glow.png', tc_opp_lit: 'media/tc_opp_lit.png', tc_opp_glow: 'media/tc_opp_glow.png', eseries: 'media/fitp_eseries_bmw_neg.png', ev_ibi: 'media/ev_ibi_fitp.jpg', ev_win: 'media/ev_atp_victor.jpg' };
+// sequenze di fotogrammi del gameplay reale (25 fps): f = fotogramma, b = versione sfocata per lo sfondo
+const SEQS = { gpA: ['media/gp_a', 160], gpB: ['media/gp_b', 80] };
 const loadImg = (u) => new Promise((res, rej) => { const im = new Image(); im.onload = () => res(im); im.onerror = rej; im.src = u; });
 // la timeline elenca le scene con la loro durata: i tempi assoluti si calcolano qui, così basta cambiare le durate per adattarsi alla voce
 function layout(TL) {
@@ -18,6 +20,11 @@ async function init() {
   await Promise.all(Object.entries(FONTS).map(([k, u]) => fonts.load(k, u)));
   const imgs = {};
   await Promise.all(Object.entries(IMGS).map(async ([k, u]) => { imgs[k] = await loadImg(u); }));
+  const pad = (i) => String(i).padStart(3, '0');
+  await Promise.all(Object.entries(SEQS).map(async ([k, [dir, n]]) => {
+    imgs[k] = await Promise.all(Array.from({ length: n }, (_, i) => loadImg(`${dir}/f${pad(i + 1)}.jpg`)));
+    imgs[k + 'Blur'] = await Promise.all(Array.from({ length: n }, (_, i) => loadImg(`${dir}/b${pad(i + 1)}.jpg`)));
+  }));
   const canvas = document.getElementById('c');
   const R = new Renderer(canvas, fonts, imgs);
   const small = document.createElement('canvas');

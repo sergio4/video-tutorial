@@ -1,15 +1,14 @@
-// Router degli atti dello spot (piano v3, 45 s): ogni atto copre uno o più blocchi A-I e disegna i propri raccordi.
+// Router degli atti dello spot (piano v5, 30 s): ogni atto copre uno o più blocchi A-G e disegna i propri raccordi.
 import { W, H } from '../engine/r.js';
-import { intro } from './intro.js';
+import { gioco } from './gioco.js';
 import { mondo } from './mondo.js';
-import { tessera } from './tessera.js';
-import { app } from './app.js';
-import { match } from './match.js';
-import { benefit } from './benefit.js';
+import { carte } from './carte.js';
+import { vantaggi } from './vantaggi.js';
+import { myfitp } from './myfitp.js';
 import { finale } from './finale.js';
 
-// percorso: scopri gli eSports FITP → level up → fai la tessera → entra in myFITP → cosa puoi fare → CTA
-const FACTORIES = [intro, mondo, tessera, app, match, benefit, finale];
+// percorso v5: gioco → level up → mondo eSports FITP → competizione → TESSERA eSPORTS FITP → myFITP → ISCRIVITI ORA
+const FACTORIES = [gioco, mondo, carte, vantaggi, myfitp, finale];
 let built = null, builtFor = null;
 
 function acts(TL) {

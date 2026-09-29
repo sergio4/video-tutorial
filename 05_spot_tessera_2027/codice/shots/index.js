@@ -1,14 +1,15 @@
-// Router degli atti dello spot (piano v5, 30 s): ogni atto copre uno o più blocchi A-G e disegna i propri raccordi.
+// Router degli atti dello spot (piano v6, 45 s): ogni atto copre uno o più blocchi 01-09 e disegna i propri raccordi.
 import { W, H } from '../engine/r.js';
 import { gioco } from './gioco.js';
-import { mondo } from './mondo.js';
+import { mondo, circuito } from './mondo.js';
 import { carte } from './carte.js';
 import { vantaggi } from './vantaggi.js';
 import { myfitp } from './myfitp.js';
+import { match } from './match.js';
 import { finale } from './finale.js';
 
-// percorso v5: gioco → level up → mondo eSports FITP → competizione → TESSERA eSPORTS FITP → myFITP → ISCRIVITI ORA
-const FACTORIES = [gioco, mondo, carte, vantaggi, myfitp, finale];
+// percorso v6: domanda → level up → mondo eSports FITP → FITP eSeries by BMW → card eventi → TESSERA E-SPORTS FITP → myFITP → match → CTA
+const FACTORIES = [gioco, mondo, circuito, carte, vantaggi, myfitp, match, finale];
 let built = null, builtFor = null;
 
 function acts(TL) {
@@ -24,12 +25,12 @@ function guide(R, t, TL) {
   if (!sc) return;
   R.hud(() => {
     R.rect(0, H - 118, W, 118, { fill: 'rgba(0,0,0,0.55)' });
-    R.text(`SCENA ${sc.n}`, 40, H - 76, { font: 'mono800', size: 22, v: 'cap', fill: '#e2ff2e', tracking: 0.1 });
-    R.text(`${t.toFixed(2)} s`, 40, H - 36, { font: 'mono700', size: 20, v: 'cap', fill: '#ffffff' });
+    R.text(`SCENA ${sc.n}`, 40, H - 76, { font: 'glySB', size: 22, v: 'cap', fill: '#e2ff2e', tracking: 0.1 });
+    R.text(`${t.toFixed(2)} s`, 40, H - 36, { font: 'glySB', size: 20, v: 'cap', fill: '#ffffff' });
     const vin = sc.t0 + sc.vo_in, vout = vin + sc.vo_est;
     const on = t >= vin && t < vout;
     R.circle(262, H - 58, 9, on ? { fill: '#ff3b6b', glow: 0.6 } : { stroke: 'rgba(255,255,255,0.5)', lw: 2 }, 20);
-    R.text('V.O.  ' + sc.vo, 284, H - 58, { font: 'unb600', size: 26, v: 'cap', fill: on ? '#ffffff' : 'rgba(255,255,255,0.4)' });
+    R.text('V.O.  ' + sc.vo, 284, H - 58, { font: 'glyM', size: 26, v: 'cap', fill: on ? '#ffffff' : 'rgba(255,255,255,0.4)' });
     R.rect(250, H - 22, (W - 290) * Math.min(1, Math.max(0, (t - sc.t0) / sc.dur)), 4, { fill: '#e2ff2e' });
   });
 }

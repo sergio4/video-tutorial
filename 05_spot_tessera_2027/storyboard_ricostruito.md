@@ -1,66 +1,53 @@
-# Spot TESSERA eSPORTS FITP 2027 · piano v5
+# Spot TESSERA E-SPORTS FITP 2027 · piano v6
 
-BOZZA · 16:9 · 30 s · 128 BPM · musica originale, voce da registrare (testo in `testo_voiceover.md`).
+BOZZA · 16:9 · 45 s · 128 BPM · musica originale, voce da registrare (testo in `testo_voiceover.md`).
+Report delle modifiche rispetto a v4 e v5, con i punti di verifica: `REPORT_MODIFICHE_v6.md`.
 
-**Domanda guida:** chi non conosce gli eSports FITP, dopo 30 secondi deve aver capito cosa può fare e perché entrare.
-**Percorso:** gioco → XP → level up → mondo eSports FITP → FITP eSeries by BMW → tornei e competizione → TESSERA eSPORTS FITP → myFITP → ISCRIVITI ORA.
+**Principio:** la ricchezza della v4 con la qualità visiva e il motion della v5.
+**Percorso:**
+domanda → level up → Entra nel mondo eSports FITP → FITP eSeries by BMW → tornei, finali live e montepremi → TESSERA E-SPORTS FITP e vantaggi → myFITP → GAME · SET · MATCH → CTA.
+**Filo conduttore:** la pallina da tennis. Ogni sua apparizione ha un compito:
+1. esce dal gioco;
+2. apre il mondo;
+3. svela il circuito;
+4. spinge le card;
+5. accende la tessera e i vantaggi;
+6. porta alla partita;
+7. preme la CTA.
 
 ## Sistema visivo
-- **Palette ufficiale** di esports.fitp.it: viola #a406f9, lilla #c84cf0, magenta #f608be, ciano #00ffff, notte #10091e, deep #311a60. Non c'è né giallo né lime.
-- **Testi in Glancyr**, con tre livelli e un solo messaggio principale per schermata:
-  - titolo in Glancyr Bold bianco, con la parola chiave in lilla;
-  - secondario in Glancyr Medium;
-  - supporto in Glancyr Regular grigio lilla.
-  - La gamification (+XP, LIVELLO 30) resta piccola e secondaria.
-- **Motion:** ogni testo entra dal basso in maschera ed esce verso l'alto. Ogni movimento ha una funzione:
-  - la barra XP segue i colpi veri;
-  - il level up nasce dal punto vinto;
-  - le card scorrono sul battere;
-  - la tessera vola nel telefono;
-  - la CTA pulsa.
+- **Palette ufficiale** di esports.fitp.it (viola, lilla, magenta, ciano, notte), senza giallo né lime nei testi. La pallina resta giallo-verde come una vera pallina da tennis, con la scia nei colori del brand.
+- **Glancyr** per i testi. Motion typography: ogni lettera sale dalla maschera ruotando in prospettiva e si posa; in uscita le righe salgono una dopo l'altra.
+- **Testi esatti:** la grafia richiesta è rispettata alla lettera, comprese le due forme «E-SPORTS/e-sports» per la tessera ed «eSports» altrove.
 
 ## Scene
 
-| # | Tempo | Cosa succede | A schermo |
+| # | Tempo | Cosa succede | Testi a schermo |
 |---|---|---|---|
-| A | 0,00–5,16 | Gameplay reale di Tennis Clash (clip fornita) in una card verticale, con lo stesso video sfocato a riempire il 16:9. Nei primi 2,6 s c'è solo gameplay. La barra XP sale su ogni colpo vero. | barra LV 29 · +XP piccoli · dal secondo 2,6 «OGNI COLPO / CONTA» |
-| B | 5,16–7,03 | Il punto vinto riempie la barra: lampo, anelli, la card si tinge di magenta, tuffo | LEVEL UP · LIVELLO 30 |
-| C | 7,03–10,78 | Dal lampo emerge il logo eSports FITP, poi il logo ufficiale FITP eSeries by BMW | «ENTRA NEL MONDO / eSPORTS FITP» → «Il circuito ufficiale della Federazione Italiana Tennis e Padel» |
-| D | 10,78–16,41 | Carosello 3D di tre card editoriali con immagini vere: gameplay con logo eSeries, palco degli Internazionali BNL d'Italia eSeries, vincitore delle Nitto ATP Finals eSeries | «TORNEI ONLINE / DAL TUO SMARTPHONE» · «FINALI LIVE / AI GRANDI EVENTI» · «MONTEPREMI / IN PALIO» |
-| E | 16,41–21,09 | La tessera entra ruotando, poi arrivano i vantaggi | «OTTIENI LA / TESSERA / eSPORTS FITP» → 2 cartelli grandi (TORNEI UFFICIALI con montepremi · FINO AL -10%* sui grandi eventi FITP) + 3 chip (Loyalty program FITP · Sconti dai partner · SuperTennis+ gratis) + nota legale |
-| F | 21,09–25,31 | La tessera vola nello smartphone: il toast dice che la tessera è attiva, il torneo è già aperto, un tocco su REGISTRATI porta a SEI ISCRITTO | «TUTTO PARTE / DA myFITP» · «Ti iscrivi ai tornei in un tocco» |
-| G | 25,31–30,00 | Composizione centrata: tessera, claim, pulsante, sito, loghi piccoli | «VIVI IL GAMING / DA PROTAGONISTA» · **ISCRIVITI ORA** · esports.fitp.it · loghi eSports FITP e FITP |
+| 01 | 0,00–5,63 | Smartphone 3D (spessore, ombra, riflesso a terra, lama di luce sul vetro) con il gameplay reale. La camera avanza e gira attorno al telefono, con fari e pulviscolo in parallasse | «Sei pronto / a diventare / il prossimo / campione?» |
+| 02 | 5,63–7,50 | Sul punto vinto la pallina esce dallo schermo verso la camera. Impatto, raggi, LEVEL UP in rilievo; poi la pallina vola via verso l'alto | LEVEL UP |
+| 03 | 7,50–11,25 | La pallina ricade e rimbalza sul palco: il rimbalzo fa comparire il logo eSports FITP | «Entra nel mondo / eSports FITP» |
+| 04 | 11,25–15,00 | La pallina attraversa lo schermo e la sua scia svela il logo FITP eSeries by BMW; poi il logo si apre verso la camera | logo FITP eSeries by BMW · «Il circuito ufficiale della Federazione Italiana Tennis e Padel» |
+| 05 | 15,00–21,56 | Carosello di tre card con immagini vere. La pallina colpisce la card attiva e la fa avanzare; la camera entra nell'ultima card | «TORNEI ONLINE / DAL TUO SMARTPHONE» · «FINALI LIVE / AI GRANDI EVENTI» · «MONTEPREMI / IN PALIO» |
+| 06a | 21,56–24,91 | La pallina cade al centro e accende la tessera, protagonista della scena. Accanto, collegati da fasci di luce, i due vantaggi principali | «TESSERA E-SPORTS FITP» · «Tornei eSports ufficiali» · «Grandi eventi» + icona sconto + «fino al 10%*» · nota legale |
+| 06b | 24,91–28,13 | Disposizione della v4: tessera a sinistra, griglia 2×2 a destra. La pallina esce dalla tessera e tocca le card una dopo l'altra | «E con la tessera anche...» · Loyalty Program FITP · Sconti dai partner · SuperTennis+ · Oggetti esclusivi su Tennis Clash |
+| 07 | 28,13–34,69 | Smartphone 3D: myFITP si scarica e si apre → tocco sulla sezione eSports → elenco tornei → REGISTRATI → SEI ISCRITTO. Tre tappe si accendono in sincrono; alla fine la pallina esce verso la camera | «Scarica myFITP / e registrati ai tornei / nella sezione eSports» · myFITP › eSports › Tornei |
+| 08 | 34,69–38,91 | Dalla v4: VS con i personaggi Tennis Clash, scambio su campo notturno, punto vincente, la scia della pallina disegna la coppa, WIN, esultanza | FITP eSERIES BY BMW · PRIMO TURNO · VS · GAME · SET · MATCH · WIN |
+| 09 | 38,91–45,00 | Disposizione della v4 con crescendo: la tessera arriva al centro fra raggi e particelle e va a sinistra. A destra il claim con la pennellata. La pallina rimbalza sulla pennellata e colpisce il pulsante, che si accende; poi sito e loghi | «Vivi il gaming / da protagonista» · «Richiedi ora la tessera e-sports FITP» · esports.fitp.it · loghi eSports FITP e FITP |
 
-Nota legale (E): «*Fino al 10% sui biglietti e fino al 5% sugli abbonamenti. Valido per chi ha partecipato ad almeno un torneo eSports FITP.»
+Nota legale (06a): «*Fino al 10% sui biglietti e fino al 5% sugli abbonamenti. Valido per chi ha partecipato ad almeno un torneo eSports FITP.»
 
 ## Musica
-Traccia originale in fa minore a 128 BPM, generata da `codice/audio/build.py`:
-- **A:** ostinato filtrato che si apre col titolo, poi rullata e riser.
-- **B:** impatto sul punto vinto (5,5 s) e drop pieno.
-- **C:** respiro con pad e arpeggio.
-- **D:** groove pieno, con un colpo su ogni card.
-- **E:** lift.
-- **F:** groove asciutto, con tap e conferma.
-- **G:** salita, colpo sul pulsante e accordo finale.
-
-Nelle finestre della voce la musica scende di circa 5 dB. Il mix è a −14 LUFS.
-
-## Materiali
-- Gameplay: clip WhatsApp fornita (392×850), sezioni 3,0–9,4 s e 12,6–15,8 s (`codice/media/gp_a`, `gp_b`).
-- Foto degli eventi, dagli URL forniti:
-  - `ev_ibi_fitp.jpg` (fitp.it);
-  - `ev_atp_victor.jpg` (nittoatpfinals.com);
-  - non usate: `ev_ibi_trixo.jpg` (stesso palco della card 2) e `ev_atp_premiazione.jpg` (i toni azzurri stonano con la palette).
-- Loghi:
-  - FITP eSeries by BMW, ufficiale (esports.fitp.it);
-  - eSports FITP;
-  - FITP in negativo, **ricavato da me dall'SVG**.
-- Font: Glancyr (`assets/font/glancyr`), preso dal sito eSports FITP.
+Traccia originale in fa minore a 128 BPM, generata da `codice/audio/build.py` e scritta in `out/musica_v6.wav`.
+- Ogni colpo della pallina ha il suo suono.
+- La musica scende di circa 4 dB nelle finestre della voce.
+- Il mix è a −14 LUFS.
 
 ## Da verificare
-- **Licenza Glancyr:** non c'è un file di licenza. Va verificato che FITP abbia i diritti d'uso anche per il video.
-- **Diritti sulle foto:** le foto sono scaricate da fitp.it, trixo.gg e nittoatpfinals.com. Servono i diritti e la liberatoria delle persone riconoscibili (il vincitore nella card 3).
-- **Tennis Clash:** nome e gameplay richiedono l'ok di WildLife. Nel gameplay compaiono i nickname «imSerghio» e «Insignific».
-- **Montepremi e sconti 2027:** confermare le percentuali, gli eventi e la condizione del torneo.
-- **Flusso myFITP:** toast e iscrizione sono ricostruiti in modo plausibile, da confermare con chi gestisce l'app.
-- **CTA:** a schermo c'è «ISCRIVITI ORA», grammaticalmente corretto. «Iscrivi ora» sarebbe un imperativo senza oggetto.
+- **Grafia della tessera:** nello stesso spot convivono «TESSERA E-SPORTS FITP» e «tessera e-sports FITP» accanto a «eSports FITP» e «Tornei eSports ufficiali», come richiesto.
+- **Sezione eSports di myFITP:** ho ipotizzato che sia l'icona centrale della barra in basso, quella con la pallina. Va verificato con chi gestisce l'app.
+- **Oggetti esclusivi su Tennis Clash:** è un vantaggio nuovo; va verificato con WildLife prima della pubblicazione.
+- **Diritti sulle foto** (fitp.it, nittoatpfinals.com), liberatoria del vincitore nella card 3, ok di WildLife su nome, gameplay e personaggi.
+- **Licenza Glancyr.**
+- **Montepremi e sconti 2027.**
+- **Logo FITP in negativo:** l'ho ricavato io dall'SVG.

@@ -1,10 +1,12 @@
-// C · Il mondo eSports FITP
-// C1: dal lampo del level up emerge il logo eSports FITP con il titolo «ENTRA NEL MONDO eSPORTS FITP».
-// C2: il logo ufficiale FITP eSeries by BMW, con il secondario «Il circuito ufficiale FITP»: non è solo un gioco,
-// è un circuito federale. Poi le card editoriali (carte.js).
+// 03 · Entra nel mondo eSports FITP   04 · FITP eSeries by BMW
+// 03: la pallina ricade dall'alto e rimbalza sul pavimento del palco: il rimbalzo fa comparire il logo eSports FITP
+//     e il titolo «Entra nel mondo eSports FITP».
+// 04: la pallina attraversa lo schermo da sinistra a destra e la sua scia svela il logo ufficiale FITP eSeries by BMW;
+//     sotto, «Il circuito ufficiale della Federazione Italiana Tennis e Padel». Il logo si apre verso la camera (→ 05).
 import { W, H } from '../engine/r.js';
 import { clamp, lerp, seg, env, E, deg, hash, rgba } from '../engine/math.js';
-import { BR, h1, h2, brandBg } from './type.js';
+import { BR, kin, brandBg } from './type.js';
+import { flyBall, impact, segPath } from './ball.js';
 
 // fasci di luce e griglia prospettica: profondità discreta, mai protagonista
 export function stage(R, t, a = 1) {
@@ -25,37 +27,90 @@ export function stage(R, t, a = 1) {
 
 export function mondo(S, TL) {
   const c = S.c, t0 = c.t0, t1 = c.t1;
-  const c2 = t0 + 1.9; // seconda metà: il circuito
+  const tB = t0 + 0.45;           // rimbalzo sul palco
+  const tOut = t1 - 0.45;
+  const FY = 800;                 // quota del rimbalzo (pavimento del palco)
+  const path = segPath([
+    [t0 - 0.05, tB, [W / 2 + 40, -120, 16], [W / 2, FY, 30], 0, E.inQuad],
+    [tB, tB + 0.75, [W / 2, FY, 30], [W + 140, 180, 22], 260, E.outQuad],
+  ]);
 
   function draw(R, t) {
     brandBg(R, t);
     stage(R, t, 1);
+    // alone sul pavimento dove rimbalza la pallina
+    const g = env(t, tB - 0.05, tB, tB + 0.2, tB + 1.2);
+    if (g > 0) R.hud(() => R.with([1, 0, 0, W / 2, 0, 0.22, 0, FY + 26, 0, 0, 1, 0], () => R.circle(0, 0, 420, { fill: { rad: [0, 0, 420], stops: [[0, rgba(BR.magenta, 0.55 * g)], [1, 'rgba(0,0,0,0)']] }, blend: 'lighter' }, 64)));
+    impact(R, W / 2, FY + 26, seg(t, tB, tB + 0.8), { scale: 2.6, flat: 0.25, col: BR.magenta });
+    // logo eSports FITP: nasce dal rimbalzo
     R.hud(() => {
-      // C1: logo eSports FITP
-      const la = seg(t, t0 + 0.05, t0 + 0.35) * (1 - seg(t, c2 - 0.15, c2 + 0.1));
+      const la = seg(t, tB, tB + 0.12) * (1 - seg(t, tOut, tOut + 0.3));
       if (la > 0) {
-        const k = E.outBack(seg(t, t0 + 0.05, t0 + 0.5), 1.4) * lerp(1, 1.25, seg(t, c2 - 0.15, c2 + 0.1));
-        const w = 560 * k, h = w * (717 / 1278);
-        R.image(R.img.logo, W / 2 - w / 2, 385 - h / 2, w, h, { sub: 1, alpha: la });
-      }
-      // C2: logo FITP eSeries by BMW
-      const ea = seg(t, c2, c2 + 0.3) * (1 - seg(t, t1 - 0.2, t1));
-      if (ea > 0) {
-        const k = lerp(0.85, 1, E.outExpo(seg(t, c2, c2 + 0.5)));
-        const w = 1100 * k, h = w * (228 / 1536);
-        R.image(R.img.eseries, W / 2 - w / 2, 480 - h / 2, w, h, { sub: 1, alpha: ea });
+        const k = E.outBack(seg(t, tB, tB + 0.55), 1.6) * lerp(1, 1.04, seg(t, tB + 0.6, t1)) * lerp(1, 0.85, E.inCubic(seg(t, tOut, tOut + 0.3)));
+        const w = 620 * k, h = w * (717 / 1278);
+        R.image(R.img.logo, W / 2 - w / 2, 350 - h / 2 - E.inCubic(seg(t, tOut, tOut + 0.3)) * 60, w, h, { sub: 1, alpha: la });
       }
     });
-    h1(R, ['ENTRA NEL MONDO', ['eSPORTS FITP', BR.lilac]], W / 2, 695, t, t0 + 0.3, c2 - 0.25, { size: 88, align: 'center' });
-    h2(R, 'Il circuito ufficiale della Federazione Italiana Tennis e Padel', W / 2, 655, t, c2 + 0.35, t1 - 0.2, { align: 'center', size: 40, fill: BR.white });
-    // ingresso: il lampo magenta del level up si dissolve
-    const wh = 1 - E.outCubic(seg(t, t0, t0 + 0.35));
-    if (wh > 0) R.hud(() => R.rect(0, 0, W, H, { fill: BR.magenta, alpha: wh * 0.85 }));
+    kin(R, [
+      { s: 'Entra nel mondo', size: 104 },
+      { s: 'eSports FITP', size: 150, col: BR.lilac, glow: 0.25, glowColor: BR.magenta },
+    ], W / 2, 690, t, tB + 0.15, tOut, { align: 'center', lineGap: 0.3 });
+    flyBall(R, path, t, { trail: 0.14 });
+    // ingresso: il viola del level up si apre
+    const wh = 1 - E.outCubic(seg(t, t0, t0 + 0.3));
+    if (wh > 0) R.hud(() => R.rect(0, 0, W, H, { fill: BR.deep2, alpha: wh }));
   }
 
   function fx(t) {
     const f = { grain: 0.04 };
-    if (t < t0 + 0.3) f.mb = 6;
+    if (t < tB + 0.8) f.mb = 7;
+    if (t >= tB && t < tB + 0.25) { const u = (t - tB) / 0.25; f.flash = [BR.magenta, 0.25 * (1 - u)]; }
+    return f;
+  }
+
+  return { t0, t1, draw, fx };
+}
+
+export function circuito(S, TL) {
+  const d = S.d, t0 = d.t0, t1 = d.t1;
+  const tA = t0 + 0.05, tZ = t0 + 0.75;  // passaggio della pallina
+  const LY = 470, LW = 1250, LH = LW * (228 / 1536);
+  const tOut = t1 - 0.4;
+  const bx = (t) => lerp(-160, W + 160, E.inOutSine(seg(t, tA, tZ)));
+  const path = (t) => (t < tA - 0.02 || t > tZ + 0.02 ? null : [bx(t), LY - Math.sin(seg(t, tA, tZ) * Math.PI) * 30, 26]);
+
+  function draw(R, t) {
+    brandBg(R, t);
+    stage(R, t, 0.9);
+    const zoom = 1 + 0.05 * seg(t, tZ, tOut) + 0.9 * E.inCubic(seg(t, tOut, t1));
+    const za = 1 - seg(t, tOut + 0.15, t1);
+    R.hud(() => R.with([zoom, 0, 0, (W / 2) * (1 - zoom), 0, zoom, 0, LY * (1 - zoom), 0, 0, 1, 0], () => {
+      // logo svelato dalla scia: la parte già attraversata dalla pallina è visibile
+      const rx = t < tZ ? bx(t) : W + 200;
+      const x0 = W / 2 - LW / 2;
+      if (rx > x0) {
+        R.clipRect(0, 0, rx, H);
+        R.image(R.img.eseries, x0, LY - LH / 2, LW, LH, { sub: 1, alpha: za });
+        R.unclip();
+      }
+      // lama di luce che segue la pallina sul bordo della rivelazione
+      if (t < tZ + 0.1) R.band(rx, LY - LH * 0.9, rx, LY + LH * 0.9, 5, { fill: '#ffffff', alpha: 1 - seg(t, tZ, tZ + 0.1), glow: 1.4, glowColor: BR.cyan });
+      // riflesso che attraversa il logo quando è completo
+      const sw = seg(t, tZ + 0.5, tZ + 1.3);
+      if (sw > 0 && sw < 1) {
+        const sx = lerp(x0 - 200, x0 + LW + 200, sw);
+        R.clipRect(x0, LY - LH / 2, LW, LH);
+        R.poly([sx - 60, LY - LH, sx + 20, LY - LH, sx - 60, LY + LH, sx - 140, LY + LH], { fill: '#ffffff', alpha: 0.35 * za, blend: 'screen' });
+        R.unclip();
+      }
+    }));
+    kin(R, [{ s: 'Il circuito ufficiale della Federazione Italiana Tennis e Padel', size: 46, font: 'glyM', tracking: 0 }], W / 2, 660, t, tZ + 0.15, tOut - 0.1, { align: 'center', stagger: 0.008 });
+    flyBall(R, path, t, { trail: 0.28 });
+  }
+
+  function fx(t) {
+    const f = { grain: 0.04 };
+    if (t < tZ + 0.1 || t > tOut) f.mb = 8;
     return f;
   }
 

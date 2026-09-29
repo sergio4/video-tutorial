@@ -2,7 +2,7 @@
 // Livello 1 = titolo (messaggio principale, uno per schermata), livello 2 = secondario, livello 3 = supporto.
 // Gamification e CTA hanno stili propri. Tutti i testi entrano con la stessa grammatica di movimento.
 import { W, H } from '../engine/r.js';
-import { clamp, lerp, seg, E, rgba } from '../engine/math.js';
+import { clamp, lerp, seg, E, rgba, deg } from '../engine/math.js';
 
 export const BR = {
   violet: '#a406f9', lilac: '#c84cf0', magenta: '#f608be', cyan: '#00ffff',
@@ -88,4 +88,51 @@ export function brandBg(R, t, o = {}) {
     [W * (0.85 + 0.04 * Math.cos(t * 0.33)), H * 0.35, 700, BR.magenta, 0.16 * (o.a ?? 1)],
     [W * 0.55, H * 1.05, 900, BR.deep, 0.5 * (o.a ?? 1)],
   ]);
+}
+
+// ---------------------------------------------------------------- motion typography
+// Righe che si costruiscono lettera per lettera: ogni glifo sale dalla maschera ruotando in prospettiva e si posa
+// (scala 1,3 → 1). Uscita: le righe salgono fuori dalla maschera, una dopo l'altra.
+// lines: [{ s, size, col, hl: [da, a] (caratteri evidenziati), hlCol, glow }]; y = centro della prima riga.
+export function kin(R, lines, x, y, t, tin, tout = 1e9, o = {}) {
+  const al = o.align || 'left', gap = o.lineGap ?? 0.26, st = o.stagger ?? 0.022;
+  let yy = y;
+  R.hud(() => lines.forEach((L, i) => {
+    const size = L.size || o.size || 100;
+    if (i > 0) yy += ((lines[i - 1].size || o.size || 100) * 0.5 + size * 0.5) * (o.lead ?? 1.12);
+    const d0 = tin + (L.delay ?? i * gap);
+    const ex = seg(t, tout + i * 0.06, tout + i * 0.06 + 0.32);
+    if (t < d0 || ex >= 1) return;
+    const exU = E.inCubic(ex);
+    R.clipRect(0, yy - size * 0.98 - exU * size * 1.2, W, size * 1.62);
+    R.text(L.s, x, yy - exU * size * 1.15, {
+      font: L.font || 'glyB', size, align: al, v: 'cap', fill: L.col || BR.white, tracking: L.tracking ?? -0.012,
+      alpha: 1 - ex * 0.6, glow: L.glow || 0, glowColor: L.glowColor, shadow: ['rgba(8,4,24,0.55)', 30, 0, 8],
+      per: (g) => {
+        const u = E.outExpo(seg(t, d0 + g * st, d0 + g * st + 0.55));
+        const hl = L.hl && g >= L.hl[0] && g < L.hl[1];
+        return { y: (1 - u) * size * 1.05, rx: (1 - u) * deg(-70), s: lerp(1.3, 1, u), a: seg(t, d0 + g * st, d0 + g * st + 0.1), fill: hl ? L.hlCol || BR.lilac : undefined };
+      },
+    });
+    R.unclip();
+  }));
+  return yy;
+}
+
+// testo con punti centrali disegnati (Glancyr non ha il carattere «·»): parts = ['GAME', 'SET', 'MATCH']
+// o: opzioni di R.text (centrato su x); o.per(i) riceve l'indice del carattere nella frase intera
+export function dotText(R, parts, x, y, o) {
+  const size = o.size || 100, gap = size * (o.dotGap ?? 0.75), tr = o.tracking || 0;
+  const ws = parts.map((p) => R.measure(p, o.font, size, tr));
+  let cx = x - (ws.reduce((a, b) => a + b, 0) + gap * (parts.length - 1)) / 2, off = 0;
+  parts.forEach((p, k) => {
+    const o0 = off;
+    R.text(p, cx, y, { ...o, align: 'left', per: o.per ? (i, n, ch, G) => o.per(i + o0, n, ch, G) : undefined });
+    off += p.length + 3;
+    if (k < parts.length - 1) {
+      const pa = o.per ? o.per(off - 2).a ?? 1 : 1;
+      R.circle(cx + ws[k] + gap / 2, y, size * 0.075, { fill: o.dotFill || o.fill || '#fff', alpha: (o.alpha ?? 1) * pa, glow: o.glow || 0 }, 20);
+    }
+    cx += ws[k] + gap;
+  });
 }

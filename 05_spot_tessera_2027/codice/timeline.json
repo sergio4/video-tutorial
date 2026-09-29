@@ -1,63 +1,16 @@
 {
-  "title": "Spot TESSERA eSPORTS FITP 2027 · v5 (30 s)",
+  "title": "Spot TESSERA E-SPORTS FITP 2027 · v6 (45 s)",
   "bpm": 128,
-  "note": "Piano v5: Gioco (gameplay reale) → Level up → Mondo eSports FITP → FITP eSeries by BMW e competizione → TESSERA eSPORTS FITP → myFITP → ISCRIVITI ORA. Tempi a battute (128 BPM). 'vo_in' = entrata della voce dall'inizio del blocco, 'vo_est' = durata stimata. V.O. in bozza.",
+  "note": "Piano v6: ricchezza della v4 + qualità della v5. Domanda → level up → mondo eSports FITP → FITP eSeries by BMW → card eventi → TESSERA E-SPORTS FITP e vantaggi → myFITP → GAME · SET · MATCH → CTA. La pallina da tennis è il filo conduttore. Tempi a battute (128 BPM). 'vo_in' = entrata della voce dall'inizio del blocco, 'vo_est' = durata stimata. V.O. in bozza.",
   "scenes": [
-    {
-      "id": "a",
-      "n": "A · Gioco",
-      "dur": 5.15625,
-      "vo_in": 0.7,
-      "vo_est": 3.4,
-      "vo": "Giochi a Tennis Clash? Allora sai cosa vuol dire salire di livello."
-    },
-    {
-      "id": "b",
-      "n": "B · Level up",
-      "dur": 1.875,
-      "vo_in": 0,
-      "vo_est": 0,
-      "vo": ""
-    },
-    {
-      "id": "c",
-      "n": "C · Il mondo eSports FITP",
-      "dur": 3.75,
-      "vo_in": 0.35,
-      "vo_est": 2.0,
-      "vo": "Il prossimo livello? Quello vero."
-    },
-    {
-      "id": "d",
-      "n": "D · La competizione",
-      "dur": 5.625,
-      "vo_in": 0.3,
-      "vo_est": 3.9,
-      "vo": "Sfidi i migliori player d'Italia, fino al palco dei grandi eventi."
-    },
-    {
-      "id": "e",
-      "n": "E · La TESSERA eSPORTS FITP",
-      "dur": 4.6875,
-      "vo_in": 0.25,
-      "vo_est": 3.9,
-      "vo": "Il tuo pass è la tessera eSports FITP. Con vantaggi anche fuori dal gioco."
-    },
-    {
-      "id": "f",
-      "n": "F · myFITP",
-      "dur": 4.21875,
-      "vo_in": 0.45,
-      "vo_est": 2.3,
-      "vo": "Richiedila su myFITP e sei subito in gara."
-    },
-    {
-      "id": "g",
-      "n": "G · CTA",
-      "dur": 4.6875,
-      "vo_in": 0.35,
-      "vo_est": 3.9,
-      "vo": "Vivi il gaming da protagonista. Iscriviti ora su esports.fitp.it."
-    }
+    { "id": "a", "n": "01 · Apertura: smartphone e domanda", "dur": 5.625, "vo_in": 0.5, "vo_est": 3.4, "vo": "Giochi a Tennis Clash? Allora sai cosa vuol dire salire di livello." },
+    { "id": "b", "n": "02 · Level up", "dur": 1.875, "vo_in": 0, "vo_est": 0, "vo": "" },
+    { "id": "c", "n": "03 · Entra nel mondo eSports FITP", "dur": 3.75, "vo_in": 0.35, "vo_est": 2.0, "vo": "Il prossimo livello? Quello vero." },
+    { "id": "d", "n": "04 · FITP eSeries by BMW", "dur": 3.75, "vo_in": 0.5, "vo_est": 2.2, "vo": "Qui ogni torneo conta davvero." },
+    { "id": "e", "n": "05 · Tornei, finali live, montepremi", "dur": 6.5625, "vo_in": 0.3, "vo_est": 5.0, "vo": "Sfidi i migliori player d'Italia, fino al palco dei grandi eventi. E i montepremi sono veri." },
+    { "id": "f", "n": "06 · TESSERA E-SPORTS FITP e vantaggi", "dur": 6.5625, "vo_in": 0.3, "vo_est": 5.6, "vo": "Il tuo pass è la tessera e-sports FITP: tornei ufficiali, sconti sui grandi eventi e tanti vantaggi in più." },
+    { "id": "g", "n": "07 · myFITP", "dur": 6.5625, "vo_in": 3.2, "vo_est": 2.0, "vo": "Bastano pochi tocchi e sei in gara." },
+    { "id": "h", "n": "08 · GAME · SET · MATCH", "dur": 4.21875, "vo_in": 2.2, "vo_est": 1.6, "vo": "Il resto lo decide il tuo gioco." },
+    { "id": "i", "n": "09 · CTA", "dur": 6.09375, "vo_in": 0.4, "vo_est": 5.0, "vo": "Vivi il gaming da protagonista. Richiedi ora la tessera e-sports FITP su esports.fitp.it." }
   ]
 }

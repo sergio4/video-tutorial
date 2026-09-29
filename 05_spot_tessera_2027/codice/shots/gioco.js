@@ -1,7 +1,7 @@
 // 01 · Apertura  02 · Level up
 // Smartphone vero nello spazio (spessore, ombra, riflesso sul pavimento, lama di luce sul vetro) con il gameplay reale
 // di Tennis Clash. La camera avanza e gira attorno al telefono, i fari sfocati scorrono in parallasse.
-// La domanda «Sei pronto a diventare il prossimo campione?» si costruisce riga per riga.
+// La domanda «SEI PRONTO A DIVENTARE IL PROSSIMO CAMPIONE ESPORTS?» entra con il telefono, riga per riga.
 // Sul punto vinto la pallina esce dallo schermo verso la camera: impatto, LEVEL UP; poi vola via verso l'alto (→ 03).
 import { W, H, Cam } from '../engine/r.js';
 import { clamp, lerp, seg, env, E, deg, rgba, TRS, hash } from '../engine/math.js';
@@ -18,21 +18,24 @@ export function gioco(S, TL) {
   const tAway = t1 - 0.75;                 // la pallina riparte verso l'alto
   const frame = (t) => clamp(Math.floor((t - t0) * 25), 0, 159);
 
+  // camera quasi frontale: il telefono si legge dritto e solido; solo una lenta carrellata in avanti e una
+  // leggera deriva laterale (parallasse con fari e pulviscolo)
   function camAt(t) {
     const c = new Cam();
-    const u = E.inOutCubic(seg(t, t0, tPoint));
+    const u = E.inOutSine(seg(t, t0, tPoint));
     const sh = shake(t, [[tHit, 18, 0.5]]);
     const push = E.outCubic(seg(t, tHit, t1)) * 380;
-    c.look([lerp(-260, 70, u), lerp(-230, -170, u), lerp(-1950, -1620, u) + push], [lerp(260, 190, u), -20, 0], deg(lerp(-1.5, 0.5, u)), 1600);
+    c.look([lerp(-60, 40, u), lerp(-120, -100, u), lerp(-1760, -1640, u) + push], [lerp(40, 60, u), -10, 0], 0, 1600);
     c.cx += sh[0]; c.cy += sh[1];
     return c;
   }
 
+  // il telefono arriva dal fondo quasi dritto (rotazione contenuta), poi respira appena
   function pose(t) {
-    const inn = E.outExpo(seg(t, t0, t0 + 1.1));
+    const inn = E.outExpo(seg(t, t0 + 0.25, t0 + 1.2));
     const away = E.inCubic(seg(t, tHit, t1));
-    const ry = deg(lerp(-70, -34, inn) + 16 * E.inOutCubic(seg(t, t0 + 1, tPoint)) + 4 * Math.sin(t * 0.9));
-    return { M: TRS([390 + away * 260, -10 + Math.sin(t * 1.3) * 8 - away * 60, lerp(900, 0, inn) + away * 700], [deg(3), ry, deg(-2 + Math.sin(t * 0.7))], 0.86), ry };
+    const ry = deg(lerp(-18, -12, inn) + 2 * Math.sin(t * 0.8));
+    return { M: TRS([420 + away * 260, lerp(40, 0, inn) + Math.sin(t * 1.3) * 5 - away * 60, lerp(700, 0, inn) + away * 700], [deg(2), ry, 0], 0.86), ry };
   }
 
   // punto dello schermo del telefono da cui esce la pallina (in basso al centro, dove gioca il tennista)
@@ -79,12 +82,14 @@ export function gioco(S, TL) {
     });
 
     // la domanda, costruita riga per riga (una sola frase, nessun altro testo in scena)
+    // entra insieme al telefono, anzi un istante prima
     kin(R, [
-      { s: 'Sei pronto', size: 104 },
-      { s: 'a diventare', size: 104 },
-      { s: 'il prossimo', size: 104 },
-      { s: 'campione?', size: 150, col: BR.lilac, glow: 0.25, glowColor: BR.magenta },
-    ], 120, 330, t, t0 + 1.3, tPoint - 0.55, { lineGap: 0.42 });
+      { s: 'SEI PRONTO', size: 90 },
+      { s: 'A DIVENTARE', size: 90 },
+      { s: 'IL PROSSIMO', size: 90 },
+      { s: 'CAMPIONE', size: 124, col: BR.lilac, glow: 0.25, glowColor: BR.magenta },
+      { s: 'ESPORTS?', size: 124, col: BR.lilac, glow: 0.25, glowColor: BR.magenta },
+    ], 120, 280, t, t0 + 0.05, tPoint - 0.55, { lineGap: 0.3 });
 
     // LEVEL UP: il punto vinto fa uscire la pallina dal gioco
     const veil = seg(t, tPoint, tHit) * (1 - seg(t, t1 - 0.3, t1));

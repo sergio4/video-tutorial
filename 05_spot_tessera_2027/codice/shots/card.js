@@ -1,4 +1,4 @@
-// TESSERA E-SPORTS FITP 2027: fronte (arte ufficiale) e retro «ATTIVA». Coordinate della carta: centro 0,0, 340 × 226.
+// TESSERA ESPORTS FITP 2027: fronte (arte ufficiale) e retro «ATTIVA». Coordinate della carta: centro 0,0, 340 × 226.
 import { seg, E, rgba } from '../engine/math.js';
 import { PAL, checkMark } from '../engine/kit.js';
 
@@ -26,7 +26,7 @@ export function cardBack(R, t, a = 1, act = 1) {
     R.rrect(-CW / 2, -CH / 2, CW, CH, 16, { fill: { lin: [-CW / 2, -CH / 2, CW / 2, CH / 2], stops: [[0, '#241266'], [1, '#0b0624']] }, alpha: a, knock: true });
     const lw = 92, lh = lw * (717 / 1278);
     R.image(R.img.logo, -CW / 2 + 18, -CH / 2 + 14, lw, lh, { sub: 2, alpha: a });
-    R.text('TESSERA E-SPORTS FITP', CW / 2 - 20, -CH / 2 + 32, { maxW: 190, font: 'glySB', size: 12, align: 'right', v: 'cap', fill: '#ffffff', alpha: a * 0.85, tracking: 0.12 });
+    R.text('TESSERA ESPORTS FITP', CW / 2 - 20, -CH / 2 + 32, { maxW: 190, font: 'glySB', size: 12, align: 'right', v: 'cap', fill: '#ffffff', alpha: a * 0.85, tracking: 0.12 });
     R.text('2027', CW / 2 - 20, -CH / 2 + 58, { font: 'glyB', size: 24, align: 'right', v: 'cap', fill: '#ffffff', alpha: a });
     const k = E.outBack(act, 1.8);
     if (act > 0) {

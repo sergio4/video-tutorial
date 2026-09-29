@@ -207,7 +207,6 @@ export function match(S, TL) {
       };
       plate(110, 'MARCO', 'LV 30', BR.cyan, t0 + 0.4, false);
       plate(W - 110, 'LUNA.SPIN', 'LV 21 · ROMA', PAL.magenta, t0 + 0.45, true);
-      dotText(R, ['FITP eSERIES BY BMW', 'PRIMO TURNO'], W / 2, 90, { font: 'glySB', size: 24, dotGap: 1.4, v: 'cap', fill: PAL.cyan, alpha: seg(t, t0 + 0.35, t0 + 0.55), tracking: 0.2 });
     });
   }
 

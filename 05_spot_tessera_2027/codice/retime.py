@@ -11,7 +11,7 @@ Senza --scrivi mostra solo il confronto. Poi basta rifare il render.
 import json, os, subprocess, sys, math
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-MIN = {'a': 5.625, 'b': 1.875, 'c': 3.75, 'd': 3.75, 'e': 6.5625, 'f': 6.5625, 'g': 6.5625, 'h': 4.21875, 'i': 6.09375}  # v6: durate minime (animazioni a battute)
+MIN = {'a': 5.625, 'b': 1.875, 'c': 1.875, 'e': 7.5, 'f': 7.5, 'g': 6.5625, 'h': 4.21875, 'i': 6.09375}  # v7: durate minime (animazioni a battute)
 TAIL = 0.35
 HALF_BEAT = 60 / 128 / 2
 

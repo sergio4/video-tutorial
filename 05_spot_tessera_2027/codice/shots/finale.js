@@ -1,7 +1,7 @@
-// 09 · CTA — disposizione della v4 (tessera a sinistra, claim a destra, pulsante, loghi piccoli centrati),
-// con un crescendo: raggi e particelle che convergono sulla tessera, camera che avanza, claim a tutta altezza.
-// La pallina, filo conduttore dello spot, chiude il racconto: cade, rimbalza sulla pennellata del claim e colpisce
-// il pulsante «Richiedi ora la tessera e-sports FITP», che si accende all'impatto. Poi sito e loghi.
+// 08 · CTA — disposizione della v4 (tessera a sinistra, colonna a destra) con un crescendo: raggi e particelle che
+// convergono sulla tessera, camera che avanza. La colonna destra è una pila centrata su un solo asse (CX):
+// claim, pennellata, pulsante «RICHIEDI ORA LA TESSERA ESPORTS FITP», sito, loghi. La tessera è centrata in altezza
+// sulla pila. La pallina rimbalza sulla pennellata e colpisce il pulsante, che si accende all'impatto.
 import { W, H, Cam } from '../engine/r.js';
 import { clamp, lerp, seg, env, E, deg, hash, rgba, TRS } from '../engine/math.js';
 import { shake, dust } from './common.js';
@@ -16,9 +16,11 @@ export function finale(S, TL) {
   const tClaim = t0 + 1.35;
   const tBounce = t0 + 2.55, tCta = t0 + 2.95;    // rimbalzo sulla pennellata, impatto sul pulsante
   const tUrl = tCta + 0.4, tLogo = tCta + 0.7;
-  const X = 930, BY = 760, CTA_TXT = 'Richiedi ora la tessera e-sports FITP';
-  const CARD_C = { pos: [0, -40, 0], sc: 1.9 }, CARD_E = { pos: [-455, -20, 0], sc: 1.6 };
-  let btn = { w: 900, h: 92 };
+  const CX = 1340, COLW = 1000;                   // asse e larghezza della colonna destra
+  const Y1 = 330, BY = 625, UY = 730, LOGO_Y = 835; // claim (prima riga), pulsante, sito, loghi
+  const CTA_TXT = 'RICHIEDI ORA LA TESSERA ESPORTS FITP';
+  const CARD_C = { pos: [0, -40, 0], sc: 1.9 }, CARD_E = { pos: [-500, 12, 0], sc: 1.5 };
+  let ul = { x0: CX - 300, x1: CX + 300, y: 509 };  // pennellata (calcolata sul claim)
 
   function cardPose(t) {
     const a = E.outBack(seg(t, tIn, tLand), 1.2);
@@ -28,10 +30,10 @@ export function finale(S, TL) {
     return TRS([pos[0], pos[1], lerp(1400, 0, a) + pos[2]], [deg(4 * Math.sin(t * 1.1)) * idle, deg(lerp(0, -10, e) + 6 * Math.sin(t * 0.8)) * idle + (1 - E.outCubic(seg(t, tIn, tLand))) * Math.PI * 4, deg(lerp(0, -2, e))], lerp(CARD_C.sc, CARD_E.sc, e));
   }
 
-  const path = segPath([
-    [tBounce - 0.4, tBounce, [W + 100, 120, 18], [X + 560, 628, 26], 0, E.inQuad],
-    [tBounce, tCta, [X + 560, 628, 26], [X + 120, BY, 34], 150, E.lin],
-  ]);
+  const path = (t) => segPath([
+    [tBounce - 0.4, tBounce, [W + 100, 120, 18], [ul.x1 - 60, ul.y, 26], 0, E.inQuad],
+    [tBounce, tCta, [ul.x1 - 60, ul.y, 26], [CX - 180, BY, 34], 150, E.lin],
+  ])(t);
 
   function draw(R, t) {
     const cam = new Cam();
@@ -42,7 +44,7 @@ export function finale(S, TL) {
     R.setCam(cam);
     brandBg(R, t, { a: 1 + 0.4 * seg(t, tCta, tCta + 0.5) });
     // crescendo: raggi che si aprono dietro la tessera e crescono fino alla CTA
-    const tx = lerp(W / 2, 505, E.inOutCubic(seg(t, m0, m1))), ty = 520;
+    const tx = lerp(W / 2, 460, E.inOutCubic(seg(t, m0, m1))), ty = lerp(520, 572, E.inOutCubic(seg(t, m0, m1)));
     const ra = seg(t, t0 + 0.2, tLand) * (0.55 + 0.45 * seg(t, tCta, tCta + 0.6));
     R.hud(() => {
       for (let i = 0; i < 28; i++) {
@@ -64,49 +66,49 @@ export function finale(S, TL) {
     }
     impact(R, W / 2, 500, seg(t, tLand, tLand + 0.7), { scale: 2.2, col: BR.cyan });
 
-    // claim (testo esatto), a tutta altezza nella colonna destra
-    const cs = Math.min(112, (112 * (W - X - 70)) / R.measure('da protagonista', 'glyB', 112, -0.012));
-    kin(R, [{ s: 'Vivi il gaming', size: cs }, { s: 'da protagonista', size: cs, col: BR.white }], X, 420, t, tClaim, 1e9, { lineGap: 0.2 });
+    // claim (testo esatto), centrato sull'asse della colonna
+    const cs = Math.min(104, (104 * COLW) / R.measure('da protagonista', 'glyB', 104, -0.012));
+    const y2 = kin(R, [{ s: 'Vivi il gaming', size: cs }, { s: 'da protagonista', size: cs, col: BR.white }], CX, Y1, t, tClaim, 1e9, { align: 'center', lineGap: 0.2 });
     R.hud(() => {
       // pennellata ciano→magenta sotto «protagonista» (dalla v4)
-      const bx0 = X + R.measure('da ', 'glyB', cs, -0.012), bw = R.measure('protagonista', 'glyB', cs, -0.012);
+      const w2 = R.measure('da protagonista', 'glyB', cs, -0.012);
+      const bx0 = CX - w2 / 2 + R.measure('da ', 'glyB', cs, -0.012), bw = R.measure('protagonista', 'glyB', cs, -0.012);
+      ul = { x0: bx0, x1: bx0 + bw, y: y2 + cs * 0.36 + 24 };
       const u = E.inOutCubic(seg(t, tClaim + 0.6, tClaim + 1.0));
       if (u > 0) {
         const pts = [], pb = [];
         for (let i = 0; i <= 30; i++) {
-          const f = (i / 30) * u, px = bx0 + f * bw, py = 628 + Math.sin(f * 3.2) * 5 - f * 7 + env(t, tBounce, tBounce + 0.03, tBounce + 0.03, tBounce + 0.25) * 10 * Math.sin(f * Math.PI);
+          const f = (i / 30) * u, px = bx0 + f * bw, py = ul.y + Math.sin(f * 3.2) * 5 - f * 7 + env(t, tBounce, tBounce + 0.03, tBounce + 0.03, tBounce + 0.25) * 10 * Math.sin(f * Math.PI);
           const w = 16 * Math.sin(Math.PI * Math.min(1, (i / 30) * 1.05)) + 3;
           pts.push(px, py - w / 2); pb.unshift(px, py + w / 2);
         }
         R.poly(pts.concat(pb), { fill: { screenLin: [bx0, 0, bx0 + bw, 0], stops: [[0, BR.cyan], [1, BR.magenta]] }, glow: 0.8 });
       }
-      // CTA: il pulsante si accende quando la pallina lo colpisce
+      // CTA: il pulsante si accende quando la pallina lo colpisce (centrato sull'asse)
       const pa = seg(t, tCta, tCta + 0.08);
       if (pa > 0) {
-        const size = 40;
-        const tw = R.measure(CTA_TXT, 'glyB', size, 0);
-        btn = { w: Math.min(tw + 96, W - X - 60), h: 92 };
+        const size = Math.min(36, (36 * (COLW - 110)) / R.measure(CTA_TXT, 'glyB', 36, 0));
+        const bw2 = R.measure(CTA_TXT, 'glyB', size, 0) + 100, bh = 92;
         const k = lerp(1.25, 1, E.outBack(seg(t, tCta, tCta + 0.35), 2)) * (1 + 0.02 * Math.sin((t - tCta) * 6) * seg(t, tCta + 0.8, tCta + 1.2));
-        const cx = X + btn.w / 2;
-        R.with([k, 0, 0, cx * (1 - k), 0, k, 0, BY * (1 - k), 0, 0, 1, 0], () => {
-          R.rrect(X, BY - btn.h / 2, btn.w, btn.h, btn.h / 2, { stroke: BR.magenta, lw: 6, alpha: pa, glow: 1.2, glowOnly: true });
-          R.rrect(X, BY - btn.h / 2, btn.w, btn.h, btn.h / 2, { fill: { screenLin: [X, 0, X + btn.w, 0], stops: [[0, BR.magenta], [1, BR.violet]] }, alpha: pa, shadow: ['rgba(0,0,0,0.45)', 30, 0, 10], knock: true });
-          R.text(CTA_TXT, cx, BY, { font: 'glyB', size, align: 'center', v: 'cap', fill: BR.white, alpha: pa, maxW: btn.w - 70 });
+        R.with([k, 0, 0, CX * (1 - k), 0, k, 0, BY * (1 - k), 0, 0, 1, 0], () => {
+          R.rrect(CX - bw2 / 2, BY - bh / 2, bw2, bh, bh / 2, { stroke: BR.magenta, lw: 6, alpha: pa, glow: 1.2, glowOnly: true });
+          R.rrect(CX - bw2 / 2, BY - bh / 2, bw2, bh, bh / 2, { fill: { screenLin: [CX - bw2 / 2, 0, CX + bw2 / 2, 0], stops: [[0, BR.magenta], [1, BR.violet]] }, alpha: pa, shadow: ['rgba(0,0,0,0.45)', 30, 0, 10], knock: true });
+          R.text(CTA_TXT, CX, BY, { font: 'glyB', size, align: 'center', v: 'cap', fill: BR.white, alpha: pa });
         });
       }
       const ua = seg(t, tUrl, tUrl + 0.3);
-      if (ua > 0) R.text('esports.fitp.it', X + 4, 870 + (1 - E.outExpo(seg(t, tUrl, tUrl + 0.4))) * 20, { font: 'glyM', size: 40, v: 'cap', fill: BR.white, alpha: ua, tracking: 0.02 });
-      // loghi piccoli e centrati, senza fondi
+      if (ua > 0) R.text('esports.fitp.it', CX, UY + (1 - E.outExpo(seg(t, tUrl, tUrl + 0.4))) * 20, { font: 'glyM', size: 40, align: 'center', v: 'cap', fill: BR.white, alpha: ua, tracking: 0.02 });
+      // loghi piccoli, sullo stesso asse della colonna
       const la = seg(t, tLogo, tLogo + 0.35);
       if (la > 0) {
-        const y = 995, eh = 64, ew = eh * (1278 / 717), fh = 56, fw = fh * (1400 / 689), gap = 42;
-        const x0 = W / 2 - (ew + gap + fw) / 2;
+        const y = LOGO_Y, eh = 64, ew = eh * (1278 / 717), fh = 56, fw = fh * (1400 / 689), gap = 42;
+        const x0 = CX - (ew + gap + fw) / 2;
         R.image(R.img.logo, x0, y - eh / 2, ew, eh, { sub: 1, alpha: la });
         R.band(x0 + ew + gap / 2, y - 26, x0 + ew + gap / 2, y + 26, 1.5, { fill: '#ffffff', alpha: la * 0.35 });
         R.image(R.img.fitp_neg, x0 + ew + gap, y - fh / 2, fw, fh, { sub: 1, alpha: la });
       }
     });
-    impact(R, X + 120, BY, seg(t, tCta, tCta + 0.7), { scale: 1.6, col: BR.magenta });
+    impact(R, CX - 180, BY, seg(t, tCta, tCta + 0.7), { scale: 1.6, col: BR.magenta });
     flyBall(R, path, t, { trail: 0.14 });
     const wh = 1 - E.outCubic(seg(t, t0, t0 + 0.3));
     if (wh > 0) R.hud(() => R.rect(0, 0, W, H, { fill: '#ffffff', alpha: wh }));

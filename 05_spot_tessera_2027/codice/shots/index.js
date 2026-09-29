@@ -1,15 +1,15 @@
-// Router degli atti dello spot (piano v6, 45 s): ogni atto copre uno o più blocchi 01-09 e disegna i propri raccordi.
+// Router degli atti dello spot (piano v7, 41 s): ogni atto copre uno o più blocchi 01-08 e disegna i propri raccordi.
 import { W, H } from '../engine/r.js';
 import { gioco } from './gioco.js';
-import { mondo, circuito } from './mondo.js';
+import { mondo } from './mondo.js';
 import { carte } from './carte.js';
 import { vantaggi } from './vantaggi.js';
 import { myfitp } from './myfitp.js';
 import { match } from './match.js';
 import { finale } from './finale.js';
 
-// percorso v6: domanda → level up → mondo eSports FITP → FITP eSeries by BMW → card eventi → TESSERA E-SPORTS FITP → myFITP → match → CTA
-const FACTORIES = [gioco, mondo, circuito, carte, vantaggi, myfitp, match, finale];
+// percorso v7: domanda → level up → mondo eSports FITP → card eventi → TESSERA ESPORTS FITP e vantaggi → myFITP → match → CTA
+const FACTORIES = [gioco, mondo, carte, vantaggi, myfitp, match, finale];
 let built = null, builtFor = null;
 
 function acts(TL) {
